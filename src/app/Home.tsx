@@ -1,7 +1,7 @@
 "use client"
 
 import {useEffect, useRef} from "react";
-import MainService from "@/app/MainService";
+import TestMain from "@/app/test/TestMain";
 
 
 export function Home() {
@@ -10,7 +10,7 @@ export function Home() {
   }
   
   function onFirstEffect() {
-    MainService.initialize()
+    TestMain.start()
   }
   
   const firstEnter = useRef<boolean>(true)

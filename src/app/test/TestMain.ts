@@ -1,5 +1,5 @@
-import {Map as YMap, Array as YArray, Doc as YDoc} from "yjs";
-import {r, rhineProxy} from "@/app/core/Proxy";
+import {rhineProxy} from "@/app/core/Proxy";
+import RhineConnector from "@/app/core/connector/RhineConnector";
 
 export interface User {
   name: string
@@ -18,43 +18,31 @@ export interface Range {
 }
 
 export default class TestMain {
+  
   static start() {
     
     console.log('\n\n---- TestMain.Start ----\n\n')
     
-    // {
-    //   name: 'Eddie',
-    //   age: 20,
-    //   friends: ['Kitty', 'Barry'],
-    //   job: {
-    //     enterprise: 'RhineAI',
-    //     position: 'Developer',
-    //   }
-    // }
+    const user = {
+      name: 'Eddie',
+      age: 20,
+      friends: ['Kitty', 'Lily', 'Betty'],
+      job: {
+        enterprise: 'RhineAI',
+        position: 'Developer',
+        range: {
+          start: 1000,
+          end: 3000,
+        }
+      }
+    }
     
-    const friends = new YArray<any>()
-    friends.push(['Kitty', 'Ross', 'Mark', 'Betty'])
-    const range = new YMap()
-    range.set('start', 1019)
-    range.set('end', 1110)
-    const job = new YMap<any>()
-    job.set('enterprise', 'OpenAI')
-    job.set('position', 'Developer')
-    job.set('range', range)
-    const user = new YMap<any>()
-    user.set('name', 'Eddie')
-    user.set('age', 20)
-    user.set('friends', friends)
-    user.set('job', job)
-    // MainService.yMap.set('user', user)
+    const connector = new RhineConnector('wss://rhineai.com/ws/test-room-0')
+    const state = rhineProxy<User>(user, connector)  // 使用RhineVar 创建代理管理对象
     
-    const doc = new YDoc()
-    
-    // 使用 RhineVar
-    const state = rhineProxy<User>(user)  // 使用RhineVar 创建代理管理对象
-    
-    console.log(state.job.json())
+    // console.log(state.job.json())
     
   }
+  
 }
 
