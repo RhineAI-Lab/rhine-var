@@ -1,6 +1,5 @@
-import {Map as YMap, Array as YArray} from "yjs";
-import {rhineProxy} from "@/app/core/Proxy";
-import MainService from "@/app/MainService";
+import {Map as YMap, Array as YArray, Doc as YDoc} from "yjs";
+import {r, rhineProxy} from "@/app/core/Proxy";
 
 export interface User {
   name: string
@@ -9,11 +8,13 @@ export interface User {
   job: {
     enterprise: string
     position: string
-    range: {
-      start: 1019
-      end: 1110
-    }
+    range: Range
   }
+}
+
+export interface Range {
+  start: number
+  end: number
 }
 
 export default class TestMain {
@@ -45,12 +46,14 @@ export default class TestMain {
     user.set('age', 20)
     user.set('friends', friends)
     user.set('job', job)
-    MainService.yMap.set('user', user)
+    // MainService.yMap.set('user', user)
     
+    const doc = new YDoc()
     
     // 使用 RhineVar
     const state = rhineProxy<User>(user)  // 使用RhineVar 创建代理管理对象
     
+    console.log(state.job.json())
     
   }
 }

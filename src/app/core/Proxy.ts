@@ -1,6 +1,6 @@
 import {Map as YMap, Array as YArray, Doc as YDoc, YMapEvent, Transaction} from "yjs";
-import RhineVar from "@/app/core/RhineVar";
-import {convertArrayProperty} from "@/app/core/ConvertProperty";
+import RhineVar from "@/app/core/var/RhineVar";
+import {convertArrayProperty} from "@/app/core/utils/ConvertProperty";
 
 const ENABLE_LOG = true
 
@@ -16,6 +16,11 @@ type RecursiveCrossRhineVar<T> = {
 }
 
 type ProxiedRhineVar<T> = T & RecursiveCrossRhineVar<T> & RhineVar
+
+
+export function r<T>(value: T) {
+  return value as ProxiedRhineVar<T>
+}
 
 
 export function rhineProxy<T extends object>(target: YMap<any> | YArray<any>) {
