@@ -1,5 +1,5 @@
 
-## The world's most intuitive and reliable strongly-typed collaborative library
+# The world's most intuitive and reliable strongly-typed collaborative library
 
 <br/>
 

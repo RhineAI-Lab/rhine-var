@@ -1,5 +1,5 @@
 import {Array as YArray, Map as YMap, Transaction, YMapEvent} from "yjs";
-import {ChangeType} from "@/app/test/Proxy";
+import {ChangeType} from "@/app/core/Proxy";
 
 
 type Callback = (value: any, key: string, oldValue: any, type: ChangeType, nativeEvent: YMapEvent<any>, nativeTransaction: Transaction) => void
@@ -46,6 +46,7 @@ export default class RhineVar {
   }
   
   
+  static y = null
   static json = null
   static listeners = null
   static subscribe = null
