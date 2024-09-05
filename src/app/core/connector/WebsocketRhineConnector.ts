@@ -5,13 +5,14 @@ import {ConnectorStatus} from "@/app/core/connector/ConnectorStatus";
 
 const ENABLE_LOG = false
 
-export default class RhineConnector {
+export default class WebsocketRhineConnector {
   
   yDoc: YDoc
   yBaseMap: YMap<any>
   url: string = ''
   
-  clientId = ''
+  clientId = -1
+  synced = false
   
   provider: WebsocketProvider | null = null
   websocketStatus: ConnectorStatus = ConnectorStatus.DISCONNECTED
@@ -22,8 +23,12 @@ export default class RhineConnector {
     url && this.connect(url)
   }
   
-  bind(target: YMap<any> | YArray<any>) {
-    this.yBaseMap.set('state', target)
+  bind(defaultValue: YMap<any> | YArray<any>, overwrite: boolean = false) {
+    if (!overwrite && this.yBaseMap.has('state')) {
+      return this.yBaseMap.get('state')
+    }
+    this.yBaseMap.set('state', defaultValue)
+    return defaultValue
   }
   
   async connect(url: string): Promise<void> {
@@ -45,11 +50,15 @@ export default class RhineConnector {
       this.provider.on('status', (event: any) => {
         this.websocketStatus = event.status
         ENABLE_LOG && console.log('WebsocketProvider status:', event.status)
-        if (this.websocketStatus == ConnectorStatus.CONNECTED) resolve()
       })
       
       this.provider.on('sync', (isSynced: boolean) => {
         ENABLE_LOG && console.info('WebsocketProvider sync:', isSynced)
+        if (isSynced) {
+          this.synced = true
+          this.clientId = this.yDoc.clientID
+          resolve()
+        }
       })
       
       this.provider.on('connection-close', (e: any) => {
@@ -65,5 +74,11 @@ export default class RhineConnector {
     
   }
   
-  
+}
+
+
+export async function websocketRhineConnect(url: string) {
+  const connector = new WebsocketRhineConnector()
+  await connector.connect('wss://rhineai.com/ws/test-room-0')
+  return connector
 }

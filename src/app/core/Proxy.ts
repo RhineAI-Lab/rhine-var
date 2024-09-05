@@ -1,7 +1,8 @@
 import {Map as YMap, Array as YArray, Doc as YDoc, YMapEvent, Transaction} from "yjs";
 import RhineVar from "@/app/core/var/RhineVar";
 import {convertArrayProperty} from "@/app/core/utils/ConvertProperty";
-import RhineConnector from "@/app/core/connector/RhineConnector";
+import WebsocketRhineConnector from "@/app/core/connector/WebsocketRhineConnector";
+import {jsonToNative} from "@/app/core/utils/YDataUtils";
 
 const ENABLE_LOG = true
 
@@ -19,15 +20,20 @@ type RecursiveCrossRhineVar<T> = {
 type ProxiedRhineVar<T> = T & RecursiveCrossRhineVar<T> & RhineVar
 
 
-export function rhineProxy<T extends object>(data: T, connector: RhineConnector | null = null) {
+export function rhineProxy<T extends object>(data: T, connector: WebsocketRhineConnector | null = null) {
   
-  let target: YMap<any> | YArray<any> = new YMap<any>()
-  if (Array.isArray(data)) {
-    target = new YArray<any>()
-  }
+  let target = jsonToNative(data)
+  
   if (connector) {
-    connector.bind(target)
+    target = connector.bind(target, true)
   }
+  
+  return rhineProxyNative(target) as ProxiedRhineVar<T>
+}
+
+
+export function rhineProxyNative<T>(target: YMap<any> | YArray<any>) {
+  
   
   const handler: ProxyHandler<RhineVar> = {
     
@@ -72,11 +78,10 @@ export function rhineProxy<T extends object>(data: T, connector: RhineConnector 
   
   const object = new RhineVar(target) as ProxiedRhineVar<T>
   
-  
   target.forEach((value, keyString) => {
     let key = keyString as keyof T
     if (value instanceof YMap || value instanceof YArray) {
-      object[key] = rhineProxy(value as any) as any
+      object[key] = rhineProxyNative(value)
     }
   })
   
