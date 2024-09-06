@@ -1,8 +1,8 @@
-import {Array as YArray, Map as YMap, Transaction, YMapEvent} from "yjs";
+import {Array as YArray, Map as YMap, Transaction, YArrayEvent, YMapEvent} from "yjs";
 import {ChangeType} from "@/app/core/Proxy";
 
 
-type Callback = (value: any, key: string, oldValue: any, type: ChangeType, nativeEvent: YMapEvent<any>, nativeTransaction: Transaction) => void
+type Callback = (value: any, key: string, oldValue: any, type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any>, nativeTransaction: Transaction) => void
 
 
 export default class RhineVar {
@@ -38,7 +38,7 @@ export default class RhineVar {
     })
   }
   
-  emit(value: any, key: string, oldValue: any, type: ChangeType, nativeEvent: YMapEvent<any>, nativeTransaction: Transaction) {
+  emit(value: any, key: string, oldValue: any, type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any>, nativeTransaction: Transaction) {
     this.listeners.forEach(listener => listener(value, key, oldValue, type, nativeEvent, nativeTransaction))
     if (this.keyListeners.has(key)) {
       this.keyListeners.get(key)!.forEach(listener => listener(value, key, oldValue, type, nativeEvent, nativeTransaction))

@@ -6,6 +6,11 @@ import {forceSet, isObjectOrArray, jsonToNative} from "@/app/core/utils/NativeDa
 
 const ENABLE_LOG = true
 
+export function log(...items: any[]) {
+  if (ENABLE_LOG) {
+    console.log('%cRhineVar', 'color: #b6ff00', ...items)
+  }
+}
 
 export enum ChangeType {
   Add = 'add',
@@ -48,7 +53,7 @@ export function rhineProxyNative<T>(target: YMap<any> | YArray<any>) {
     
     get(object, p, receiver) {
       if (p in RhineVar) return Reflect.get(object, p, receiver)
-      ENABLE_LOG && console.log('RhineVar Proxy.handler.get:', p, object, receiver)
+      log('Proxy.handler.get:', p, object, receiver)
       
       if (p in object) return Reflect.get(object, p, receiver)
       if (typeof p !== 'string') return undefined
@@ -67,7 +72,7 @@ export function rhineProxyNative<T>(target: YMap<any> | YArray<any>) {
     
     set(object, p, newValue, receiver) {
       if (p in RhineVar) return Reflect.set(object, p, newValue, receiver)
-      ENABLE_LOG && console.log('RhineVar Proxy.handler.set:', p, 'to', newValue, '\n', object, receiver)
+      log('Proxy.handler.set:', p, 'to', newValue, '\n', object, receiver)
       
       if (isObjectOrArray(newValue)) {
         if (!(newValue instanceof RhineVar)) {
@@ -87,14 +92,15 @@ export function rhineProxyNative<T>(target: YMap<any> | YArray<any>) {
   if (target instanceof YMap) {
     target.observe((event, transaction) => {
       event.changes.keys.forEach(({action, oldValue}, key) => {
-        ENABLE_LOG && console.log(`RhineVar Proxy event. Map ${action} ${key}: ${oldValue} -> ${target.get(key)}"`)
+        log(`Proxy.event: Map ${action} ${key}: ${oldValue} -> ${target.get(key)}`)
         object.emit(target.get(key), key, oldValue, action as ChangeType, event, transaction)
       })
     })
   } else {
     target.observe((event, transaction) => {
-      ENABLE_LOG && console.log(`RhineVar Proxy event. Array changed.`, event, transaction)
-      console.log(event.changes)
+      log(`Proxy.event: Array changed.`, event, transaction)
+      const {added, deleted, delta} = event.changes
+      object.emit(delta, '', undefined, ChangeType.Update, event, transaction)
     })
   }
   
