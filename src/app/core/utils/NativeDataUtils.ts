@@ -1,4 +1,5 @@
 import {Map as YMap, Array as YArray} from "yjs"
+import {convertArrayProperty} from "@/app/core/utils/ConvertProperty";
 
 
 export function isObject(value: any) {
@@ -21,10 +22,15 @@ export function isYArray(value: any) {
   return value instanceof YArray
 }
 
-export function forceSet(target: YMap<any> | YArray<any>, key: string | symbol, value: any) {
+export function isYMapOrYArray(value: any) {
+  return isYMap(value) || isYArray(value)
+}
+
+export function nativeSet(target: YMap<any> | YArray<any>, key: string | symbol, value: any) {
   if (typeof key !== 'string') {
     return false
   }
+  
   try {
     if (target instanceof YMap) {
       target.set(key, value)
@@ -41,9 +47,27 @@ export function forceSet(target: YMap<any> | YArray<any>, key: string | symbol, 
       }
     }
   } catch (e) {
-    console.error(e)
+    console.error('RhineVar nativeSet', e)
   }
   return false
+}
+
+export function nativeGet(target: YMap<any> | YArray<any>, key: string | symbol) {
+  if (typeof key !== 'string') {
+    return undefined
+  }
+  
+  try {
+    if (target instanceof YMap) {
+      return target.get(key)
+    } else if (target instanceof YArray) {
+      const pn = parseInt(key)
+      if (!isNaN(pn)) return target.get(pn)
+    }
+  } catch (e) {
+    console.error('RhineVar nativeGet', e)
+  }
+  return undefined
 }
 
 export function jsonToNative(data: any) {

@@ -1,10 +1,20 @@
 import {Array as YArray} from "yjs";
+import RhineVar from "@/app/core/var/RhineVar";
+import {ensureRhineVar} from "@/app/core/Proxy";
 
-export function convertArrayProperty<T>(target: YArray<T>, name: string) {
+export function convertArrayProperty<T>(target: YArray<T>, name: string, object: RhineVar) {
   if (name === 'length') {
     return target.length
   } if (name === 'push') {
-    return (item: T) => target.push([item])
+    return (item: T | RhineVar) => {
+      item = ensureRhineVar(item)
+      if (item instanceof RhineVar) {
+        target.push([item.native as T])
+        Reflect.set(object, target.length - 1, item)
+      } else {
+        target.push([item])
+      }
+    }
   } else if (name === 'pop') {
     return () => {
       let item = target.get(target.length - 1)

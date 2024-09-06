@@ -30,8 +30,8 @@ export default class TestMain {
     state.friends.subscribe((delta) => {
       console.log('Friends Changed:', delta, state.friends.json())
     })
-    state.friends[1] = rhineProxy<Friend>({name: 'Henry', sex: Sex.Male})
-    console.log(state.friends.json())
+    state.friends.push({name: 'Henry', sex: Sex.Male})
+    console.log(state.friends[1].json())
     
   }
   
