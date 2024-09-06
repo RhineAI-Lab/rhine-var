@@ -2,7 +2,7 @@ import {Map as YMap, Array as YArray, Doc as YDoc, YMapEvent, Transaction} from 
 import RhineVar from "@/app/core/var/RhineVar";
 import {convertArrayProperty} from "@/app/core/utils/ConvertProperty";
 import WebsocketRhineConnector from "@/app/core/connector/WebsocketRhineConnector";
-import {jsonToNative} from "@/app/core/utils/YDataUtils";
+import {forceSet, isObjectOrArray, jsonToNative} from "@/app/core/utils/NativeDataUtils";
 
 const ENABLE_LOG = true
 
@@ -28,11 +28,20 @@ export function rhineProxy<T extends object>(data: T, connector: WebsocketRhineC
     target = connector.bind(target, true)
   }
   
-  return rhineProxyNative(target) as ProxiedRhineVar<T>
+  return rhineProxyNative<T>(target) as ProxiedRhineVar<T>
 }
 
 
 export function rhineProxyNative<T>(target: YMap<any> | YArray<any>) {
+  
+  const object = new RhineVar(target) as ProxiedRhineVar<T>
+  
+  target.forEach((value, keyString) => {
+    let key = keyString as keyof T
+    if (value instanceof YMap || value instanceof YArray) {
+      object[key] = rhineProxyNative<T>(value) as any
+    }
+  })
   
   
   const handler: ProxyHandler<RhineVar> = {
@@ -40,6 +49,7 @@ export function rhineProxyNative<T>(target: YMap<any> | YArray<any>) {
     get(object, p, receiver) {
       if (p in RhineVar) return Reflect.get(object, p, receiver)
       ENABLE_LOG && console.log('RhineVar Proxy.handler.get:', p, object, receiver)
+      
       if (p in object) return Reflect.get(object, p, receiver)
       if (typeof p !== 'string') return undefined
       
@@ -58,44 +68,33 @@ export function rhineProxyNative<T>(target: YMap<any> | YArray<any>) {
     set(object, p, newValue, receiver) {
       if (p in RhineVar) return Reflect.set(object, p, newValue, receiver)
       ENABLE_LOG && console.log('RhineVar Proxy.handler.set:', p, 'to', newValue, '\n', object, receiver)
-      if (p in object) return Reflect.set(object, p, newValue, receiver)
-      if (typeof p !== 'string') return false;
-      if (target instanceof YMap) {
-        target.set(p, newValue)
-        return true
+      
+      if (isObjectOrArray(newValue)) {
+        if (!(newValue instanceof RhineVar)) {
+          newValue = rhineProxy(newValue)
+        }
+        forceSet(target, p, newValue.native)
+        return Reflect.set(object, p, newValue, receiver)
+      } else {
+        let result = forceSet(target, p, newValue)
+        if (!result) console.error('Failed to set new value')
+        return result
       }
-      const pn = parseInt(p)
-      if (target instanceof YArray && !isNaN(pn)) {
-        target.delete(pn, 1)
-        target.insert(pn, [newValue])
-        return true
-      }
-      console.error('Unknown key on YArray')
-      return false
     },
     
   }
   
-  const object = new RhineVar(target) as ProxiedRhineVar<T>
-  
-  target.forEach((value, keyString) => {
-    let key = keyString as keyof T
-    if (value instanceof YMap || value instanceof YArray) {
-      object[key] = rhineProxyNative(value)
-    }
-  })
-  
   if (target instanceof YMap) {
     target.observe((event, transaction) => {
       event.changes.keys.forEach(({action, oldValue}, key) => {
-        ENABLE_LOG && console.log(`RhineVar Proxy.event ${action} ${key}: ${oldValue} -> ${target.get(key)}"`)
+        ENABLE_LOG && console.log(`RhineVar Proxy event. Map ${action} ${key}: ${oldValue} -> ${target.get(key)}"`)
         object.emit(target.get(key), key, oldValue, action as ChangeType, event, transaction)
       })
     })
   } else {
-    // https://quilljs.com/docs/delta/
     target.observe((event, transaction) => {
-      console.log(event, transaction)
+      ENABLE_LOG && console.log(`RhineVar Proxy event. Array changed.`, event, transaction)
+      console.log(event.changes)
     })
   }
   

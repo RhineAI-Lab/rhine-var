@@ -8,11 +8,11 @@ type Callback = (value: any, key: string, oldValue: any, type: ChangeType, nativ
 export default class RhineVar {
   
   constructor(
-    public readonly y: YMap<any> | YArray<any>
+    public readonly native: YMap<any> | YArray<any>
   ) {}
   
   public json() {
-    return this.y.toJSON()
+    return this.native.toJSON()
   }
   
   private listeners: Callback[] = []
@@ -46,7 +46,7 @@ export default class RhineVar {
   }
   
   
-  static y = null
+  static native = null
   static json = null
   static listeners = null
   static subscribe = null
