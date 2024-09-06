@@ -10,13 +10,13 @@ export default class TestMain {
     console.log('\n\n---- TestMain.Start ----\n\n')
     
     const user: User = {
-      name: 'Eddie',
+      name: 'Mark',
       age: 20,
       friends: [
         {name: 'Kitty', sex: Sex.Female}
       ],
       job: {
-        enterprise: 'RhineAI',
+        enterprise: 'OpenAI',
         position: 'Developer',
         range: {start: 1000, end: 3000}
       }
@@ -27,11 +27,7 @@ export default class TestMain {
     
     const state = rhineProxy<User>(user, connector)  // 使用RhineVar 创建代理管理对象
     
-    state.friends.subscribe((delta) => {
-      console.log('Friends Changed:', delta, state.friends.json())
-    })
-    state.friends.push({name: 'Henry', sex: Sex.Male})
-    console.log(state.friends[1].json())
+    console.log(state.json())
     
   }
   

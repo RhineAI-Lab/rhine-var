@@ -1,5 +1,5 @@
 import {Map as YMap, Array as YArray} from "yjs";
-import RhineVar from "@/app/core/var/RhineVar";
+import RhineVar, {RHINE_VAR_KEYS} from "@/app/core/var/RhineVar";
 import WebsocketRhineConnector from "@/app/core/connector/WebsocketRhineConnector";
 import {
   nativeGet,
@@ -39,7 +39,7 @@ export function rhineProxy<T extends object>(data: T, connector: WebsocketRhineC
   let target = jsonToNative(data)
   
   if (connector) {
-    target = connector.bind(target, true)
+    target = connector.bind(target, false)
   }
   
   return rhineProxyNative<T>(target) as ProxiedRhineVar<T>
@@ -47,6 +47,7 @@ export function rhineProxy<T extends object>(data: T, connector: WebsocketRhineC
 
 
 export function rhineProxyNative<T extends object>(target: Native) {
+  // log('rhineProxyNative', target)
   const object = new RhineVar(target) as ProxiedRhineVar<T>
   
   target.forEach((value, keyString) => {
@@ -58,7 +59,7 @@ export function rhineProxyNative<T extends object>(target: Native) {
   
   const handler: ProxyHandler<RhineVar> = {
     get(object, p, receiver) {
-      if (p in RhineVar) return Reflect.get(object, p, receiver)
+      if (RHINE_VAR_KEYS.has(p)) return Reflect.get(object, p, receiver)
       log('Proxy.handler.get:', p, object, receiver)
       
       if (p in object) return Reflect.get(object, p, receiver)
@@ -76,7 +77,8 @@ export function rhineProxyNative<T extends object>(target: Native) {
     },
     
     set(object, p, newValue, receiver) {
-      if (p in RhineVar) return Reflect.set(object, p, newValue, receiver)
+      console.log('set')
+      if (RHINE_VAR_KEYS.has(p)) return Reflect.set(object, p, newValue, receiver)
       log('Proxy.handler.set:', p, 'to', newValue, '\n', object, receiver)
       
       newValue = ensureRhineVar(newValue)

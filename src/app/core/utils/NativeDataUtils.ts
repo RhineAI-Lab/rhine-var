@@ -1,5 +1,4 @@
 import {Map as YMap, Array as YArray} from "yjs"
-import {convertArrayProperty} from "@/app/core/utils/ConvertProperty";
 
 
 export function isObject(value: any) {

@@ -1,5 +1,6 @@
 import {Array as YArray, Map as YMap, Transaction, YArrayEvent, YMapEvent} from "yjs";
 import {ChangeType} from "@/app/core/Proxy";
+import {start} from "node:repl";
 
 
 type Callback = (value: any, key: string, oldValue: any, type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any>, nativeTransaction: Transaction) => void
@@ -45,16 +46,17 @@ export default class RhineVar {
     }
   }
   
-  
-  static native = null
-  static json = null
-  static listeners = null
-  static subscribe = null
-  static unsubscribe = null
-  static keyListeners = null
-  static subscribeKey = null
-  static unsubscribeKey = null
-  static emit = null
 }
 
+export const RHINE_VAR_KEYS = new Set<string | symbol>([
+  'native',
+  'json',
+  'listeners',
+  'subscribe',
+  'unsubscribe',
+  'keyListeners',
+  'subscribeKey',
+  'unsubscribeKey',
+  'emit',
+])
 
