@@ -1,6 +1,6 @@
 import {rhineProxy} from "@/app/core/Proxy";
 import {websocketRhineConnect} from "@/app/core/connector/WebsocketRhineConnector";
-import User, {Friend, Sex} from "@/app/test/User";
+import User, {Sex} from "@/app/test/User";
 
 
 export default class TestMain {
@@ -27,7 +27,6 @@ export default class TestMain {
     
     const state = rhineProxy<User>(user, connector)  // 使用RhineVar 创建代理管理对象
     
-    console.log(state.json())
     
   }
   

@@ -13,16 +13,8 @@ export function isObjectOrArray(value: any) {
   return value !== null && typeof value === 'object'
 }
 
-export function isYMap(value: any) {
-  return value instanceof YMap
-}
-
-export function isYArray(value: any) {
-  return value instanceof YArray
-}
-
 export function isYMapOrYArray(value: any) {
-  return isYMap(value) || isYArray(value)
+  return (value instanceof YMap) || (value instanceof YArray)
 }
 
 export function nativeSet(target: YMap<any> | YArray<any>, key: string | symbol, value: any) {
@@ -34,8 +26,7 @@ export function nativeSet(target: YMap<any> | YArray<any>, key: string | symbol,
     if (target instanceof YMap) {
       target.set(key, value)
       return true
-    }
-    if (target instanceof YArray) {
+    } else if (target instanceof YArray) {
       const index = parseInt(key)
       if (!isNaN(index)) {
         if (target.length - 1 >= index) {
@@ -46,7 +37,33 @@ export function nativeSet(target: YMap<any> | YArray<any>, key: string | symbol,
       }
     }
   } catch (e) {
-    console.error('RhineVar nativeSet', e)
+    console.error('RhineVar nativeSet.error:', e)
+  }
+  return false
+}
+
+export function nativeDelete(target: YMap<any> | YArray<any>, key: string | symbol) {
+  if (typeof key !== 'string') {
+    return false
+  }
+  
+  try {
+    if (target instanceof YMap) {
+      if (target.has(key)) {
+        target.delete(key)
+        return true
+      }
+    }
+    if (target instanceof YArray) {
+      const pn = parseInt(key)
+      if (!isNaN(pn)) {
+        if (target.length > pn && pn >= 0) {
+          target.delete(pn, 1)
+        }
+      }
+    }
+  } catch (e) {
+    console.error('RhineVar nativeDelete.error:', e)
   }
   return false
 }
@@ -64,7 +81,7 @@ export function nativeGet(target: YMap<any> | YArray<any>, key: string | symbol)
       if (!isNaN(pn)) return target.get(pn)
     }
   } catch (e) {
-    console.error('RhineVar nativeGet', e)
+    console.error('RhineVar nativeGet.error:', e)
   }
   return undefined
 }

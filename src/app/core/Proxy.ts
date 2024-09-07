@@ -7,8 +7,7 @@ import {
   isObjectOrArray,
   isYMapOrYArray,
   jsonToNative,
-  isYMap,
-  isYArray
+  nativeDelete
 } from "@/app/core/utils/NativeDataUtils";
 import {convertArrayProperty} from "@/app/core/utils/ConvertProperty";
 
@@ -67,7 +66,7 @@ export function rhineProxyNative<T extends object>(target: Native) {
       let result = nativeGet(target, p)
       if (result) return result
       
-      if (isYArray(target)) {
+      if (target instanceof YArray) {
         if (typeof p === 'string') {
           const f = convertArrayProperty(target, p, object)
           if (f) return f
@@ -76,26 +75,45 @@ export function rhineProxyNative<T extends object>(target: Native) {
       return undefined
     },
     
-    set(object, p, newValue, receiver) {
-      console.log('set')
-      if (RHINE_VAR_KEYS.has(p)) return Reflect.set(object, p, newValue, receiver)
-      log('Proxy.handler.set:', p, 'to', newValue, '\n', object, receiver)
+    set(object, p, value, receiver): boolean {
+      if (RHINE_VAR_KEYS.has(p)) return Reflect.set(object, p, value, receiver)
+      log('Proxy.handler.set:', p, 'to', value, '\n', object, receiver)
       
-      newValue = ensureRhineVar(newValue)
-      if (isObjectOrArray(newValue)) {
-        nativeSet(target, p, newValue.native)
-        return Reflect.set(object, p, newValue, receiver)
+      value = ensureRhineVar(value)
+      
+      let result = false
+      if (isObjectOrArray(value)) {
+        result = nativeSet(target, p, value.native)
       } else {
-        let result = nativeSet(target, p, newValue)
-        if (!result) console.error('Failed to set new value')
-        return result
+        result = nativeSet(target, p, value)
       }
+      if (!result) console.error('Failed to set value')
+      return result
     },
+    
+    deleteProperty(object: RhineVar, p: string | symbol): boolean {
+      if (RHINE_VAR_KEYS.has(p)) return false
+      log('Proxy.handler.deleteProperty:', p)
+      
+      let result = nativeDelete(target, p)
+      if (!result) console.error('Failed to delete value')
+      return result
+    }
   }
   
-  if (isYMap(target)) {
+  if (target instanceof YMap) {
     target.observe((event, transaction) => {
       event.changes.keys.forEach(({action, oldValue}, key) => {
+        
+        let value = target.get(key)
+        if (action === 'add' || action === 'update') {
+          if (isObjectOrArray(value)) {
+            Reflect.set(object, key, rhineProxy(value))
+          }
+        } else if (action === 'delete') {
+          Reflect.deleteProperty(object, key)
+        }
+        
         log(`Proxy.event: Map ${action} ${key}: ${oldValue} -> ${target.get(key)}`)
         object.emit(target.get(key), key, oldValue, action as ChangeType, event, transaction)
       })
