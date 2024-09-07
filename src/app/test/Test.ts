@@ -3,7 +3,7 @@ import {websocketRhineConnect} from "@/rhine-var/core/connector/WebsocketRhineCo
 import {rhineProxy} from "@/rhine-var/core/Proxy";
 
 
-export default class TestMain {
+export default class Test {
   
   static async start() {
     
@@ -23,12 +23,7 @@ export default class TestMain {
     }
     
     const connector = websocketRhineConnect('wss://rhineai.com/ws/test-room-0')
-    const user = rhineProxy<User>(defaultUserData, connector, false)
-    
-    console.log(user.json())
-    await connector.waitSynced()
-    console.log(user.json())
-    
+    const user = rhineProxy<User>(defaultUserData, connector)
   }
   
 }

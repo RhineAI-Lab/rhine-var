@@ -1,0 +1,17 @@
+
+.page {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+span {
+  font-size: 40px;
+}
+
+button {
+  width: 100px;
+  height: 50px;
+  font-size: 30px;
+}

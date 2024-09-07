@@ -114,6 +114,8 @@ export default class WebsocketRhineConnector {
 
 export function websocketRhineConnect(url: string) {
   const connector = new WebsocketRhineConnector()
-  connector.connect(url)
+  if (typeof window !== 'undefined') {
+    connector.connect(url)
+  }
   return connector
 }

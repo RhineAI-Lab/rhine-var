@@ -20,11 +20,11 @@ export enum ChangeType {
 
 export type Native = YMap<any> | YArray<any>
 
-type RecursiveCrossRhineVar<T> = {
+export type RecursiveCrossRhineVar<T> = {
   [K in keyof T]: T[K] extends object ? RecursiveCrossRhineVar<T[K]> & RhineVar : T[K]
 }
 
-type ProxiedRhineVar<T> = T & RecursiveCrossRhineVar<T> & RhineVar
+export type ProxiedRhineVar<T> = T & RecursiveCrossRhineVar<T> & RhineVar
 
 
 export function rhineProxy<T extends object>(
