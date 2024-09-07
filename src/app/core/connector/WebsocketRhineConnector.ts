@@ -32,7 +32,7 @@ export default class WebsocketRhineConnector {
     this.syncedListeners.forEach(listener => listener(synced))
   }
   
-  waitBind(): Promise<void> {
+  waitSynced(): Promise<void> {
     return new Promise((resolve) => {
       if (this.synced) return true
       const listener = (synced: boolean) => {

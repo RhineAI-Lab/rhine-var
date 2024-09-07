@@ -55,9 +55,10 @@ export function rhineProxy<T extends object>(
         object.native = syncedValue
         object.observe()
         log('Proxy.synced: Update synced native')
-        console.log(syncedValue.toJSON())
         syncedValue.forEach((value: any, key: string) => {
-          Reflect.set(object, key, value)
+          if (isYMapOrYArray(value)) {
+            Reflect.set(object, key, directPackage(rhineProxyNative(value)))
+          }
         })
       } else {
         connector.yBaseMap.set(WebsocketRhineConnector.STATE_KEY, syncedValue)
@@ -101,6 +102,7 @@ export function rhineProxyNative<T extends object>(target: Native) {
     
     set(proxy, p, value, receiver): boolean {
       if (RHINE_VAR_KEYS.has(p)) return Reflect.set(object, p, value, receiver)
+      if (value instanceof DirectSetPackage) return Reflect.set(object, p, value.data, receiver)
       log('Proxy.handler.set:', p, 'to', value, '\n', object, receiver)
       
       value = ensureRhineVar(value)
@@ -140,5 +142,15 @@ export function ensureRhineVar<T>(value: T | ProxiedRhineVar<T>): ProxiedRhineVa
     }
   }
   return value
+}
+
+export class DirectSetPackage {
+  constructor(
+    public data: any
+  ) {}
+}
+
+export function directPackage(data: any) {
+  return new DirectSetPackage(data)
 }
 
