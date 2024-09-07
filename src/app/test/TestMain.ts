@@ -9,7 +9,7 @@ export default class TestMain {
     
     console.log('\n\n---- TestMain.Start ----\n\n')
     
-    const user: User = {
+    const defaultUserData: User = {
       name: 'Mark',
       age: 20,
       friends: [
@@ -22,11 +22,15 @@ export default class TestMain {
       }
     }
     
-    const connector = await websocketRhineConnect('wss://rhineai.com/ws/test-room-0')
-    console.log('Rhine Var Connected.', connector.url)
+    const connector = websocketRhineConnect('wss://rhineai.com/ws/test-room-0')
     
-    const state = rhineProxy<User>(user, connector)  // 使用RhineVar 创建代理管理对象
+    await connector.waitBind()
     
+    const user = rhineProxy<User>(defaultUserData, connector, false)
+    user.name = 'Henry'
+    
+    
+    console.log(user.json())
     
   }
   

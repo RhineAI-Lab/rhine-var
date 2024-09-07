@@ -1,6 +1,8 @@
 import {Array as YArray, Map as YMap, Transaction, YArrayEvent, YMapEvent} from "yjs";
-import {ChangeType} from "@/app/core/Proxy";
+import {ChangeType, rhineProxyNative} from "@/app/core/Proxy";
 import {start} from "node:repl";
+import {log} from "@/app/core/utils/Logger";
+import {isObjectOrArray} from "@/app/core/utils/NativeDataUtils";
 
 
 type Callback = (value: any, key: string, oldValue: any, type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any>, nativeTransaction: Transaction) => void
@@ -9,7 +11,7 @@ type Callback = (value: any, key: string, oldValue: any, type: ChangeType, nativ
 export default class RhineVar {
   
   constructor(
-    public readonly native: YMap<any> | YArray<any>
+    public native: YMap<any> | YArray<any>
   ) {}
   
   public json() {
@@ -46,6 +48,46 @@ export default class RhineVar {
     }
   }
   
+  observer = (event: YMapEvent<any> | YArrayEvent<any>, transaction: Transaction) => {}
+  
+  // 开始观察当前Native的内容变化
+  observe() {
+    const target = this.native
+    if (target instanceof YMap) {
+      this.observer = (event, transaction) => {
+        event.changes.keys.forEach(({action, oldValue}, key) => {
+          log(`Proxy.event: Map ${action} ${key}: ${oldValue} -> ${target.get(key)}`)
+          
+          let value = target.get(key)
+          if (action === 'add' || action === 'update') {
+            if (isObjectOrArray(value)) {
+              Reflect.set(this, key, rhineProxyNative(value))
+            }
+          } else if (action === 'delete') {
+            Reflect.deleteProperty(this, key)
+          }
+          this.emit(target.get(key), key, oldValue, action as ChangeType, event, transaction)
+        })
+      }
+    } else if (target instanceof YArray){
+      this.observer = (event, transaction) => {
+        log(`Proxy.event: Array changed.`, event, transaction)
+        const {added, deleted, delta} = event.changes
+        this.emit(delta, '', undefined, ChangeType.Update, event, transaction)
+      }
+    }
+    if (this.observer) {
+      target.observe(this.observer)
+    }
+  }
+  
+  // 当存在观察者时 结束观察当前native的内容变化
+  unobserve() {
+    if (this.observer) {
+      this.native.unobserve(this.observer)
+    }
+  }
+  
 }
 
 export const RHINE_VAR_KEYS = new Set<string | symbol>([
@@ -58,5 +100,8 @@ export const RHINE_VAR_KEYS = new Set<string | symbol>([
   'subscribeKey',
   'unsubscribeKey',
   'emit',
+  'observer',
+  'observe',
+  'unobserve',
 ])
 

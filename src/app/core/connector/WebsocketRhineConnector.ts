@@ -1,11 +1,14 @@
 import {Map as YMap, Array as YArray, Doc as YDoc} from "yjs";
 import {WebsocketProvider} from "y-websocket";
 import {ConnectorStatus} from "@/app/core/connector/ConnectorStatus";
+import {log} from "@/app/core/utils/Logger";
+import {isYMapOrYArray, jsonToNative} from "@/app/core/utils/NativeDataUtils";
 
-
-const ENABLE_LOG = false
+export type SyncedListener = (synced: boolean) => void
 
 export default class WebsocketRhineConnector {
+  
+  static STATE_KEY = 'state'
   
   yDoc: YDoc
   yBaseMap: YMap<any>
@@ -17,6 +20,32 @@ export default class WebsocketRhineConnector {
   provider: WebsocketProvider | null = null
   websocketStatus: ConnectorStatus = ConnectorStatus.DISCONNECTED
   
+  
+  syncedListeners: SyncedListener[] = []
+  addSyncedListener(listener: SyncedListener) {
+    this.syncedListeners.push(listener)
+  }
+  removeSyncedListener(listener: SyncedListener) {
+    this.syncedListeners = this.syncedListeners.filter(l => l !== listener)
+  }
+  emitSynced(synced: boolean) {
+    this.syncedListeners.forEach(listener => listener(synced))
+  }
+  
+  waitBind(): Promise<void> {
+    return new Promise((resolve) => {
+      if (this.synced) return true
+      const listener = (synced: boolean) => {
+        if (synced) {
+          this.removeSyncedListener(listener)
+          resolve()
+        }
+      }
+      this.addSyncedListener(listener)
+    })
+  }
+  
+  
   constructor(url = '') {
     this.yDoc = new YDoc()
     this.yBaseMap = this.yDoc.getMap()
@@ -24,11 +53,17 @@ export default class WebsocketRhineConnector {
   }
   
   bind(defaultValue: YMap<any> | YArray<any>, overwrite: boolean = false) {
-    if (!overwrite && this.yBaseMap.has('state')) {
-      return this.yBaseMap.get('state')
+    if (this.synced) {
+      if (!overwrite && this.yBaseMap.has(WebsocketRhineConnector.STATE_KEY)) {
+        return this.yBaseMap.get(WebsocketRhineConnector.STATE_KEY)
+      }
+      this.yBaseMap.set(WebsocketRhineConnector.STATE_KEY, defaultValue)
+      return defaultValue
+    } else {
+      const tempMap = new YDoc().getMap()
+      tempMap.set(WebsocketRhineConnector.STATE_KEY, defaultValue)
+      return defaultValue
     }
-    this.yBaseMap.set('state', defaultValue)
-    return defaultValue
   }
   
   async connect(url: string): Promise<void> {
@@ -49,26 +84,27 @@ export default class WebsocketRhineConnector {
       
       this.provider.on('status', (event: any) => {
         this.websocketStatus = event.status
-        ENABLE_LOG && console.log('WebsocketProvider status:', event.status)
+        log('WebsocketRhineConnector.event status:', event.status)
       })
       
-      this.provider.on('sync', (isSynced: boolean) => {
-        ENABLE_LOG && console.info('WebsocketProvider sync:', isSynced)
-        if (isSynced) {
+      this.provider.on('sync', (synced: boolean) => {
+        log('WebsocketRhineConnector.event sync:', synced)
+        if (synced) {
           this.synced = true
           this.clientId = this.yDoc.clientID
+          this.emitSynced(synced)
           resolve()
         }
       })
       
       this.provider.on('connection-close', (e: any) => {
         this.websocketStatus = ConnectorStatus.DISCONNECTED
-        ENABLE_LOG && console.warn('WebsocketProvider connection-close:', e)
+        log('WebsocketRhineConnector.event connection-close:', e)
       })
       
       this.provider.on('connection-error', (error: any) => {
         this.websocketStatus = ConnectorStatus.DISCONNECTED
-        ENABLE_LOG && console.warn('WebsocketProvider connection-error:', error)
+        log('WebsocketRhineConnector.event connection-error:', error)
       })
     })
     
@@ -77,8 +113,8 @@ export default class WebsocketRhineConnector {
 }
 
 
-export async function websocketRhineConnect(url: string) {
+export function websocketRhineConnect(url: string) {
   const connector = new WebsocketRhineConnector()
-  await connector.connect('wss://rhineai.com/ws/test-room-0')
+  connector.connect(url)
   return connector
 }

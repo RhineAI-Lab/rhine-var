@@ -3,7 +3,7 @@ export default interface User {
   name: string
   age: number
   friends: Friend[]
-  job: {
+  job?: {
     enterprise: string
     position: string
     range: Range
