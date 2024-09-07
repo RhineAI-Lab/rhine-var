@@ -2,8 +2,14 @@
 import React from "react";
 import useRhine from "@/rhine-var/react/hooks/useRhine";
 import './page.css'
-import {countState} from "@/app/data";
+import {websocketRhineConnect} from "@/rhine-var/core/connector/WebsocketRhineConnector";
+import {rhineProxy} from "@/rhine-var/core/Proxy";
 
+
+const defaultData = {value: 0}
+const connector = websocketRhineConnect('wss://rhineai.com/ws/room-0')
+
+const countState = rhineProxy(defaultData, connector)
 
 export default function page() {
   
@@ -17,4 +23,7 @@ export default function page() {
     </main>
   )
 }
+
+
+
 
