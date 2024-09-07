@@ -1,8 +1,8 @@
 import {Array as YArray, Map as YMap, Transaction, YArrayEvent, YMapEvent} from "yjs";
-import {ChangeType, rhineProxyNative} from "@/app/core/Proxy";
-import {start} from "node:repl";
-import {log} from "@/app/core/utils/Logger";
-import {isObjectOrArray} from "@/app/core/utils/NativeDataUtils";
+import {ChangeType, rhineProxyNative} from "@/rhine-var/core/Proxy";
+import WebsocketRhineConnector from "@/rhine-var/core/connector/WebsocketRhineConnector";
+import {log} from "@/rhine-var/core/utils/Logger";
+import {isObjectOrArray} from "@/rhine-var/core/utils/NativeDataUtils";
 
 
 type Callback = (value: any, key: string, oldValue: any, type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any>, nativeTransaction: Transaction) => void
@@ -13,6 +13,8 @@ export default class RhineVar {
   constructor(
     public native: YMap<any> | YArray<any>
   ) {}
+  
+  connector: WebsocketRhineConnector | null = null
   
   public json() {
     return this.native.toJSON()
@@ -103,5 +105,6 @@ export const RHINE_VAR_KEYS = new Set<string | symbol>([
   'observer',
   'observe',
   'unobserve',
+  'connector',
 ])
 

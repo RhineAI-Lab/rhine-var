@@ -1,6 +1,6 @@
 import {Array as YArray} from "yjs";
-import RhineVar from "@/app/core/var/RhineVar";
-import {ensureRhineVar} from "@/app/core/Proxy";
+import RhineVar from "@/rhine-var/core/var/RhineVar";
+import {ensureRhineVar} from "@/rhine-var/core/Proxy";
 
 export function convertArrayProperty<T>(target: YArray<T>, name: string, object: RhineVar) {
   if (name === 'length') {

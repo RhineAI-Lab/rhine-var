@@ -1,6 +1,6 @@
-import {rhineProxy} from "@/app/core/Proxy";
-import {websocketRhineConnect} from "@/app/core/connector/WebsocketRhineConnector";
 import User, {Sex} from "@/app/test/User";
+import {websocketRhineConnect} from "@/rhine-var/core/connector/WebsocketRhineConnector";
+import {rhineProxy} from "@/rhine-var/core/Proxy";
 
 
 export default class TestMain {

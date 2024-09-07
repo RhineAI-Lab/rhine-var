@@ -1,16 +1,15 @@
 import {Array as YArray, Map as YMap} from "yjs";
-import RhineVar, {RHINE_VAR_KEYS} from "@/app/core/var/RhineVar";
-import WebsocketRhineConnector from "@/app/core/connector/WebsocketRhineConnector";
+import WebsocketRhineConnector from "@/rhine-var/core/connector/WebsocketRhineConnector";
+import RhineVar, {RHINE_VAR_KEYS} from "@/rhine-var/core/var/RhineVar";
 import {
   isObjectOrArray,
   isYMapOrYArray,
-  jsonToNative,
-  nativeDelete,
+  jsonToNative, nativeDelete,
   nativeGet,
   nativeSet
-} from "@/app/core/utils/NativeDataUtils";
-import {convertArrayProperty} from "@/app/core/utils/ConvertProperty";
-import {log} from "@/app/core/utils/Logger";
+} from "@/rhine-var/core/utils/NativeDataUtils";
+import {log} from "@/rhine-var/core/utils/Logger";
+import {convertArrayProperty} from "@/rhine-var/core/utils/ConvertProperty";
 
 
 export enum ChangeType {
@@ -40,6 +39,7 @@ export function rhineProxy<T extends object>(
   }
   
   const object = rhineProxyNative<T>(target) as ProxiedRhineVar<T>
+  object.connector = connector
   
   if (connector && !connector.synced) {
     connector.addSyncedListener((synced) => {

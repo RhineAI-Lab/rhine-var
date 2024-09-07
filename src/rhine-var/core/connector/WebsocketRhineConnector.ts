@@ -1,8 +1,7 @@
 import {Map as YMap, Array as YArray, Doc as YDoc} from "yjs";
 import {WebsocketProvider} from "y-websocket";
-import {ConnectorStatus} from "@/app/core/connector/ConnectorStatus";
-import {log} from "@/app/core/utils/Logger";
-import {isYMapOrYArray, jsonToNative} from "@/app/core/utils/NativeDataUtils";
+import {ConnectorStatus} from "@/rhine-var/core/connector/ConnectorStatus";
+import {log} from "@/rhine-var/core/utils/Logger";
 
 export type SyncedListener = (synced: boolean) => void
 
