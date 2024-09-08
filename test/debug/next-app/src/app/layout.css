@@ -1,0 +1,34 @@
+
+html, body, main {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+
+.page {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: space-evenly;
+  background: #000000;
+  color: #ffffff;
+}
+
+span {
+  font-size: 34px;
+}
+
+button {
+  width: 90px;
+  height: 60px;
+  font-size: 28px;
+  font-weight: 100;
+  border: none;
+  outline: none;
+  border-radius: 1000000px;
+  background: #ffffff;
+  color: #000000;
+  cursor: pointer;
+  box-shadow: 0 0 10px #ffffff16;
+}
