@@ -5,6 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "compile": "tsc",
+    "watch": "tsc --watch",
+    "prepare": "ts-patch install -s",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -23,11 +25,12 @@
     "puppeteer": "^23.3.0",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
+    "ts-patch": "^3.2.1",
     "typescript": "^5.5.4"
   },
   "dependencies": {
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "typescript-transform-paths": "^3.5.0",
     "y-websocket": "^2.0.4",
     "yjs": "^13.6.18"
   }
