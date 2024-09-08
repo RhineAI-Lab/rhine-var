@@ -38,3 +38,6 @@ next-env.d.ts
 # IDE
 .idea
 .vscode
+
+# Compile
+/dist/
