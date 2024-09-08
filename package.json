@@ -1,7 +1,7 @@
 {
   "name": "rhine-var",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.1.3",
+  "description": "Variables that support multi-user collaboration and persistence, making collaboration and variable operations as simple as possible, with strict and well-defined type hints.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -10,9 +10,9 @@
     "prepare": "ts-patch install -s",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "RhineAI",
+  "license": "Apache-2.0",
+  "keywords": ["CRDT", "state", "data-persistence", "offline-first", "shared-editing", "proxy", "collaboration",  "concurrency"],
   "devDependencies": {
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.0.1",
