@@ -79,7 +79,7 @@ export function rhineProxyNative<T extends object>(target: Native): ProxiedRhine
       if (p in object) return Reflect.get(object, p, receiver)
       
       let result = nativeGet(object.native, p)
-      if (result) return result
+      if (result !== undefined) return result
       
       if (object.native instanceof YArray) {
         if (typeof p === 'string') {

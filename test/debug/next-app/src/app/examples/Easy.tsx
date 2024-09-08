@@ -5,7 +5,7 @@ import {rhineProxy, useRhine} from "rhine-var";
 
 
 const defaultValue = {value: 0}
-const count = rhineProxy(defaultValue, 'RhineAI.com/ws/room-0')
+const count = rhineProxy(defaultValue, 'RhineAI.com/ws/room-0', false)
 
 export default function EasyCounter() {
   

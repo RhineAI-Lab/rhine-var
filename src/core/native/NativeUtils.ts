@@ -3,11 +3,11 @@ import {Native} from "@/core/native/Native";
 import {isArray, isObject} from "@/core/utils/DataUtils";
 
 
-export function isYMapOrYArray(value: any) {
+export function isYMapOrYArray(value: any): boolean {
   return (value instanceof YMap) || (value instanceof YArray)
 }
 
-export function nativeSet(target: Native, key: string | symbol, value: any) {
+export function nativeSet(target: Native, key: string | symbol, value: any): boolean {
   if (typeof key !== 'string') {
     return false
   }
@@ -32,7 +32,7 @@ export function nativeSet(target: Native, key: string | symbol, value: any) {
   return false
 }
 
-export function nativeDelete(target: Native, key: string | symbol) {
+export function nativeDelete(target: Native, key: string | symbol): boolean {
   if (typeof key !== 'string') {
     return false
   }
@@ -58,7 +58,7 @@ export function nativeDelete(target: Native, key: string | symbol) {
   return false
 }
 
-export function nativeGet(target: Native, key: string | symbol) {
+export function nativeGet(target: Native, key: string | symbol): any | undefined {
   if (typeof key !== 'string') {
     return undefined
   }
@@ -76,7 +76,7 @@ export function nativeGet(target: Native, key: string | symbol) {
   return undefined
 }
 
-export function jsonToNative(data: any) {
+export function jsonToNative(data: any): Native | any {
   if (isObject(data)) {
     let map = new YMap<any>()
     Object.entries(data).forEach(([key, value]) => {
