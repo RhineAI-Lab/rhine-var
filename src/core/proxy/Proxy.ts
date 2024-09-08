@@ -1,4 +1,4 @@
-import {Array as YArray, Map as YMap} from "yjs";
+import {Array as YArray, Map as YMap, YMapEvent} from "yjs";
 import WebsocketRhineConnector, {websocketRhineConnect} from "@/core/connector/WebsocketRhineConnector";
 import RhineVar, {RHINE_VAR_KEYS} from "@/core/proxy/RhineVar";
 import {ensureRhineVar, isObjectOrArray} from "@/core/utils/DataUtils";
@@ -7,7 +7,8 @@ import {convertArrayProperty} from "@/core/utils/ConvertProperty";
 import {ProxiedRhineVar} from "@/core/proxy/ProxiedRhineVar";
 import {Native} from "@/core/native/Native";
 import {isYMapOrYArray, jsonToNative, nativeDelete, nativeGet, nativeSet} from "@/core/native/NativeUtils";
-import DirectPackage, {directPackage} from "@/core/proxy/DirectPackage";
+import {directKey, isDirectKey} from "@/core/proxy/DirectKey";
+import {ChangeType} from "@/core/event/ChangeType";
 
 
 export function rhineProxy<T extends object>(
@@ -32,27 +33,29 @@ export function rhineProxy<T extends object>(
   object.connector = connector
   
   if (connector && !connector.synced) {
-    connector.addSyncedListener((synced) => {
-      if (!synced) return
+    connector.addSyncedListener((synced: boolean) => {
       
-      let syncedValue = target.clone()
-      if (!overwrite && connector.yBaseMap.has(WebsocketRhineConnector.STATE_KEY)) {
-        syncedValue = connector.yBaseMap.get(WebsocketRhineConnector.STATE_KEY) as YMap<any>
-        object.native.forEach((value: any, key: string | number) => {
-          Reflect.deleteProperty(object, key)
-        })
-        object.unobserve()
-        object.native = syncedValue
-        object.observe()
-        log('Proxy.synced: Update synced native')
-        syncedValue.forEach((value: any, key: string) => {
-          if (isYMapOrYArray(value)) {
-            Reflect.set(object, key, directPackage(rhineProxyNative(value)))
-          }
-        })
-      } else {
-        connector.yBaseMap.set(WebsocketRhineConnector.STATE_KEY, syncedValue)
+      if (synced) {
+        let syncedValue = target.clone()
+        if (!overwrite && connector.yBaseMap.has(WebsocketRhineConnector.STATE_KEY)) {
+          syncedValue = connector.yBaseMap.get(WebsocketRhineConnector.STATE_KEY) as YMap<any>
+          object.native.forEach((value: any, key: string | number) => {
+            Reflect.deleteProperty(object, directKey(key + ''))
+          })
+          object.unobserve()
+          object.native = syncedValue
+          object.observe()
+          log('Proxy.synced: Update synced native')
+          syncedValue.forEach((value: any, key: string) => {
+            if (isYMapOrYArray(value)) {
+              Reflect.set(object, directKey(key), rhineProxyNative(value))
+            }
+          })
+        } else {
+          connector.yBaseMap.set(WebsocketRhineConnector.STATE_KEY, syncedValue)
+        }
       }
+      
     })
   }
 
@@ -73,6 +76,7 @@ export function rhineProxyNative<T extends object>(target: Native): ProxiedRhine
   
   const handler: ProxyHandler<RhineVar<T>> = {
     get(proxy, p, receiver) {
+      if (isDirectKey(p)) return Reflect.get(object, p, receiver)
       if (RHINE_VAR_KEYS.has(p)) return Reflect.get(object, p, receiver)
       log('Proxy.handler.get:', p, '\n', object, receiver)
       
@@ -91,8 +95,8 @@ export function rhineProxyNative<T extends object>(target: Native): ProxiedRhine
     },
     
     set(proxy, p, value, receiver): boolean {
+      if (isDirectKey(p)) return Reflect.set(object, p, value.data, receiver)
       if (RHINE_VAR_KEYS.has(p)) return Reflect.set(object, p, value, receiver)
-      if (value instanceof DirectPackage) return Reflect.set(object, p, value.data, receiver)
       log('Proxy.handler.set:', p, 'to', value, '\n', object, receiver)
       
       value = ensureRhineVar(value)
@@ -108,6 +112,7 @@ export function rhineProxyNative<T extends object>(target: Native): ProxiedRhine
     },
     
     deleteProperty(proxy: RhineVar<T>, p: string | symbol): boolean {
+      if (isDirectKey(p)) return Reflect.deleteProperty(object, p)
       if (RHINE_VAR_KEYS.has(p)) return false
       log('Proxy.handler.deleteProperty:', p)
       
