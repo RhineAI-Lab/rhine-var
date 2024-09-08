@@ -1,6 +1,6 @@
 {
   "name": "rhine-var",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Variables that support multi-user collaboration and persistence, making collaboration and variable operations as simple as possible, with strict and well-defined type hints.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -13,6 +13,14 @@
   "author": "RhineAI",
   "license": "Apache-2.0",
   "keywords": ["CRDT", "state", "data-persistence", "offline-first", "shared-editing", "proxy", "collaboration", "websocket", "strongly-typed", "real-time", "concise", "concise", "rigorous", "concurrency"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RhineAI-Lab/rhine-var.git"
+  },
+  "bugs": {
+    "url": "https://github.com/RhineAI-Lab/rhine-var/issues"
+  },
+  "homepage": "https://github.com/RhineAI-Lab/rhine-var#readme",
   "devDependencies": {
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.0.1",
