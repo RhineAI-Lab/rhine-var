@@ -1,5 +1,5 @@
 import {Array as YArray, Map as YMap} from "yjs";
-import WebsocketRhineConnector from "@/rhine-var/core/connector/WebsocketRhineConnector";
+import WebsocketRhineConnector, {websocketRhineConnect} from "@/rhine-var/core/connector/WebsocketRhineConnector";
 import RhineVar, {RHINE_VAR_KEYS} from "@/rhine-var/core/var/RhineVar";
 import {
   isObjectOrArray,
@@ -29,14 +29,21 @@ export type ProxiedRhineVar<T> = T & RecursiveCrossRhineVar<T> & RhineVar
 
 export function rhineProxy<T extends object>(
   data: T,
-  connector: WebsocketRhineConnector | null = null,
+  connector: WebsocketRhineConnector | string | null = null,
   overwrite: boolean = false
-) {
+): ProxiedRhineVar<T> {
   let target = jsonToNative(data)
   
   if (connector) {
+    if (typeof connector === 'string') {
+      if (!connector.startsWith('ws://') && !connector.startsWith('wss://')) {
+        connector = 'wss://' + connector
+      }
+      connector = websocketRhineConnect(connector)
+    }
     target = connector.bind(target, overwrite)
   }
+  connector = connector as WebsocketRhineConnector | null
   
   const object = rhineProxyNative<T>(target) as ProxiedRhineVar<T>
   object.connector = connector
@@ -70,7 +77,7 @@ export function rhineProxy<T extends object>(
 }
 
 
-export function rhineProxyNative<T extends object>(target: Native) {
+export function rhineProxyNative<T extends object>(target: Native): ProxiedRhineVar<T> {
   // log('rhineProxyNative', target)
   const object = new RhineVar(target)
   
