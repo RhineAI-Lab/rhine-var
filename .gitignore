@@ -9,9 +9,9 @@
 # testing
 /coverage
 
-# next.js
-/.next/
-/out/
+# build
+/dist/
+package-lock.json
 
 # production
 /build
@@ -39,5 +39,3 @@ next-env.d.ts
 .idea
 .vscode
 
-# Compile
-/dist/
