@@ -8,6 +8,9 @@
     "allowJs": true,
     "strict": true,
     "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
     "baseUrl": "./",
     "paths": {
       "@/*": ["./src/*"],
@@ -17,5 +20,6 @@
       { "transform": "typescript-transform-paths", "afterDeclarations": true },
     ]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "test/debug"]
 }
