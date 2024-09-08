@@ -3,7 +3,7 @@ import {Native} from "@/core/native/Native";
 import {isArray, isObject} from "@/core/utils/DataUtils";
 
 
-export function isYMapOrYArray(value: any): boolean {
+export function isNative(value: any): boolean {
   return (value instanceof YMap) || (value instanceof YArray)
 }
 

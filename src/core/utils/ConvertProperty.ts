@@ -1,25 +1,30 @@
 import {Array as YArray} from "yjs";
 import RhineVar from "@/core/proxy/RhineVar";
 import {ensureRhineVar} from "@/core/utils/DataUtils";
+import {isNative} from "@/core/native/NativeUtils";
+import {Native} from "@/core/native/Native";
 
-export function convertArrayProperty<T>(target: YArray<T>, name: string, object: RhineVar) {
+export function convertArrayProperty<T>(target: YArray<T>, name: string, object: RhineVar<T>) {
   if (name === 'length') {
     return target.length
   } if (name === 'push') {
-    return (item: T | RhineVar) => {
+    return (item: T | RhineVar<T>): void => {
       item = ensureRhineVar(item)
       if (item instanceof RhineVar) {
         target.push([item.native as T])
-        Reflect.set(object, target.length - 1, item)
       } else {
         target.push([item])
       }
     }
   } else if (name === 'pop') {
-    return () => {
-      let item = target.get(target.length - 1)
-      target.delete(target.length - 1)
-      return item
+    return (): T[keyof T] => {
+      let key = target.length - 1
+      let item = target.get(key)
+      target.delete(key)
+      if (isNative(item)) {
+        return (item as Native).toJSON() as T[keyof T]
+      }
+      return item as T[keyof T]
     }
   } else if (name === 'shift') {
     return () => {
