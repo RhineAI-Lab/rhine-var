@@ -38,7 +38,7 @@ export function rhineProxy<T extends object>(
       let syncedValue = target.clone()
       if (!overwrite && connector.yBaseMap.has(WebsocketRhineConnector.STATE_KEY)) {
         syncedValue = connector.yBaseMap.get(WebsocketRhineConnector.STATE_KEY) as YMap<any>
-        object.native.forEach((value, key) => {
+        object.native.forEach((value: any, key: string | number) => {
           Reflect.deleteProperty(object, key)
         })
         object.unobserve()
@@ -62,7 +62,7 @@ export function rhineProxy<T extends object>(
 
 export function rhineProxyNative<T extends object>(target: Native): ProxiedRhineVar<T> {
   // log('rhineProxyNative', target)
-  const object = new RhineVar(target)
+  const object = new RhineVar<T>(target)
   
   object.native.forEach((value, keyString) => {
     let key = keyString as keyof T
@@ -71,7 +71,7 @@ export function rhineProxyNative<T extends object>(target: Native): ProxiedRhine
     }
   })
   
-  const handler: ProxyHandler<RhineVar> = {
+  const handler: ProxyHandler<RhineVar<T>> = {
     get(proxy, p, receiver) {
       if (RHINE_VAR_KEYS.has(p)) return Reflect.get(object, p, receiver)
       log('Proxy.handler.get:', p, '\n', object, receiver)
@@ -107,7 +107,7 @@ export function rhineProxyNative<T extends object>(target: Native): ProxiedRhine
       return result
     },
     
-    deleteProperty(proxy: RhineVar, p: string | symbol): boolean {
+    deleteProperty(proxy: RhineVar<T>, p: string | symbol): boolean {
       if (RHINE_VAR_KEYS.has(p)) return false
       log('Proxy.handler.deleteProperty:', p)
       

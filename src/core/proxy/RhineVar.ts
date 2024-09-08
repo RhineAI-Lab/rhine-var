@@ -8,7 +8,7 @@ import {ChangeType} from "@/core/event/ChangeType";
 import {Callback} from "@/core/event/Callback";
 
 
-export default class RhineVar {
+export default class RhineVar<T> {
   
   constructor(
     public native: Native
@@ -16,34 +16,34 @@ export default class RhineVar {
   
   connector: WebsocketRhineConnector | null = null
   
-  public json() {
-    return this.native.toJSON()
+  public json(): T {
+    return this.native.toJSON() as T
   }
   
-  private listeners: Callback[] = []
-  subscribe(callback: Callback): () => void {
+  private listeners: Callback<T>[] = []
+  subscribe(callback: Callback<T>): () => void {
     this.listeners.push(callback)
     return () => this.unsubscribe(callback)
   }
-  unsubscribe(callback: Callback) {
+  unsubscribe(callback: Callback<T>) {
     this.listeners = this.listeners.filter(listener => listener !== callback)
   }
   
-  private keyListeners: Map<string, Callback[]> = new Map()
-  subscribeKey(key: string, callback: Callback): () => void {
+  private keyListeners: Map<keyof T, Callback<T>[]> = new Map()
+  subscribeKey(key: keyof T, callback: Callback<T>): () => void {
     if (!this.keyListeners.has(key)) {
       this.keyListeners.set(key, [])
     }
     this.keyListeners.get(key)!.push(callback)
     return () => this.unsubscribeKey(callback)
   }
-  unsubscribeKey(callback: Callback) {
+  unsubscribeKey(callback: Callback<T>) {
     this.keyListeners.forEach((listeners, key) => {
       this.keyListeners.set(key, listeners.filter(listener => listener !== callback))
     })
   }
   
-  emit(value: any, key: string, oldValue: any, type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any>, nativeTransaction: Transaction) {
+  emit(value: T[keyof T], key: keyof T, oldValue: T[keyof T], type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any>, nativeTransaction: Transaction) {
     this.listeners.forEach(listener => listener(value, key, oldValue, type, nativeEvent, nativeTransaction))
     if (this.keyListeners.has(key)) {
       this.keyListeners.get(key)!.forEach(listener => listener(value, key, oldValue, type, nativeEvent, nativeTransaction))
@@ -68,14 +68,14 @@ export default class RhineVar {
           } else if (action === 'delete') {
             Reflect.deleteProperty(this, key)
           }
-          this.emit(target.get(key), key, oldValue, action as ChangeType, event, transaction)
+          this.emit(target.get(key), key as keyof T, oldValue, action as ChangeType, event, transaction)
         })
       }
     } else if (target instanceof YArray){
       this.observer = (event, transaction) => {
         log(`Proxy.event: Array changed.`, event, transaction)
         const {added, deleted, delta} = event.changes
-        this.emit(delta, '', undefined, ChangeType.Update, event, transaction)
+        this.emit(delta as T[keyof T], '' as keyof T, undefined as T[keyof T], ChangeType.Update, event, transaction)
       }
     }
     if (this.observer) {
