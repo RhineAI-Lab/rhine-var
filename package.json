@@ -1,14 +1,16 @@
 {
   "name": "rhine-var",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Variables that support multi-user collaboration and persistence, making collaboration and variable operations as simple as possible, with strict and well-defined type hints.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "prepare": "ts-patch install -s",
     "build": "tsc",
     "watch": "tsc --watch",
-    "prepare": "ts-patch install -s",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "publish-github": "npm publish --scope=@RhineAI-Lab --registry=https://npm.pkg.github.com",
+    "publish-npmjs": "npm publish"
   },
   "author": "RhineAI",
   "license": "Apache-2.0",

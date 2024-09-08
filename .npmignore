@@ -17,5 +17,7 @@ tsconfig.json
 yarn.lock
 package-lock.json
 
-.idea
-.vscode
+.idea/
+.vscode/
+
+.npmrc
