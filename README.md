@@ -104,7 +104,7 @@ When the room does not exist on the server, a default value will be used to crea
 
 ### Room ID
 
-The `Same Room ID` manages the `Same State Variables`, and users who join will experience real-time multi-user collaboration.
+<room-id> can be any text, with each Room ID corresponding to a RhineVariable, and users who join with the same Room ID will experience real-time multi-user collaboration.
 
 Regarding the server-side, it will be mentioned below.
 
