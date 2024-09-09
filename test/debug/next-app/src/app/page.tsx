@@ -1,13 +1,14 @@
 "use client"
 
 import React from "react";
-import EasyCounter from "@/app/examples/EasyCounter";
 import Ground from "@/app/examples/Ground";
+import EasyCounter from "@/app/examples/EasyCounter";
 
 export default function page() {
   
   return <main>
-    <Ground/>
+    <EasyCounter/>
+    {/*<Ground/>*/}
   </main>
 }
 

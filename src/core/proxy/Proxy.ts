@@ -17,21 +17,25 @@ import {
 } from "@/core/native/NativeUtils";
 
 
+export const PROTOCOL_LIST = ['ws://', "wss://"]
+export const DEFAULT_PROTOCOL_LIST = PROTOCOL_LIST[0]
+
+
 export function rhineProxy<T extends object>(
   data: T,
   connector: WebsocketRhineConnector | string | null = null,
-  overwrite: boolean = false
+  overwrite: boolean | number = false
 ): ProxiedRhineVar<T> {
   let target = jsonToNative(data)
   
   if (connector) {
     if (typeof connector === 'string') {
-      if (!connector.startsWith('ws://') && !connector.startsWith('wss://')) {
-        connector = 'wss://' + connector
+      if (PROTOCOL_LIST.every(protocol => !(connector as string).startsWith(protocol))) {
+        connector = DEFAULT_PROTOCOL_LIST + connector
       }
       connector = websocketRhineConnect(connector)
     }
-    target = connector.bind(target, overwrite)
+    target = connector.bind(target, Boolean(overwrite))
   }
   connector = connector as WebsocketRhineConnector | null
   

@@ -1,10 +1,7 @@
 {
   "name": "rhine-var-test-next-app",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "next dev"
   },
   "dependencies": {
     "next": "14.2.7",

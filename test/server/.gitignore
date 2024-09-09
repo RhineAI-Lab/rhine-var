@@ -6,13 +6,6 @@
 .yarn/install-state.gz
 package-lock.json
 
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
 # production
 /build
 
@@ -28,9 +21,6 @@ yarn-error.log*
 # local env files
 .env*.local
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -38,3 +28,6 @@ next-env.d.ts
 # IDE
 /.idea
 /.vscode
+
+# local database
+/dbDir
