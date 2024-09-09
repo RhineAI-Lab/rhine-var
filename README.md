@@ -18,7 +18,7 @@ Developing collaborative applications has never been this easy.
 
 This project is still in its early stages, so I hope everyone can view it with understanding. Of course, I personally see great potential in its future and hope for your support.
 
-The basic functionality has been implemented, but please be very cautious when deciding to use it in your projects.
+The basic functionality has been implemented, but please be very cautious when deciding to use it in your important projects, as it has not yet undergone sufficient testing.
 
 <br/>
 
