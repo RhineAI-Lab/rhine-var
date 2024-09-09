@@ -1,6 +1,6 @@
 import {Array as YArray} from "yjs";
 import RhineVar from "@/core/proxy/RhineVar";
-import {ensureRhineVar} from "@/core/utils/DataUtils";
+import {ensureNative} from "@/core/utils/DataUtils";
 import {isNative} from "@/core/native/NativeUtils";
 import {Native} from "@/core/native/Native";
 
@@ -20,17 +20,15 @@ import {Native} from "@/core/native/Native";
  *
  */
 
-export function convertArrayProperty<T>(name: string, target: YArray<T>, object: RhineVar<T>) {
+export function convertArrayProperty<T>(name: string, target: YArray<any>, object: RhineVar<T>) {
   if (name === 'length') {
     return target.length
   } if (name === 'push') {
-    return (item: T | RhineVar<T>): number => {
-      item = ensureRhineVar(item)
-      if (item instanceof RhineVar) {
-        target.push([item.native as T])
-      } else {
-        target.push([item])
+    return (...items: (T[keyof T] | RhineVar<T[keyof T]>)[]): number => {
+      for (let i = 0; i < items.length; i++) {
+        items[i] = ensureNative(items[i])
       }
+      target.push(items)
       return target.length
     }
   } else if (name === 'pop') {
@@ -44,6 +42,14 @@ export function convertArrayProperty<T>(name: string, target: YArray<T>, object:
       }
       return item as T[keyof T]
     }
+  } else if (name === 'unshift') {
+    return (...items: (T[keyof T] | RhineVar<T[keyof T]>)[]): number => {
+      for (let i = 0; i < items.length; i++) {
+        items[i] = ensureNative(items[i])
+      }
+      target.unshift(items)
+      return target.length
+    }
   } else if (name === 'shift') {
     return (): T[keyof T] | undefined => {
       if (target.length === 0) return undefined
@@ -55,20 +61,35 @@ export function convertArrayProperty<T>(name: string, target: YArray<T>, object:
       }
       return item as T[keyof T]
     }
-  } else if (name === 'unshift') {
-    return (...items: T[]) => {
-      target.unshift(items)
-      return target.length
-    }
   } else if (name === 'slice') {
-    return (start: number, end?: number) => {
-      return target.slice(start, end)
+    return (start: number, end?: number): RhineVar<T[keyof T]>[] => {
+      if (end === undefined) end = target.length
+      if (start < 0) start = target.length + start
+      if (end < 0) end = target.length + end
+      if (start < 0) start = 0
+      if (end > target.length) end = target.length
+      let result = []
+      for (let i = start; i < end; i++) {
+        if (i in object) {
+          result.push(Reflect.get(object, i))
+        } else {
+          result.push(target.get(i))
+        }
+      }
+      return result
     }
   } else if (name === 'splice') {
-    return (start: number, deleteCount: number, ...items: T[]) => {
-      const removed = target.slice(start, start + deleteCount)
+    return (start: number, deleteCount: number, ...items: (T[keyof T] | RhineVar<T[keyof T]>)[]) => {
+      const removed = []
+      for (let i = start; i < start + deleteCount; i++) {
+        let item = target.get(i)
+        removed.push(isNative(item) ? (item as Native).toJSON() : item)
+      }
       target.delete(start, deleteCount)
       if (items.length > 0) {
+        for (let i = 0; i < items.length; i++) {
+          items[i] = ensureNative(items[i])
+        }
         target.insert(start, items)
       }
       return removed

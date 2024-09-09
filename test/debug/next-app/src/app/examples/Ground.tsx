@@ -4,21 +4,19 @@ import React from "react";
 import {rhineProxy} from "rhine-var";
 
 
-const defaultValue = {fruits: ['apple', 'orange']}
+const defaultValue = {fruits: [
+    {name: 'apple', number: 4},
+    {name: 'orange', number: 2},
+    {name: 'peach', number: 3},
+]}
 const state = rhineProxy(defaultValue, 'RhineAI.com/ws/room-0', false)
 
 async function test() {
-  state.afterSynced(() => state.fruits.subscribe((delta) => {
-    console.log('subscribe', delta)
-  }))
+  await state.waitSynced()
   
-  await state.connector!.waitSynced()
-  state.fruits.push('aa')
-  console.log(state.fruits.json())
+  console.log(state.fruits)
 }
-
 test()
-
 
 
 export default function Ground() {

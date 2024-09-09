@@ -1,5 +1,5 @@
 import {StoredRhineVar} from "@/core/proxy/ProxiedRhineVar";
-import {isNative} from "@/core/native/NativeUtils";
+import {isNative, jsonToNative} from "@/core/native/NativeUtils";
 import RhineVar from "@/core/proxy/RhineVar";
 import {rhineProxy, rhineProxyNative} from "@/core/proxy/Proxy";
 import {Native} from "@/core/native/Native";
@@ -24,6 +24,16 @@ export function ensureRhineVar<T>(value: T | Native): StoredRhineVar<T> | any {
     if (!(value instanceof RhineVar)) {
       return rhineProxy(value as object)
     }
+  }
+  return value
+}
+
+export function ensureNative<T>(value: T | RhineVar<T>): Native | any {
+  if (value instanceof RhineVar) {
+    return value.native
+  }
+  if (isObjectOrArray(value)) {
+    return jsonToNative(value)
   }
   return value
 }
