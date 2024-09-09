@@ -18,8 +18,12 @@ export default class RhineVar<T> {
   
   connector: WebsocketRhineConnector | null = null
   
-  public json(): T {
+  json(): T {
     return this.native.toJSON() as T
+  }
+  
+  toString() {
+    return String(this.json())
   }
   
   afterSynced(callback: () => void) {
@@ -115,6 +119,7 @@ export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'native',
   'connector',
   'json',
+  'toString',
   
   'afterSynced',
   'waitSynced',

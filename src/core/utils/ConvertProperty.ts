@@ -21,6 +21,15 @@ import {Native} from "@/core/native/Native";
  */
 
 export function convertArrayProperty<T>(name: string, target: YArray<any>, object: RhineVar<T>) {
+  
+  const get = (i: number) => {
+    if (i in object) {
+      return Reflect.get(object, i)
+    } else {
+      return target.get(i)
+    }
+  }
+  
   if (name === 'length') {
     return target.length
   } if (name === 'push') {
@@ -70,11 +79,7 @@ export function convertArrayProperty<T>(name: string, target: YArray<any>, objec
       if (end > target.length) end = target.length
       let result = []
       for (let i = start; i < end; i++) {
-        if (i in object) {
-          result.push(Reflect.get(object, i))
-        } else {
-          result.push(target.get(i))
-        }
+        result.push(get(i))
       }
       return result
     }
@@ -95,26 +100,83 @@ export function convertArrayProperty<T>(name: string, target: YArray<any>, objec
       return removed
     }
   } else if (name === 'forEach') {
-    return (callback: (value: T, index: number, arr: YArray<any>) => void) => {
-      return target.forEach(callback)
+    return (callback: (value: T[keyof T], index: number, arr: YArray<any>) => void) => {
+      return target.forEach((yValue, yIndex, yArray) => {
+        callback(get(yIndex), yIndex, yArray)
+      })
     }
   } else if (name === 'map') {
-    return (callback: (value: T, index: number, arr: YArray<any>) => void) => {
-      return target.map(callback)
+    return <R>(callback: (value: T, index: number, arr: YArray<any>) => R) => {
+      const result: R[] = []
+      target.forEach((yValue, yIndex, yArray) => {
+        result.push(callback(get(yIndex), yIndex, yArray))
+      })
+      return result
     }
   } else if (name === 'indexOf') {
-    return (item: T) => {
+    return (item: T[keyof T]) => {
       for (let i = 0; i < target.length; i++) {
-        if (target.get(i) === item) return i
+        if (get(i) === item) return i
       }
       return -1
     }
   } else if (name === 'includes') {
-    return (item: T) => {
+    return (item: T[keyof T]) => {
       for (let i = 0; i < target.length; i++) {
-        if (target.get(i) === item) return true
+        if (get(i) === item) return true
       }
       return false
+    }
+  } else if (name === 'at') {
+    return (i: number): T[keyof T] => {
+      if (i < 0) i = target.length + i
+      if (i < 0) return undefined as any
+      if (i >= target.length) return undefined as any
+      return get(i)
+    }
+  } else if (name === 'join') {
+    return (str: string = ','): string => {
+      let result = ''
+      for (let i = 0; i < target.length; i++) {
+        if (i > 0) result += str
+        let item = target.get(i)
+        if (isNative(item)) {
+          result += (item as Native).toJSON()
+        } else {
+          result += item
+        }
+      }
+      return result
+    }
+  } else if (name === 'find') {
+    return (callback: (item: T[keyof T]) => boolean): T[keyof T] | undefined => {
+      for (let i = 0; i < target.length; i++) {
+        let item = get(i)
+        if (callback(item)) return item
+      }
+      return undefined
+    }
+  } else if (name === 'findIndex') {
+    return (callback: (item: T[keyof T]) => boolean): number => {
+      for (let i = 0; i < target.length; i++) {
+        if (callback(get(i))) return i
+      }
+      return -1
+    }
+  } else if (name === 'findLast') {
+    return (callback: (item: T[keyof T]) => boolean): T[keyof T] | undefined => {
+      for (let i = target.length - 1; i >= 0; i--) {
+        let item = get(i)
+        if (callback(item)) return item
+      }
+      return undefined
+    }
+  } else if (name === 'findLastIndex') {
+    return (callback: (item: T[keyof T]) => boolean): number => {
+      for (let i = target.length - 1; i >= 0; i--) {
+        if (callback(get(i))) return i
+      }
+      return -1
     }
   }
 }
