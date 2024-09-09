@@ -1,6 +1,6 @@
 <div align="center">
 
-# RHINE-VAR: Simplest and Most Powerful Collaborative Framework
+# RHINE-VAR: Simplest and Powerful Collaborative Framework
 
 Rhine Variable — A self-synchronizing variable for collaboration.
 Developing collaborative applications has never been this easy.
