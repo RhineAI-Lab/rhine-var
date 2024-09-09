@@ -46,6 +46,9 @@ RhineVar offers full support for native Yjs object operations, providing lower-l
 ### More Friendly and Complete Event System
 RhineVar offers an extensive event subscription and listening system with intuitive data change events. It also supports deep data change monitoring within objects, catering to a wide range of use cases.
 
+### Fully Open Source
+This is a fully open-source project, licensed under the Apache-2.0 license on GitHub. You are free to use it for both commercial and non-commercial projects, and it allows modification and distribution, as long as the original copyright notice is retained.
+
 <br/>
 
 ## Contact Us
