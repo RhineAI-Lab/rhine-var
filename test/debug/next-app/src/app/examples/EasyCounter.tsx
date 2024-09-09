@@ -1,12 +1,9 @@
-"use client"
-import React from "react";
-import {rhineProxy, useRhine} from "rhine-var";
-
+import {rhineProxy, useRhine} from 'rhine-var'
 
 const defaultValue = {value: 0}
 const count = rhineProxy(defaultValue, 'localhost:6600/room-0')
 
-export default function EasyCounter() {
+function Counter() {
   
   const countSnap = useRhine(count)
   
@@ -16,3 +13,7 @@ export default function EasyCounter() {
     <button onClick={() => count.value++ }> + 1 </button>
   </div>
 }
+
+
+
+export default Counter
