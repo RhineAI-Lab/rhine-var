@@ -18,7 +18,6 @@ import {Native} from "@/core/native/Native";
  * 删除元素并返回类型: pop shift
  * 从Native和RhineVar中删除对应元素 返回该元素 因该元素已不存在于RhineVar中 所以会自动转为json
  *
- *
  */
 
 export function convertArrayProperty<T>(name: string, target: YArray<T>, object: RhineVar<T>) {

@@ -12,12 +12,9 @@ async function test() {
     console.log('subscribe', key, value)
   })
   
-  state.fruits.push('peach')
-  console.log(state.fruits.json())
   await state.connector!.waitSynced()
-  console.log(state.json())
-  console.log(state.fruits)
-  console.log(state.fruits[0])
+  console.log(state.fruits.json())
+  console.log(state.origin.fruits.json())
 }
 
 test()

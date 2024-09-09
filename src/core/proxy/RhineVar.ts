@@ -6,12 +6,14 @@ import {isObjectOrArray} from "@/core/utils/DataUtils";
 import {Native} from "@/core/native/Native";
 import {ChangeType} from "@/core/event/ChangeType";
 import {Callback} from "@/core/event/Callback";
+import {StoredRhineVar} from "@/core/proxy/ProxiedRhineVar";
 
 
 export default class RhineVar<T> {
   
   constructor(
-    public native: Native
+    public native: Native,
+    public origin: StoredRhineVar<T> = this as any
   ) {}
   
   connector: WebsocketRhineConnector | null = null
@@ -28,6 +30,9 @@ export default class RhineVar<T> {
   unsubscribe(callback: Callback<T>) {
     this.listeners = this.listeners.filter(listener => listener !== callback)
   }
+  unsubscribeAll() {
+    this.listeners = []
+  }
   
   private keyListeners: Map<keyof T, Callback<T>[]> = new Map()
   subscribeKey(key: keyof T, callback: Callback<T>): () => void {
@@ -41,6 +46,9 @@ export default class RhineVar<T> {
     this.keyListeners.forEach((listeners, key) => {
       this.keyListeners.set(key, listeners.filter(listener => listener !== callback))
     })
+  }
+  unsubscribeAllKey() {
+    this.keyListeners = new Map()
   }
   
   emit(value: T[keyof T], key: keyof T, oldValue: T[keyof T], type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any>, nativeTransaction: Transaction) {
@@ -89,22 +97,25 @@ export default class RhineVar<T> {
       this.native.unobserve(this.observer)
     }
   }
-  
 }
 
-export const RHINE_VAR_KEYS = new Set<string | symbol>([
+export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
+  'origin',
   'native',
+  'connector',
   'json',
+  
   'listeners',
   'subscribe',
   'unsubscribe',
+  'unsubscribeAll',
   'keyListeners',
   'subscribeKey',
   'unsubscribeKey',
+  'unsubscribeAllKey',
+  
   'emit',
   'observer',
   'observe',
   'unobserve',
-  'connector',
 ])
-

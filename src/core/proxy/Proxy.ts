@@ -1,13 +1,12 @@
-import {Array as YArray, Map as YMap, YMapEvent} from "yjs";
+import {Array as YArray, Map as YMap} from "yjs";
 import WebsocketRhineConnector, {websocketRhineConnect} from "@/core/connector/WebsocketRhineConnector";
-import RhineVar, {RHINE_VAR_KEYS} from "@/core/proxy/RhineVar";
+import RhineVar, {RHINE_VAR_PREDEFINED_PROPERTIES} from "@/core/proxy/RhineVar";
 import {ensureRhineVar, isObjectOrArray} from "@/core/utils/DataUtils";
 import {log} from "@/core/utils/Logger";
 import {convertArrayProperty} from "@/core/utils/ConvertProperty";
 import {ProxiedRhineVar} from "@/core/proxy/ProxiedRhineVar";
 import {Native} from "@/core/native/Native";
 import {isNative, jsonToNative, nativeDelete, nativeGet, nativeSet} from "@/core/native/NativeUtils";
-import {directKey, isDirectKey, originKey} from "@/core/proxy/DirectKey";
 
 
 export function rhineProxy<T extends object>(
@@ -39,7 +38,7 @@ export function rhineProxy<T extends object>(
         if (!overwrite && connector.yBaseMap.has(WebsocketRhineConnector.STATE_KEY)) {
           syncedValue = connector.yBaseMap.get(WebsocketRhineConnector.STATE_KEY) as YMap<any>
           object.native.forEach((value: any, key: string | number) => {
-            Reflect.deleteProperty(object, directKey(key))
+            Reflect.deleteProperty(object.origin, key)
           })
           object.unobserve()
           object.native = syncedValue
@@ -47,7 +46,7 @@ export function rhineProxy<T extends object>(
           log('Proxy.synced: Update synced native')
           syncedValue.forEach((value: any, key: string) => {
             if (isNative(value)) {
-              Reflect.set(object, directKey(key), rhineProxyNative(value))
+              Reflect.set(object.origin, key, rhineProxyNative(value))
             }
           })
         } else {
@@ -75,8 +74,7 @@ export function rhineProxyNative<T extends object>(target: Native): ProxiedRhine
   
   const handler: ProxyHandler<RhineVar<T>> = {
     get(proxy, p, receiver) {
-      if (isDirectKey(p)) return Reflect.get(object, originKey(p), receiver)
-      if (RHINE_VAR_KEYS.has(p)) return Reflect.get(object, p, receiver)
+      if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return Reflect.get(object, p, receiver)
       log('Proxy.handler.get:', p, '\n', object, receiver)
       
       if (p in object) return Reflect.get(object, p, receiver)
@@ -94,8 +92,7 @@ export function rhineProxyNative<T extends object>(target: Native): ProxiedRhine
     },
     
     set(proxy, p, value, receiver): boolean {
-      if (isDirectKey(p)) return Reflect.set(object, originKey(p), value.data, receiver)
-      if (RHINE_VAR_KEYS.has(p)) return Reflect.set(object, p, value, receiver)
+      if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return Reflect.set(object, p, value, receiver)
       log('Proxy.handler.set:', p, 'to', value, '\n', object, receiver)
       
       value = ensureRhineVar(value)
@@ -111,8 +108,7 @@ export function rhineProxyNative<T extends object>(target: Native): ProxiedRhine
     },
     
     deleteProperty(proxy: RhineVar<T>, p: string | symbol): boolean {
-      if (isDirectKey(p)) return Reflect.deleteProperty(object, originKey(p))
-      if (RHINE_VAR_KEYS.has(p)) return false
+      if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return false
       log('Proxy.handler.deleteProperty:', p)
       
       let result = nativeDelete(object.native, p)
