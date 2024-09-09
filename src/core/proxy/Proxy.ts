@@ -8,7 +8,6 @@ import {ProxiedRhineVar} from "@/core/proxy/ProxiedRhineVar";
 import {Native} from "@/core/native/Native";
 import {isNative, jsonToNative, nativeDelete, nativeGet, nativeSet} from "@/core/native/NativeUtils";
 import {directKey, isDirectKey, originKey} from "@/core/proxy/DirectKey";
-import {ChangeType} from "@/core/event/ChangeType";
 
 
 export function rhineProxy<T extends object>(
@@ -87,7 +86,7 @@ export function rhineProxyNative<T extends object>(target: Native): ProxiedRhine
       
       if (object.native instanceof YArray) {
         if (typeof p === 'string') {
-          const f = convertArrayProperty<T>(object.native, p, object)
+          const f = convertArrayProperty<T>(p, object.native, object)
           if (f) return f
         }
       }
