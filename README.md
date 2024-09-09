@@ -17,37 +17,40 @@ Developing collaborative applications has never been this easy.
 ## Why Choose RHINE-VAR ?
 
 ### Concise and Efficient Syntax Design
-RhineVar draws inspiration from the design philosophy of the Valtio state management library, significantly reducing the learning curve. Developers can easily manage collaborative data as if they were manipulating regular variables.
+RhineVar draws inspiration from the design philosophy of the Valtio state management library, `significantly reducing the learning curve`. Allowing developers to handle data seamlessly, as if `working with standard variables`.
+
+### Almost No Size Limit
+There is almost no upper limit. It can be an `Extremely Complex and Large Data Structure` to accommodate all the data for a large project. But at the very least, it is `a JavaScript Object`.
 
 ### Comprehensive Type Support
-RhineVar offers full type hints and checks, ensuring precise code completion and static analysis during development. This not only improves the development experience but also reduces potential errors, making it especially suitable for TypeScript projects, enhancing code safety and reliability.
+RhineVar offers full type hints and checks, ensuring `Precise Code Completion` and `Static Analysis` during development. This not only improves the development experience but also reduces potential errors, making it especially `suitable for TypeScript projects`, enhancing code safety and reliability.
 
 ### Distributed Real-time Collaboration Algorithm
-The underlying collaboration algorithm of RhineVar is powered by the robust Yjs library. Using the CRDT (Conflict-free Replicated Data Type) algorithm, it ensures eventual consistency even in multi-user and offline environments.
+The underlying collaboration algorithm of RhineVar is `Powered By the Robust Yjs Library`. Using the CRDT (Conflict-free Replicated Data Type) algorithm, it ensures eventual consistency even in multi-user and offline environments.
 
 ### High Performance with Low Bandwidth Requirements
-The data synchronization and conflict resolution mechanism is highly efficient. Leveraging Yjs's incremental update mechanism, only necessary data changes are transmitted rather than the entire document, making it ideal for bandwidth-constrained environments and reducing unnecessary data transfers.
+The data synchronization and conflict resolution mechanism is highly efficient. Leveraging Yjs's `Incremental Update Mechanism`, only necessary data changes are transmitted rather than the entire document, making it ideal for bandwidth-constrained environments and reducing unnecessary data transfers.
 
 ### Strong Offline Support
-Users can continue to work even while offline. Once reconnected, all changes are automatically synchronized, ensuring no data is lost or conflicted. This is crucial for building offline-first applications.
+Users can continue to work even while offline. Once reconnected, all changes are automatically synchronized, ensuring `no data is lost or conflicted`. This is crucial for building offline-first applications.
 
 ### Cross-platform and Framework Agnostic
-RhineVar can be used in various environments, including browsers, Node.js, and other JavaScript platforms. It integrates with multiple frontend frameworks and libraries such as Next.js, React, Vue.js, ProseMirror, and more.
+RhineVar can be used in `All JavaScript Environments`, including browsers, Node.js, and other JavaScript platforms. It integrates with multiple frontend frameworks and libraries such as Next.js, React, Vue.js, ProseMirror, and more.
 
 ### Lightweight and Extensible
-RhineVar is a highly lightweight library, with its core package only a few KB in size, making it suitable for various frontend applications. Its modular architecture supports feature extensions, allowing developers to import or develop custom modules as needed.
+RhineVar is a highly lightweight library, with its core package `only a few KB` in size, making it suitable for various frontend applications. Its modular architecture supports feature extensions, allowing developers to import or develop custom modules as needed.
 
 ### Decentralized Architecture
 With a decentralized architecture, collaborative editing becomes more scalable, efficient, and fault-tolerant. Peer-to-peer data transfer is supported without relying on a central server (currently under development).
 
 ### Native Yjs Support
-RhineVar offers full support for native Yjs object operations, providing lower-level, richer API support. Direct operations on Yjs objects automatically trigger updates in RhineVar.
+RhineVar offers full support for native Yjs object operations, providing lower-level, richer API support. `Direct operations on Yjs objects automatically trigger updates in RhineVar`.
 
 ### More Friendly and Complete Event System
-RhineVar offers an extensive event subscription and listening system with intuitive data change events. It also supports deep data change monitoring within objects, catering to a wide range of use cases.
+RhineVar offers an extensive event subscription and listening system with `Intuitive Data Change Events`. It also supports deep data change monitoring within objects, catering to a wide range of use cases.
 
 ### Fully Open Source
-This is a fully open-source project, licensed under the Apache-2.0 license on GitHub. You are free to use it for both commercial and non-commercial projects, and it allows modification and distribution, as long as the original copyright notice is retained.
+This is a fully open-source project, licensed under the `Apache-2.0 license` on GitHub. You are `Free to use it for both Commercial and Non-commercial Projects`, and it allows modification and distribution, as long as the original copyright notice is retained.
 
 <br/>
 
@@ -93,11 +96,13 @@ When the room does not exist on the server, a default value will be used to crea
 
 The `Same Room ID` manages the `Same State Variables`, and users who join will experience real-time multi-user collaboration.
 
+Regarding the server-side, it will be mentioned below.
+
 ### rhineProxy
 
-Create a `RhineVariable` that anyone in the room can directly modify, and the value will be synchronized to everyone almost simultaneously.
+Create a `RhineVariable` that anyone in the room can directly modify, and the value will be synchronized to everyone real-time.
 
-Its value is `at least an object` in javascript, `but` there is almost no upper limit. It can be an `extremely complex and large JSON structure` to accommodate all the data for a large project.
+Its data structure `can be quite complex`, but `at least`, it is `an object` in JavaScript.
 
 ### useRhine
 

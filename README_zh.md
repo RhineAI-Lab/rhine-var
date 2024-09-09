@@ -16,6 +16,8 @@
 
 **简洁高效的语法设计:** &nbsp; RhineVar 借鉴了 Valtio 状态管理库的设计理念，极大地降低了学习成本。开发者可以像操作普通变量一样轻松操控协同数据。
 
+**几乎没有体积上限:** &nbsp; 它几乎没有体积限制，可以是一个极其复杂且庞大的数据结构，以容纳一个大型项目所需的所有数据。但至少是一个 JavaScript 对象。
+
 **完备的类型支持:** &nbsp; RhineVar 提供全面的类型提示和类型检查，确保在开发过程中能够获得精确的代码补全和静态分析。这不仅改善了开发体验，还有效降低了潜在的错误风险，特别适用于 TypeScript 项目，提升了代码的安全性和可靠性。
 
 **分布式实时协作算法:** &nbsp; RhineVar 的底层协同算法基于强大的 Yjs 库。通过 CRDT (Conflict-free Replicated Data Type，无冲突复制数据类型) 算法，确保多用户同时使用，甚至离线下使用的最终一致性。
@@ -24,7 +26,7 @@
 
 **强大的离线支持:** &nbsp; 即使在离线状态下，用户仍然可以继续使用应用。当重新联机时，所有更改将自动同步，确保数据不会出现丢失或冲突。这对于构建离线优先的应用至关重要。
 
-**跨平台和框架无关:** &nbsp; RhineVar 支持在多种环境中使用，包括浏览器、Node.js 和其他 JavaScript 环境。此外，它可以与多个前端框架和库 (如 NextJs、React、Vue.js、ProseMirror 等) 集成。
+**跨平台和框架无关:** &nbsp; RhineVar 支持在多种环境中使用，包括浏览器、Node.js 和其它 JavaScript 环境。此外，它可以与多个前端框架和库 (如 NextJs、React、Vue.js、ProseMirror 等) 集成。
 
 **轻量级且可扩展:** &nbsp; RhineVar 是一个非常轻量的库，核心包仅几 KB，适合各种前端应用。其模块化架构也支持扩展特性，开发者可以根据需要引入或开发自定义模块。
 
@@ -81,19 +83,21 @@ function Counter() {
 
 一个房间号对应一个状态变量, 加入到一个房间中的用户会参与到多人协同中。
 
+关于服务端，下方将会提及。
+
 ### rhineProxy
 
-用于创建一个 `RhineVariable` 他的值会和房间中的其他人共享并同步。
+用于创建一个 `RhineVariable` 它的值会和房间中的其他人共享并同步。
 
-你可以像操作 JavaScript 中的普通变量一样直接随意操作他。
+你可以像操作 JavaScript 中的普通变量一样直接随意操作它。
 
-值的类型至少是 JavaScript 中的 object，但没有上限。它可以是一个非常复杂和庞大的 JSON 结构，以容纳大型项目的所有数据。
+它内部的数据结构可以很复杂，但至少是 JavaScript 中的一个 object。
 
 ### useRhine
 
-一个 `React` 的 `Hook` 函数. 他将为 `RhineVariable` 创建一个快照, 用于自动热重载更新页面。当任何人对值做出修改时，他会把最新的值立刻更新到所有人的屏幕上。
+一个 `React` 的 `Hook` 函数. 它将为 `RhineVariable` 创建一个快照, 用于自动热重载更新页面。当任何人对值做出修改时，它会把最新的值立刻更新到所有人的屏幕上。
 
-只有页面需要数据的时候使用 `useRhine` 创造的快照。在其他操作，例如赋值时，请操作原来的 `RhineVariable`。
+只有页面需要数据的时候使用 `useRhine` 创造的快照。在其它操作，例如赋值时，请操作原来的 `RhineVariable`。
 
 <br/>
 
@@ -105,7 +109,7 @@ cd test/server
 yarn install
 yarn start
 ```
-默认运行在 `端口 6600`, 你可以通过连接 `ws://localhost:6600/<room-id>` 连接他，`<room-id>` 可以是任意文本，一个房间号对应一个 `RhineVariable`。
+默认运行在 `端口 6600`, 你可以通过连接 `ws://localhost:6600/<room-id>` 连接它，`<room-id>` 可以是任意文本，一个房间号对应一个 `RhineVariable`。
 
 更多服务端开发信息请参考: [https://docs.yjs.dev/ecosystem/connection-provider/y-websocket](https://docs.yjs.dev/ecosystem/connection-provider/y-websocket)
 
