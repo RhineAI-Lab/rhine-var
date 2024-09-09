@@ -130,9 +130,14 @@ export function convertArrayProperty<T>(name: string, target: YArray<any>, objec
   } else if (name === 'at') {
     return (i: number): T[keyof T] => {
       if (i < 0) i = target.length + i
-      if (i < 0) return undefined as any
-      if (i >= target.length) return undefined as any
+      if (i < 0 || i >= target.length) return undefined as any
       return get(i)
+    }
+  } else if (name === 'with') {
+    return (i: number, value: T[keyof T]): RhineVar<T> => {
+      if (i < 0) i = target.length + i
+      if (i < 0 || i >= target.length) throw 'RangeError: Unexpect index ' + i + ' in RhineVarArray(' + target.length + ')'
+      return object
     }
   } else if (name === 'join') {
     return (str: string = ','): string => {
@@ -147,6 +152,29 @@ export function convertArrayProperty<T>(name: string, target: YArray<any>, objec
         }
       }
       return result
+    }
+  } else if (name === 'filter') {
+    return (callback: (item: T[keyof T]) => boolean): T[keyof T][] => {
+      let result: T[keyof T][] = []
+      for (let i = 0; i < target.length; i++) {
+        let item = get(i)
+        if (callback(item)) result.push(item)
+      }
+      return result
+    }
+  } else if (name === 'some') {
+    return (callback: (item: T[keyof T]) => boolean): boolean => {
+      for (let i = 0; i < target.length; i++) {
+        if (callback(get(i))) return true
+      }
+      return false
+    }
+  } else if (name === 'every') {
+    return (callback: (item: T[keyof T]) => boolean): boolean => {
+      for (let i = 0; i < target.length; i++) {
+        if (!callback(get(i))) return false
+      }
+      return true
     }
   } else if (name === 'find') {
     return (callback: (item: T[keyof T]) => boolean): T[keyof T] | undefined => {
@@ -178,5 +206,99 @@ export function convertArrayProperty<T>(name: string, target: YArray<any>, objec
       }
       return -1
     }
+  } else if (name === 'entries') {
+    return (): IterableIterator<[number, T[keyof T]]> => {
+      let i = 0;
+      return {
+        next() {
+          if (i < target.length) {
+            return {value: [i, get(i++)], done: false}
+          } else {
+            return {value: undefined, done: true}
+          }
+        },
+        [Symbol.iterator]() {
+          return this
+        }
+      }
+    }
+  } else if (name === 'keys') {
+    return (): IterableIterator<number> => {
+      let i = 0
+      return {
+        next() {
+          if (i < target.length) {
+            return { value: i++, done: false }
+          } else {
+            return { value: undefined, done: true }
+          }
+        },
+        [Symbol.iterator]() {
+          return this;
+        },
+      }
+    }
+  } else if (name === 'values') {
+    return (): IterableIterator<T[keyof T]> => {
+      let i = 0
+      return {
+        next() {
+          if (i < target.length) {
+            return {value: get(i++), done: false}
+          } else {
+            return {value: undefined, done: true}
+          }
+        },
+        [Symbol.iterator]() {
+          return this
+        },
+      }
+    }
+  } else if (RHINE_VAR_ARRAY_UNSUPPORTED_PROPERTIES.has(name)) {
+    return () => {
+      console.error('Unsupported method "' + name + '" in RhineVarArray. Please call json() to convert to a native JS Array object before proceeding.')
+    }
   }
 }
+
+export const RHINE_VAR_ARRAY_SUPPORTED_PROPERTIES = new Set<string | symbol>([
+  'length',
+  'push',
+  'pop',
+  'unshift',
+  'shift',
+  'slice',
+  'splice',
+  'forEach',
+  'map',
+  'indexOf',
+  'includes',
+  'at',
+  'with',
+  'join',
+  'filter',
+  'some',
+  'every',
+  'find',
+  'findIndex',
+  'findLast',
+  'findLastIndex',
+  'entries',
+  'keys',
+  'values',
+])
+
+export const RHINE_VAR_ARRAY_UNSUPPORTED_PROPERTIES = new Set<string | symbol>([
+  'contact',
+  'copyWithin',
+  'flat',
+  'flatMap',
+  'reduce',
+  'reduceRight',
+  'reverse',
+  'sort',
+  'toReversed',
+  'toSorted',
+  'toSpliced',
+])
+
