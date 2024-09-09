@@ -12,40 +12,41 @@ Developing collaborative applications has never been this easy.
 
 </div>
 
+<br/>
 
 ## Why Choose RHINE-VAR ?
 
-#### Concise and Efficient Syntax Design
+### Concise and Efficient Syntax Design
 RhineVar draws inspiration from the design philosophy of the Valtio state management library, significantly reducing the learning curve. Developers can easily manage collaborative data as if they were manipulating regular variables.
 
-#### Comprehensive Type Support
+### Comprehensive Type Support
 RhineVar offers full type hints and checks, ensuring precise code completion and static analysis during development. This not only improves the development experience but also reduces potential errors, making it especially suitable for TypeScript projects, enhancing code safety and reliability.
 
-#### Distributed Real-time Collaboration Algorithm
+### Distributed Real-time Collaboration Algorithm
 The underlying collaboration algorithm of RhineVar is powered by the robust Yjs library. Using the CRDT (Conflict-free Replicated Data Type) algorithm, it ensures eventual consistency even in multi-user and offline environments.
 
-#### High Performance with Low Bandwidth Requirements
+### High Performance with Low Bandwidth Requirements
 The data synchronization and conflict resolution mechanism is highly efficient. Leveraging Yjs's incremental update mechanism, only necessary data changes are transmitted rather than the entire document, making it ideal for bandwidth-constrained environments and reducing unnecessary data transfers.
 
-#### Strong Offline Support
+### Strong Offline Support
 Users can continue to work even while offline. Once reconnected, all changes are automatically synchronized, ensuring no data is lost or conflicted. This is crucial for building offline-first applications.
 
-#### Cross-platform and Framework Agnostic
+### Cross-platform and Framework Agnostic
 RhineVar can be used in various environments, including browsers, Node.js, and other JavaScript platforms. It integrates with multiple frontend frameworks and libraries such as Next.js, React, Vue.js, ProseMirror, and more.
 
-#### Lightweight and Extensible
+### Lightweight and Extensible
 RhineVar is a highly lightweight library, with its core package only a few KB in size, making it suitable for various frontend applications. Its modular architecture supports feature extensions, allowing developers to import or develop custom modules as needed.
 
-#### Decentralized Architecture
+### Decentralized Architecture
 With a decentralized architecture, collaborative editing becomes more scalable, efficient, and fault-tolerant. Peer-to-peer data transfer is supported without relying on a central server (currently under development).
 
-#### Native Yjs Support
+### Native Yjs Support
 RhineVar offers full support for native Yjs object operations, providing lower-level, richer API support. Direct operations on Yjs objects automatically trigger updates in RhineVar.
 
-#### More Friendly and Complete Event System
+### More Friendly and Complete Event System
 RhineVar offers an extensive event subscription and listening system with intuitive data change events. It also supports deep data change monitoring within objects, catering to a wide range of use cases.
 
-
+<br/>
 
 ## Contact Us
 Welcome to join our WeChat group for communication. We look forward to having more community members participate in the creation of rhine-var.
@@ -61,6 +62,8 @@ Email: [RhineAILab@gmail.com](rhineailab@gmail.com) & [RhineAI@163.com](RhineAI@
 yarn add rhine-var
 ```
 If you don't have `yarn`, you can install it via `npm i rhine-var`, or install `yarn` first using `npm i -g yarn` and then use the command above to install.
+
+<br/>
 
 ## Usage
 
@@ -79,11 +82,11 @@ function Counter() {
   </div>
 }
 ```
-#### Default Value
+### Default Value
 
 When the room does not exist on the server, a default value will be used to create the room. If not connected to the server, data from the default value will also be returned.
 
-#### Room ID
+### Room ID
 
 The `Same Room ID` manages the `Same State Variables`, and users who join will experience real-time multi-user collaboration.
 
