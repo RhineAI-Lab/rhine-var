@@ -1,15 +1,16 @@
-
-# The most concise and rigorous real-time collaborative editing library.
-
-Variables that support multi-user collaboration and persistence, making collaboration and variable operations as simple as possible, with strict and well-defined type hints.
-
 <div align="center">
+
+# RHINE-VAR: Simplest and Most Powerful Collaborative Framework
+
+Rhine Variable — A self-synchronizing variable for collaboration.
+Developing collaborative applications has never been this easy.
+
 
 [English](README.md) &nbsp; | &nbsp; [中文](README_zh.md)
 
-</div>
+<img src='./assets/images/example1.png' style="border-radius: 10px; max-width: 840px"/>
 
-<img src='./assets/images/example1.png' style="border-radius: 10px"/>
+</div>
 
 
 ## Why Choose RHINE-VAR ?
@@ -46,7 +47,7 @@ RhineVar offers an extensive event subscription and listening system with intuit
 
 
 
-## Contact Information
+## Contact Us
 Welcome to join our WeChat group for communication. We look forward to having more community members participate in the creation of rhine-var.
 
 WeChat: [FNA-04]()
@@ -108,7 +109,7 @@ cd test/server
 yarn install
 yarn start
 ```
-It will run on `Port 6600`, and you can connect to it via `ws://localhost:6600/<room-id>`. The same Room ID manages the same State Variables, and users who join will experience real-time multi-user collaboration.
+It will run on `Port 6600`, and you can connect to it via `ws://localhost:6600/<room-id>`. `<room-id>` can be any text, with each room ID corresponding to a `RhineVariable`.
 
 More information about server develop: [https://docs.yjs.dev/ecosystem/connection-provider/y-websocket](https://docs.yjs.dev/ecosystem/connection-provider/y-websocket)
 
@@ -129,6 +130,7 @@ yarn start
 cd test/debug/next-app
 yarn install
 yarn start
+# Open http://localhost:3000 in browser
 ```
 
 <br/>
