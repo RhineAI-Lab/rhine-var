@@ -8,9 +8,19 @@ Developing collaborative applications has never been this easy.
 
 [English](README.md) &nbsp; | &nbsp; [中文](README_zh.md)
 
-<img src='./assets/images/example1.png' style="border-radius: 10px; max-width: 840px"/>
+<img src='./assets/images/example1.png' style="border-radius: 10px"/>
 
 </div>
+
+<br/>
+
+### Author's Note
+
+This project is still in its early stages, so I hope everyone can view it with understanding. Of course, I personally see great potential in its future and hope for your support.
+
+The basic functionality has been implemented, but please be very cautious when deciding to use it in your projects.
+
+<br/>
 
 <br/>
 
