@@ -6,7 +6,15 @@ import {log} from "@/core/utils/Logger";
 import {convertArrayProperty} from "@/core/utils/ConvertProperty";
 import {ProxiedRhineVar} from "@/core/proxy/ProxiedRhineVar";
 import {Native} from "@/core/native/Native";
-import {isNative, jsonToNative, nativeDelete, nativeGet, nativeSet} from "@/core/native/NativeUtils";
+import {
+  isNative,
+  jsonToNative,
+  nativeDelete,
+  nativeGet,
+  nativeHas,
+  nativeOwnKeys,
+  nativeSet
+} from "@/core/native/NativeUtils";
 
 
 export function rhineProxy<T extends object>(
@@ -114,7 +122,16 @@ export function rhineProxyNative<T extends object>(target: Native): ProxiedRhine
       let result = nativeDelete(object.native, p)
       if (!result) console.error('Failed to delete value')
       return result
-    }
+    },
+    
+    has(proxy: RhineVar<T>, p: string | symbol): boolean {
+      if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return false
+      return nativeHas(object.native, p)
+    },
+    
+    ownKeys(proxy: RhineVar<T>): string[] {
+      return nativeOwnKeys(object.native)
+    },
   }
   
   object.observe()

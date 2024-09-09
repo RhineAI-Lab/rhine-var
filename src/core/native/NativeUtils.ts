@@ -32,6 +32,40 @@ export function nativeSet(target: Native, key: string | symbol, value: any): boo
   return false
 }
 
+export function nativeHas(target: Native, key: string | symbol): boolean {
+  if (typeof key !== 'string') {
+    return false
+  }
+  
+  try {
+    if (target instanceof YMap) {
+      return target.has(key)
+    } else if (target instanceof YArray) {
+      const index = parseInt(key)
+      if (!isNaN(index)) {
+        return index < target.length && index >= 0
+      }
+    }
+  } catch (e) {
+    console.error('RhineVar nativeHas.error:', e)
+  }
+  return false
+}
+
+export function nativeOwnKeys(target: Native): string[] {
+  let keys: string[] = []
+  if (target instanceof YMap) {
+    target.forEach((value, key) => {
+      keys.push(key)
+    })
+  } else if (target instanceof YArray) {
+    for (let i = 0; i < target.length; i++) {
+      keys.push(String(i))
+    }
+  }
+  return keys
+}
+
 export function nativeDelete(target: Native, key: string | symbol): boolean {
   if (typeof key !== 'string') {
     return false
