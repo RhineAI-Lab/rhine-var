@@ -22,6 +22,17 @@ export default class RhineVar<T> {
     return this.native.toJSON() as T
   }
   
+  afterSynced(callback: () => void) {
+    if (this.connector) {
+      this.connector.afterSynced(callback)
+    }
+  }
+  async waitSynced() {
+    if (this.connector) {
+      await this.connector.waitSynced()
+    }
+  }
+  
   private listeners: Callback<T>[] = []
   subscribe(callback: Callback<T>): () => void {
     this.listeners.push(callback)
@@ -104,6 +115,9 @@ export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'native',
   'connector',
   'json',
+  
+  'afterSynced',
+  'waitSynced',
   
   'listeners',
   'subscribe',
