@@ -1,6 +1,5 @@
 import {Array as YArray, Map as YMap, Transaction, YArrayEvent, YMapEvent} from "yjs";
 import {rhineProxyNative} from "@/core/proxy/Proxy";
-import WebsocketRhineConnector from "@/core/connector/WebsocketRhineConnector";
 import {log} from "@/core/utils/Logger";
 import {isObjectOrArray} from "@/core/utils/DataUtils";
 import {Native} from "@/core/native/Native";
@@ -14,14 +13,28 @@ export default class RhineVarItem<T> {
   
   constructor(
     public native: Native,
+    public parent: RhineVar<any> | RhineVarItem<any> | null = null,
     public origin: StoredRhineVarItem<T> = this as any
   ) {}
   
-  parent: RhineVar<any> | RhineVarItem<any> | null = null
-  isRoot: boolean = true
+  isRoot(): boolean {
+    return false
+  }
   
-  root() {
-    return this.parent
+  root(): RhineVar<any> | null {
+    return this.parent?.root() || null
+  }
+  
+  afterSynced(callback: () => void) {
+    const connector = this.root()?.connector
+    if (connector) {
+      connector.afterSynced(callback)
+    }
+  }
+  async waitSynced() {
+    return new Promise((resolve: any) => {
+      this.afterSynced(resolve)
+    })
   }
   
   json(): T {
@@ -115,6 +128,9 @@ export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'connector',
   'json',
   'toString',
+  'parent',
+  'isRoot',
+  'root',
   
   'afterSynced',
   'waitSynced',

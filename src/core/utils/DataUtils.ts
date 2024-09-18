@@ -16,7 +16,7 @@ export function isObjectOrArray(value: any) {
   return value !== null && typeof value === 'object'
 }
 
-export function ensureRhineVar<T>(value: T | Native): StoredRhineVarItem<T> | any {
+export function ensureRhineVar<T>(value: T | Native, parent: RhineVarItem<any>): StoredRhineVarItem<T> | any {
   if (isNative(value)) {
     return rhineProxyNative(value as Native)
   }

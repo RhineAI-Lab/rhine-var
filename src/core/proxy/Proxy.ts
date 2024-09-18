@@ -4,7 +4,7 @@ import RhineVarItem, {RHINE_VAR_PREDEFINED_PROPERTIES} from "@/core/proxy/RhineV
 import {ensureRhineVar, isObjectOrArray} from "@/core/utils/DataUtils";
 import {log} from "@/core/utils/Logger";
 import {convertArrayProperty} from "@/core/utils/ConvertProperty";
-import {ProxiedRhineVar} from "@/core/proxy/ProxiedRhineVar";
+import {ProxiedRhineVar, ProxiedRhineVarItem} from "@/core/proxy/ProxiedRhineVar";
 import {Native} from "@/core/native/Native";
 import {
   isNative,
@@ -15,6 +15,7 @@ import {
   nativeOwnKeys,
   nativeSet
 } from "@/core/native/NativeUtils";
+import RhineVar from "@/core/proxy/RhineVar";
 
 
 export const PROTOCOL_LIST = ['ws://', "wss://"]
@@ -73,9 +74,12 @@ export function rhineProxy<T extends object>(
 }
 
 
-export function rhineProxyNative<T extends object>(target: Native): ProxiedRhineVar<T> {
+export function rhineProxyNative<T extends object>(
+  target: Native,
+  parent: RhineVar<any> | RhineVarItem<any> | null = null
+): ProxiedRhineVarItem<T> | ProxiedRhineVar<T> {
   // log('rhineProxyNative', target)
-  const object = new RhineVarItem<T>(target)
+  const object = parent ? new RhineVarItem<T>(target, parent) : new RhineVar<T>(target)
   
   object.native.forEach((value, keyString) => {
     let key = keyString as keyof T
@@ -107,7 +111,7 @@ export function rhineProxyNative<T extends object>(target: Native): ProxiedRhine
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return Reflect.set(object, p, value, receiver)
       log('Proxy.handler.set:', p, 'to', value, '\n', object, receiver)
       
-      value = ensureRhineVar(value)
+      value = ensureRhineVar(value, object)
       
       let result = false
       if (isObjectOrArray(value)) {
@@ -140,6 +144,6 @@ export function rhineProxyNative<T extends object>(target: Native): ProxiedRhine
   
   object.observe()
   
-  return new Proxy(object, handler) as ProxiedRhineVar<T>
+  return new Proxy(object, handler) as ProxiedRhineVarItem<T>
 }
 
