@@ -5,6 +5,13 @@ export default class RhineVar<T> extends RhineVarItem<T> {
   
   connector: WebsocketRhineConnector | null = null
   
+  parent: RhineVarItem<any> | null = null
+  isRoot: boolean = true
+  
+  root() {
+    return this
+  }
+  
   afterSynced(callback: () => void) {
     if (this.connector) {
       this.connector.afterSynced(callback)

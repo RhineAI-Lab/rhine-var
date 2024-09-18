@@ -7,6 +7,7 @@ import {Native} from "@/core/native/Native";
 import {ChangeType} from "@/core/event/ChangeType";
 import {Callback} from "@/core/event/Callback";
 import {StoredRhineVarItem} from "@/core/proxy/ProxiedRhineVar";
+import RhineVar from "@/core/proxy/RhineVar";
 
 
 export default class RhineVarItem<T> {
@@ -15,6 +16,13 @@ export default class RhineVarItem<T> {
     public native: Native,
     public origin: StoredRhineVarItem<T> = this as any
   ) {}
+  
+  parent: RhineVar<any> | RhineVarItem<any> | null = null
+  isRoot: boolean = true
+  
+  root() {
+    return this.parent
+  }
   
   json(): T {
     return this.native.toJSON() as T
