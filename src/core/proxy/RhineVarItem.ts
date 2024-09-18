@@ -1,5 +1,5 @@
 import {Array as YArray, Map as YMap, Transaction, YArrayEvent, YMapEvent} from "yjs";
-import {rhineProxyNative} from "@/core/proxy/Proxy";
+import {rhineProxyItem} from "@/core/proxy/Proxy";
 import {log} from "@/core/utils/Logger";
 import {isObjectOrArray} from "@/core/utils/DataUtils";
 import {Native} from "@/core/native/Native";
@@ -7,6 +7,7 @@ import {ChangeType} from "@/core/event/ChangeType";
 import {Callback} from "@/core/event/Callback";
 import {StoredRhineVarItem} from "@/core/proxy/ProxiedRhineVar";
 import RhineVar from "@/core/proxy/RhineVar";
+import {YEvent} from "yjs/dist/src/utils/YEvent";
 
 
 export default class RhineVarItem<T> {
@@ -21,9 +22,10 @@ export default class RhineVarItem<T> {
     return false
   }
   
-  root(): RhineVar<any> | null {
-    return this.parent?.root() || null
+  root(): RhineVar<any> {
+    return this.parent!.root()
   }
+  
   
   afterSynced(callback: () => void) {
     const connector = this.root()?.connector
@@ -31,11 +33,13 @@ export default class RhineVarItem<T> {
       connector.afterSynced(callback)
     }
   }
+  
   async waitSynced() {
     return new Promise((resolve: any) => {
       this.afterSynced(resolve)
     })
   }
+  
   
   json(): T {
     return this.native.toJSON() as T
@@ -45,41 +49,60 @@ export default class RhineVarItem<T> {
     return String(this.json())
   }
   
-  private listeners: Callback<T>[] = []
+  
+  private subscribers: Callback<T>[] = []
   subscribe(callback: Callback<T>): () => void {
-    this.listeners.push(callback)
+    this.subscribers.push(callback)
     return () => this.unsubscribe(callback)
   }
   unsubscribe(callback: Callback<T>) {
-    this.listeners = this.listeners.filter(listener => listener !== callback)
+    this.subscribers = this.subscribers.filter(listener => listener !== callback)
   }
   unsubscribeAll() {
-    this.listeners = []
+    this.subscribers = []
   }
   
-  private keyListeners: Map<keyof T, Callback<T>[]> = new Map()
+  private keySubscribers: Map<keyof T, Callback<T>[]> = new Map()
   subscribeKey(key: keyof T, callback: Callback<T>): () => void {
-    if (!this.keyListeners.has(key)) {
-      this.keyListeners.set(key, [])
+    if (!this.keySubscribers.has(key)) {
+      this.keySubscribers.set(key, [])
     }
-    this.keyListeners.get(key)!.push(callback)
+    this.keySubscribers.get(key)!.push(callback)
     return () => this.unsubscribeKey(callback)
   }
   unsubscribeKey(callback: Callback<T>) {
-    this.keyListeners.forEach((listeners, key) => {
-      this.keyListeners.set(key, listeners.filter(listener => listener !== callback))
+    this.keySubscribers.forEach((listeners, key) => {
+      this.keySubscribers.set(key, listeners.filter(listener => listener !== callback))
     })
   }
   unsubscribeAllKey() {
-    this.keyListeners = new Map()
+    this.keySubscribers = new Map()
   }
   
-  emit(value: T[keyof T], key: keyof T, oldValue: T[keyof T], type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any>, nativeTransaction: Transaction) {
-    this.listeners.forEach(listener => listener(value, key, oldValue, type, nativeEvent, nativeTransaction))
-    if (this.keyListeners.has(key)) {
-      this.keyListeners.get(key)!.forEach(listener => listener(value, key, oldValue, type, nativeEvent, nativeTransaction))
+  private emit(value: T[keyof T], key: keyof T, oldValue: T[keyof T], type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any>, nativeTransaction: Transaction) {
+    this.subscribers.forEach(listener => listener(value, key, oldValue, type, nativeEvent, nativeTransaction))
+    if (this.keySubscribers.has(key)) {
+      this.keySubscribers.get(key)!.forEach(listener => listener(value, key, oldValue, type, nativeEvent, nativeTransaction))
     }
   }
+  
+  
+  private deepSubscribers: Callback<T>[] = []
+  subscribeDeep(callback: Callback<T>): () => void {
+    this.deepSubscribers.push(callback)
+    return () => this.unsubscribe(callback)
+  }
+  unsubscribeDeep(callback: Callback<T>) {
+    this.deepSubscribers = this.deepSubscribers.filter(listener => listener !== callback)
+  }
+  unsubscribeAllDeep() {
+    this.deepSubscribers = []
+  }
+  
+  emitDeep(value: T[keyof T], key: keyof T, oldValue: T[keyof T], type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any>, nativeTransaction: Transaction) {
+  
+  }
+  
   
   observer = (event: YMapEvent<any> | YArrayEvent<any>, transaction: Transaction) => {}
   
@@ -94,7 +117,7 @@ export default class RhineVarItem<T> {
           let value = target.get(key)
           if (action === 'add' || action === 'update') {
             if (isObjectOrArray(value)) {
-              Reflect.set(this, key, rhineProxyNative(value))
+              Reflect.set(this, key, rhineProxyItem(value, this))
             }
           } else if (action === 'delete') {
             Reflect.deleteProperty(this, key)
@@ -120,7 +143,28 @@ export default class RhineVarItem<T> {
       this.native.unobserve(this.observer)
     }
   }
+  
+  deepObserver = (event: Array<YEvent<any>>, transaction: Transaction) => {}
+  
+  deepObserve() {
+    const target = this.native
+    if (target instanceof YMap) {
+    
+    } else if (target instanceof YArray){
+    
+    }
+    if (this.deepObserver) {
+      target.observeDeep(this.deepObserver)
+    }
+  }
+  
+  deepUnobserve() {
+    if (this.deepObserver) {
+      this.native.unobserveDeep(this.deepObserver)
+    }
+  }
 }
+
 
 export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'origin',
@@ -135,7 +179,7 @@ export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'afterSynced',
   'waitSynced',
   
-  'listeners',
+  'subscribers',
   'subscribe',
   'unsubscribe',
   'unsubscribeAll',
@@ -143,9 +187,19 @@ export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'subscribeKey',
   'unsubscribeKey',
   'unsubscribeAllKey',
-  
   'emit',
+  
+  'deepSubscribers',
+  'subscribeDeep',
+  'unsubscribeDeep',
+  'unsubscribeAllDeep',
+  'emitDeep',
+  
   'observer',
   'observe',
   'unobserve',
+  
+  'deepObserver',
+  'deepObserve',
+  'deepUnobserve',
 ])

@@ -9,7 +9,7 @@ export default class RhineVar<T> extends RhineVarItem<T> {
     return true
   }
   
-  root(): RhineVar<any> | null {
+  root(): RhineVar<any> {
     return this
   }
 

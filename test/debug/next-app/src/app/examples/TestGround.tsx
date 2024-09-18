@@ -15,11 +15,11 @@ const state = rhineProxy(defaultValue, 'localhost:6600/room-1')
 
 async function test() {
   await state.waitSynced()
-  console.log(state.fruits.json())
+  console.log(state.fruits[0].root().json())
 }
 test()
 
 
-export default function Ground() {
+export default function TestGround() {
   return <div className='page'/>
 }

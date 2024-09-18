@@ -11,7 +11,7 @@ export type ProxiedRhineVarItem<T> = StoredRhineVarItem<T>
 
 
 export type RecursiveCrossRhineVar<T> = {
-  [K in keyof T]: T[K] extends object ? RecursiveCrossRhineVar<T[K]> & RhineVar<T[K]> : T[K]
+  [K in keyof T]: T[K] extends object ? RecursiveCrossRhineVarItem<T[K]> & RhineVarItem<T[K]> : T[K]
 }
 
 export type StoredRhineVar<T> = T & RecursiveCrossRhineVar<T> & RhineVar<T>

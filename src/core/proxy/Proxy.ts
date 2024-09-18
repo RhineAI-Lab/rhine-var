@@ -1,7 +1,7 @@
 import {Array as YArray, Map as YMap} from "yjs";
 import WebsocketRhineConnector, {websocketRhineConnect} from "@/core/connector/WebsocketRhineConnector";
 import RhineVarItem, {RHINE_VAR_PREDEFINED_PROPERTIES} from "@/core/proxy/RhineVarItem";
-import {ensureRhineVar, isObjectOrArray} from "@/core/utils/DataUtils";
+import {ensureNative, ensureRhineVar, isObjectOrArray} from "@/core/utils/DataUtils";
 import {log} from "@/core/utils/Logger";
 import {convertArrayProperty} from "@/core/utils/ConvertProperty";
 import {ProxiedRhineVar, ProxiedRhineVarItem} from "@/core/proxy/ProxiedRhineVar";
@@ -23,11 +23,11 @@ export const DEFAULT_PROTOCOL_LIST = PROTOCOL_LIST[0]
 
 
 export function rhineProxy<T extends object>(
-  data: T,
-  connector: WebsocketRhineConnector | string | null = null,
+  data: T | Native,
+  connector: WebsocketRhineConnector | string,
   overwrite: boolean | number = false
 ): ProxiedRhineVar<T> {
-  let target = jsonToNative(data)
+  let target: Native = ensureNative<T>(data)
   
   if (connector) {
     if (typeof connector === 'string') {
@@ -38,9 +38,9 @@ export function rhineProxy<T extends object>(
     }
     target = connector.bind(target, Boolean(overwrite))
   }
-  connector = connector as WebsocketRhineConnector | null
+  connector = connector as WebsocketRhineConnector
   
-  const object = rhineProxyNative<T>(target) as ProxiedRhineVar<T>
+  const object = rhineProxyItem<T>(target) as ProxiedRhineVar<T>
   object.connector = connector
   
   if (connector && !connector.synced) {
@@ -59,7 +59,7 @@ export function rhineProxy<T extends object>(
           log('Proxy.synced: Update synced native')
           syncedValue.forEach((value: any, key: string) => {
             if (isNative(value)) {
-              Reflect.set(object.origin, key, rhineProxyNative(value))
+              Reflect.set(object.origin, key, rhineProxyItem(value, object))
             }
           })
         } else {
@@ -74,17 +74,24 @@ export function rhineProxy<T extends object>(
 }
 
 
-export function rhineProxyNative<T extends object>(
-  target: Native,
+export function rhineItem<T>(data: T): ProxiedRhineVarItem<T> {
+  return data as ProxiedRhineVarItem<T>
+}
+
+
+export function rhineProxyItem<T extends object>(
+  data: T | Native,
   parent: RhineVar<any> | RhineVarItem<any> | null = null
 ): ProxiedRhineVarItem<T> | ProxiedRhineVar<T> {
+  let target = ensureNative<T>(data)
+  
   // log('rhineProxyNative', target)
   const object = parent ? new RhineVarItem<T>(target, parent) : new RhineVar<T>(target)
   
   object.native.forEach((value, keyString) => {
     let key = keyString as keyof T
     if (isNative(value)) {
-      Reflect.set(object, key, rhineProxyNative<T>(value))
+      Reflect.set(object, key, rhineProxyItem<T>(value, object))
     }
   })
   
