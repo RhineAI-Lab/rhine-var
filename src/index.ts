@@ -1,6 +1,6 @@
 import {rhineProxy, rhineProxyNative} from "@/core/proxy/Proxy";
-import RhineVar from "@/core/proxy/RhineVar";
-import {StoredRhineVar, ProxiedRhineVar, RecursiveCrossRhineVar} from "@/core/proxy/ProxiedRhineVar";
+import RhineVarItem from "@/core/proxy/RhineVarItem";
+import {StoredRhineVarItem, ProxiedRhineVar, RecursiveCrossRhineVarItem} from "@/core/proxy/ProxiedRhineVar";
 import WebsocketRhineConnector from "@/core/connector/WebsocketRhineConnector";
 import useRhine from "@/react/hooks/useRhine"
 import useSynced from "@/react/hooks/useSynced"
@@ -9,10 +9,10 @@ export {
   WebsocketRhineConnector,
   rhineProxy,
   rhineProxyNative,
-  RhineVar,
-  StoredRhineVar,
+  RhineVarItem,
+  StoredRhineVarItem,
   ProxiedRhineVar,
-  RecursiveCrossRhineVar,
+  RecursiveCrossRhineVarItem,
   useRhine,
   useSynced,
 }

@@ -14,14 +14,6 @@ Developing collaborative applications has never been this easy.
 
 <br/>
 
-### Author's Note
-
-This project is still in its early stages, so I hope everyone can view it with understanding. Of course, I personally see great potential in its future and hope for your support.
-
-The basic functionality has been implemented, but please be very cautious when deciding to use it in your important projects, as it has not yet undergone sufficient testing.
-
-<br/>
-
 <br/>
 
 ## Why Choose RHINE-VAR ?
@@ -104,7 +96,7 @@ When the room does not exist on the server, a default value will be used to crea
 
 ### Room ID
 
-<room-id> can be any text, with each Room ID corresponding to a RhineVariable, and users who join with the same Room ID will experience real-time multi-user collaboration.
+&lt;room-id&gt; can be any text, with each Room ID corresponding to a RhineVariable, and users who join with the same Room ID will experience real-time multi-user collaboration.
 
 Regarding the server-side, it will be mentioned below.
 

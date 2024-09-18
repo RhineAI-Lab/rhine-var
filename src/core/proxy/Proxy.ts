@@ -1,6 +1,6 @@
 import {Array as YArray, Map as YMap} from "yjs";
 import WebsocketRhineConnector, {websocketRhineConnect} from "@/core/connector/WebsocketRhineConnector";
-import RhineVar, {RHINE_VAR_PREDEFINED_PROPERTIES} from "@/core/proxy/RhineVar";
+import RhineVarItem, {RHINE_VAR_PREDEFINED_PROPERTIES} from "@/core/proxy/RhineVarItem";
 import {ensureRhineVar, isObjectOrArray} from "@/core/utils/DataUtils";
 import {log} from "@/core/utils/Logger";
 import {convertArrayProperty} from "@/core/utils/ConvertProperty";
@@ -75,7 +75,7 @@ export function rhineProxy<T extends object>(
 
 export function rhineProxyNative<T extends object>(target: Native): ProxiedRhineVar<T> {
   // log('rhineProxyNative', target)
-  const object = new RhineVar<T>(target)
+  const object = new RhineVarItem<T>(target)
   
   object.native.forEach((value, keyString) => {
     let key = keyString as keyof T
@@ -84,7 +84,7 @@ export function rhineProxyNative<T extends object>(target: Native): ProxiedRhine
     }
   })
   
-  const handler: ProxyHandler<RhineVar<T>> = {
+  const handler: ProxyHandler<RhineVarItem<T>> = {
     get(proxy, p, receiver) {
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return Reflect.get(object, p, receiver)
       log('Proxy.handler.get:', p, '\n', object, receiver)
@@ -119,7 +119,7 @@ export function rhineProxyNative<T extends object>(target: Native): ProxiedRhine
       return result
     },
     
-    deleteProperty(proxy: RhineVar<T>, p: string | symbol): boolean {
+    deleteProperty(proxy: RhineVarItem<T>, p: string | symbol): boolean {
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return false
       log('Proxy.handler.deleteProperty:', p)
       
@@ -128,12 +128,12 @@ export function rhineProxyNative<T extends object>(target: Native): ProxiedRhine
       return result
     },
     
-    has(proxy: RhineVar<T>, p: string | symbol): boolean {
+    has(proxy: RhineVarItem<T>, p: string | symbol): boolean {
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return false
       return nativeHas(object.native, p)
     },
     
-    ownKeys(proxy: RhineVar<T>): string[] {
+    ownKeys(proxy: RhineVarItem<T>): string[] {
       return nativeOwnKeys(object.native)
     },
   }
