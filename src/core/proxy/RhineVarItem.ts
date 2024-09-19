@@ -46,25 +46,42 @@ export default class RhineVarItem<T> {
   
   frozenJson(): T {
     const origin = this.origin as any
-    const object: { [key: string | number]: any} = {}
-    for (let key in origin) {
-      if (
-        !RHINE_VAR_PREDEFINED_PROPERTIES.has(key) &&
-        typeof origin[key] !== 'function' &&
-        this.hasOwnProperty(key)
-      ) {
-        let value = origin[key]
-        if (value instanceof RhineVarItem) {
-          value = value.frozenJson()
-        }
-        if (!isNaN(Number(key))) {
-          object[Number(key)] = value
-        } else {
-          object[key] = value
+    if (this.native instanceof YMap) {
+      const result: { [key: string | number]: any} = {}
+      for (let key in origin) {
+        if (
+          !RHINE_VAR_PREDEFINED_PROPERTIES.has(key) &&
+          typeof origin[key] !== 'function' &&
+          this.hasOwnProperty(key)
+        ) {
+          let value = origin[key]
+          if (value instanceof RhineVarItem) {
+            value = value.frozenJson()
+          }
+          if (!isNaN(Number(key))) {
+            result[Number(key)] = value
+          } else {
+            result[key] = value
+          }
         }
       }
+      return result as T
+    } else if (this.native instanceof YArray) {
+      const result: any[] = []
+      for (let i = 0;; i++) {
+        if (i in origin) {
+          let value = origin[i]
+          if (value instanceof RhineVarItem) {
+            value = value.frozenJson()
+          }
+          result.push(value)
+        } else {
+          break
+        }
+      }
+      return result as T
     }
-    return object as T
+    return {} as T
   }
   
   toString() {
@@ -152,8 +169,9 @@ export default class RhineVarItem<T> {
             }
           }
           
-          let value = target.get(key)
+          let value = undefined
           if (action === 'add' || action === 'update') {
+            value = target.get(key)
             if (isObjectOrArray(value)) {
               Reflect.set(this, key, rhineProxyItem(value, this))
             } else {
@@ -164,7 +182,7 @@ export default class RhineVarItem<T> {
           }
           
           const newValue = key in this ? Reflect.get(this, key) : value
-          log('Proxy.event: Map', action, key + ':', oldValue, '->', newValue.json())
+          log('Proxy.event: Map', action, key + ':', oldValue, '->', newValue)
           this.emit(key as keyof T, newValue, oldValue, action as ChangeType, event, transaction)
           this.emitDeep([key], newValue, oldValue, action as ChangeType, event, transaction)
         })
