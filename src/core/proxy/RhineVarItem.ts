@@ -113,7 +113,7 @@ export default class RhineVarItem<T> {
     if (target instanceof YMap) {
       this.observer = (event, transaction) => {
         event.changes.keys.forEach(({action, oldValue}, key) => {
-          log(`Proxy.event: Map ${action} ${key}: ${oldValue} -> ${target.get(key)}`)
+          log('Proxy.event: Map', action, key, ':', oldValue, '->', target.get(key))
           
           let value = target.get(key)
           if (action === 'add' || action === 'update') {
@@ -123,32 +123,69 @@ export default class RhineVarItem<T> {
           } else if (action === 'delete') {
             Reflect.deleteProperty(this, key)
           }
+          
           this.emit(key as keyof T, target.get(key), oldValue, action as ChangeType, event, transaction)
         })
       }
     } else if (target instanceof YArray){
       this.observer = (event, transaction) => {
-        log(`Proxy.event: Array changed:`, event, transaction)
-        this.emit('' as keyof T, event.delta as T[keyof T], undefined as T[keyof T], ChangeType.Update, event, transaction)
+        let i = 0
+        event.delta.forEach(deltaItem => {
+          if (deltaItem.retain !== undefined) {
+            i += deltaItem.retain
+          }
+          if (deltaItem.delete !== undefined) {
+            for (let j = 0; j < deltaItem.delete; j++) {
+              i++
+              const oldValue = target.get(i)
+              log('Proxy.event: Array delete', i, ':', oldValue, '->', undefined)
+              this.emit(i as keyof T, undefined as any, oldValue, ChangeType.Delete, event, transaction)
+            }
+          }
+          if (deltaItem.insert !== undefined) {
+            i += 1
+            const oldValue = target.get(i)
+            log('Proxy.event: Array add', i, ':', undefined, '->', deltaItem.insert)
+            this.emit(i as keyof T, deltaItem.insert as any, oldValue, ChangeType.Add, event, transaction)
+          }
+        })
       }
     }
     
     this.deepObserver = (events: Array<YMapEvent<any> | YArrayEvent<any>>, transaction: Transaction) => {
       events.forEach(event => {
         if (event instanceof YMapEvent) {
+          const eventTarget = event.target
           event.changes.keys.forEach(({action, oldValue}, key) => {
-            const eventTarget = event.target
-            const value = eventTarget.get(key)
             const path = event.path.concat(key)
+            const value = eventTarget.get(key)
             // log(`Proxy.deepEvent: Map ${action} ${eventTarget} ${path}: ${oldValue} -> ${value}`)
             this.emitDeep(path, value, oldValue, action as ChangeType, eventTarget, event, transaction)
           })
         } else if (event instanceof YArrayEvent) {
           const eventTarget = event.target
-          const delta = event.delta
-          const path = event.path
-          log(`Proxy.deepEvent: Array changed:`, event, transaction)
-          this.emitDeep(path, undefined, undefined, ChangeType.Update, eventTarget, event, transaction)
+          let i = 0
+          event.delta.forEach(deltaItem => {
+            if (deltaItem.retain !== undefined) {
+              i += deltaItem.retain
+            }
+            if (deltaItem.delete !== undefined) {
+              for (let j = 0; j < deltaItem.delete; j++) {
+                i++
+                const oldValue = eventTarget.get(i)
+                const path = event.path.concat(i)
+                // log('Proxy.deepEvent: Array delete', event.path, i, ':', oldValue, '->', undefined)
+                this.emitDeep(path, undefined as any, oldValue, ChangeType.Delete, eventTarget, event, transaction)
+              }
+            }
+            if (deltaItem.insert !== undefined) {
+              i += 1
+              const oldValue = eventTarget.get(i)
+              const path = event.path.concat(i)
+              // log('Proxy.deepEvent: Array add', event.path, i, ':', undefined, '->', deltaItem.insert)
+              this.emitDeep(path, deltaItem.insert as any, oldValue, ChangeType.Add, eventTarget, event, transaction)
+            }
+          })
         }
       })
     }

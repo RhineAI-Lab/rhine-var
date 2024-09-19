@@ -16,15 +16,12 @@ const state = rhineProxy(defaultValue, 'localhost:6600/room-1')
 async function test() {
   
   await state.waitSynced()
-  state.subscribeDeep((value, key, oldValue, type, nativeEvent, nativeTransaction) => {
-  
+  state.subscribeDeep((path, value, oldValue, type, nativeEvent, nativeTransaction) => {
+    console.log(path, value)
   })
   
-  console.log('### SET')
-  state.fruits[0].name = 'aaa'
-  
-  // console.log('### PUSH')
-  // state.fruits[3] = rhineItem({name: 'banana', number: 9})
+  state.fruits[3] = rhineItem({name: 'banana', number: 9})
+  state.fruits.push({name: 'banana', number: 90})
   
 }
 test()
