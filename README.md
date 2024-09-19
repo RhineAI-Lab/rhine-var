@@ -17,6 +17,7 @@ Developing collaborative applications has never been this easy.
 <br/>
 
 ## Why Choose RHINE-VAR ?
+<br/>
 
 ### Concise and Efficient Syntax Design
 RhineVar draws inspiration from the design philosophy of the Valtio state management library, `significantly reducing the learning curve`. Allowing developers to handle data seamlessly, as if `working with standard variables`.
