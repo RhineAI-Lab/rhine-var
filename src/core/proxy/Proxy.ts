@@ -95,12 +95,37 @@ export function rhineProxyItem<T extends object>(
     }
   })
   
+  const proxyGetOwnPropertyDescriptor = (proxy: RhineVarItem<T>, p: string | symbol) => {
+    log('Proxy.handler.getOwnPropertyDescriptor:', p, '\n', object)
+    if (p === Symbol.iterator) {
+      return {
+        value: function* () {
+          if (object.native instanceof YMap) {
+            for (const key of object.native.keys()) {
+              yield Reflect.get(object, key)
+            }
+          } else if (object.native instanceof YArray) {
+            for (let i = 0; i < object.native.length; i++) {
+              yield Reflect.get(object, String(i))
+            }
+          }
+        },
+        enumerable: false,
+        configurable: true,
+      }
+    }
+    return Reflect.getOwnPropertyDescriptor(object, p)
+  }
+  
   const handler: ProxyHandler<RhineVarItem<T>> = {
     get(proxy, p, receiver) {
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return Reflect.get(object, p, receiver)
       log('Proxy.handler.get:', p, '\n', object, receiver)
       
       if (p in object) return Reflect.get(object, p, receiver)
+      
+      const descriptor = proxyGetOwnPropertyDescriptor(proxy, p)
+      if (descriptor !== undefined) return descriptor.value
       
       let result = nativeGet(object.native, p)
       if (result !== undefined) return result
@@ -147,6 +172,8 @@ export function rhineProxyItem<T extends object>(
     ownKeys(proxy: RhineVarItem<T>): string[] {
       return nativeOwnKeys(object.native)
     },
+    
+    getOwnPropertyDescriptor: proxyGetOwnPropertyDescriptor,
   }
   
   object.observe()
