@@ -44,6 +44,29 @@ export default class RhineVarItem<T> {
     return this.native.toJSON() as T
   }
   
+  frozenJson(): T {
+    const origin = this.origin as any
+    const object: { [key: string | number]: any} = {}
+    for (let key in origin) {
+      if (
+        !RHINE_VAR_PREDEFINED_PROPERTIES.has(key) &&
+        typeof origin[key] !== 'function' &&
+        this.hasOwnProperty(key)
+      ) {
+        let value = origin[key]
+        if (value instanceof RhineVarItem) {
+          value = value.frozenJson()
+        }
+        if (!isNaN(Number(key))) {
+          object[Number(key)] = value
+        } else {
+          object[key] = value
+        }
+      }
+    }
+    return object as T
+  }
+  
   toString() {
     return String(this.json())
   }
@@ -124,7 +147,9 @@ export default class RhineVarItem<T> {
         event.changes.keys.forEach(({action, oldValue}, key) => {
           if (isObjectOrArray(oldValue)) {
             oldValue = Reflect.get(this, key)
-            // TODO: oldValue 中的内容 从 Native 移除后 无法通过 json() 获取具体值
+            if (oldValue instanceof RhineVarItem) {
+              oldValue = oldValue.frozenJson()
+            }
           }
           
           let value = target.get(key)
@@ -154,7 +179,10 @@ export default class RhineVarItem<T> {
           if (deltaItem.delete !== undefined) {
             for (let j = 0; j < deltaItem.delete; j++) {
               i++
-              const oldValue = i in this ? Reflect.get(this, i) : target.get(i)
+              let oldValue = i in this ? Reflect.get(this, i) : target.get(i)
+              if (oldValue instanceof RhineVarItem) {
+                oldValue = oldValue.frozenJson()
+              }
               
               Reflect.deleteProperty(this, i)
               for (let k = i + 1; k < target.length + deltaItem.delete; k++) {

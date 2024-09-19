@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react";
-import {rhineProxy} from "rhine-var";
+import {rhineProxy, ProxiedRhineVarItem} from "rhine-var";
 
 console.log('\n\n=================== Rhine Var Playground ===================\n\n')
 
@@ -16,7 +16,7 @@ state.afterSynced(() => {
     console.log(path, value, oldValue)
   })
   
-  state.person = {name: 'B', age: 0} as any
+  state.person = {name: 'B', age: 0} as ProxiedRhineVarItem<{name: string, age: number}>
   
 })
 
