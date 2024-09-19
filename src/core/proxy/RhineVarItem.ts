@@ -101,6 +101,17 @@ export default class RhineVarItem<T> {
   
   emitDeep(path: YPath, value: any, oldValue: any, type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any>, nativeTransaction: Transaction) {
     this.deepSubscribers.forEach(subscriber => subscriber(path, value, oldValue, type, nativeEvent, nativeTransaction))
+    // console.log('emitDeep', path, value)
+    if (!parent) return undefined
+    for (let key in this.parent) {
+      if (RHINE_VAR_PREDEFINED_PROPERTIES.has(key)) continue
+      if (Reflect.get(this.parent, key).origin == this) {
+        if (!isNaN(Number(key))) {
+          key = Number(key) as any
+        }
+        this.parent.emitDeep([key, ...path], value, oldValue, type, nativeEvent, nativeTransaction)
+      }
+    }
   }
   
   
@@ -127,6 +138,7 @@ export default class RhineVarItem<T> {
           const newValue = key in this ? Reflect.get(this, key) : value
           log('Proxy.event: Map', action, key + ':', oldValue, '->', newValue)
           this.emit(key as keyof T, value, oldValue, action as ChangeType, event, transaction)
+          this.emitDeep([key], value, oldValue, action as ChangeType, event, transaction)
         })
       }
     } else if (target instanceof YArray){
@@ -154,6 +166,7 @@ export default class RhineVarItem<T> {
               
               log('Proxy.event: Array delete', i + ':', oldValue, '->', undefined)
               this.emit(i as keyof T, undefined as any, oldValue as any, ChangeType.Delete, event, transaction)
+              this.emitDeep([i], undefined, oldValue, ChangeType.Delete, event, transaction)
             }
           }
           if (deltaItem.insert !== undefined && Array.isArray(deltaItem.insert)) {
@@ -171,6 +184,7 @@ export default class RhineVarItem<T> {
               const newValue = i in this ? Reflect.get(this, i) : target.get(i)
               log('Proxy.event: Array add', i, ':', undefined, '->', newValue)
               this.emit(i as keyof T, newValue as any, undefined as any, ChangeType.Add, event, transaction)
+              this.emitDeep([i], newValue, undefined, ChangeType.Add, event, transaction)
             })
           }
         })

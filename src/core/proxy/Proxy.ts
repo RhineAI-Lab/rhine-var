@@ -8,7 +8,6 @@ import {ProxiedRhineVar, ProxiedRhineVarItem} from "@/core/proxy/ProxiedRhineVar
 import {Native} from "@/core/native/Native";
 import {
   isNative,
-  jsonToNative,
   nativeDelete,
   nativeGet,
   nativeHas,
@@ -74,11 +73,6 @@ export function rhineProxy<T extends object>(
 }
 
 
-export function rhineItem<T>(data: T): ProxiedRhineVarItem<T> {
-  return data as ProxiedRhineVarItem<T>
-}
-
-
 export function rhineProxyItem<T extends object>(
   data: T | Native,
   parent: RhineVar<any> | RhineVarItem<any> | null = null
@@ -96,7 +90,7 @@ export function rhineProxyItem<T extends object>(
   })
   
   const proxyGetOwnPropertyDescriptor = (proxy: RhineVarItem<T>, p: string | symbol) => {
-    log('Proxy.handler.getOwnPropertyDescriptor:', p, '\n', object)
+    log('Proxy.handler.getOwnPropertyDescriptor:', p, '  ', object)
     if (p === Symbol.iterator) {
       return {
         value: function* () {
@@ -120,7 +114,7 @@ export function rhineProxyItem<T extends object>(
   const handler: ProxyHandler<RhineVarItem<T>> = {
     get(proxy, p, receiver) {
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return Reflect.get(object, p, receiver)
-      log('Proxy.handler.get:', p, '\n', object, receiver)
+      log('Proxy.handler.get:', p, '  ', object, receiver)
       
       if (p in object) return Reflect.get(object, p, receiver)
       
@@ -141,7 +135,7 @@ export function rhineProxyItem<T extends object>(
     
     set(proxy, p, value, receiver): boolean {
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return Reflect.set(object, p, value, receiver)
-      log('Proxy.handler.set:', p, 'to', value, '\n', object, receiver)
+      log('Proxy.handler.set:', p, 'to', value, '  ', object, receiver)
       
       value = ensureRhineVar(value, object)
       
