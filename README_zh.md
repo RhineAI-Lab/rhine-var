@@ -13,7 +13,8 @@
 <br/>
 
 ## 为什么选择 RHINE-VAR ?
-<br/>
+
+<div style="height: 6px"></div>
 
 ### 简洁高效的语法设计
 
