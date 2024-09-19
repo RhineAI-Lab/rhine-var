@@ -129,7 +129,7 @@ export default class RhineVarItem<T> {
       }
     } else if (target instanceof YArray){
       this.observer = (event, transaction) => {
-        let i = 0
+        let i = -1
         event.delta.forEach(deltaItem => {
           if (deltaItem.retain !== undefined) {
             i += deltaItem.retain
@@ -139,14 +139,31 @@ export default class RhineVarItem<T> {
               i++
               const oldValue = target.get(i)
               log('Proxy.event: Array delete', i, ':', oldValue, '->', undefined)
+              
+              Reflect.deleteProperty(this, i)
+              
+              for (let k = i + 1; k < target.length + deltaItem.delete; k++) {
+                const value = Reflect.get(this, k)
+                Reflect.set(this, k - 1, value)
+                Reflect.deleteProperty(this, k)
+              }
+              
               this.emit(i as keyof T, undefined as any, oldValue, ChangeType.Delete, event, transaction)
             }
           }
-          if (deltaItem.insert !== undefined) {
-            i += 1
-            const oldValue = target.get(i)
-            log('Proxy.event: Array add', i, ':', undefined, '->', deltaItem.insert)
-            this.emit(i as keyof T, deltaItem.insert as any, oldValue, ChangeType.Add, event, transaction)
+          if (deltaItem.insert !== undefined && Array.isArray(deltaItem.insert)) {
+            deltaItem.insert.forEach((value) => {
+              i++
+              log('Proxy.event: Array add', i, ':', undefined, '->', value)
+              
+              for (let k = target.length - 1; k >= i; k--) {
+                const existingValue = Reflect.get(this, k)
+                Reflect.set(this, k + 1, existingValue)
+              }
+              Reflect.set(this, i, rhineProxyItem(value, this))
+              
+              this.emit(i as keyof T, value, undefined as any, ChangeType.Add, event, transaction)
+            })
           }
         })
       }
@@ -164,7 +181,7 @@ export default class RhineVarItem<T> {
           })
         } else if (event instanceof YArrayEvent) {
           const eventTarget = event.target
-          let i = 0
+          let i = -1
           event.delta.forEach(deltaItem => {
             if (deltaItem.retain !== undefined) {
               i += deltaItem.retain

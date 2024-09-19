@@ -11,7 +11,7 @@ const defaultValue = {
     {name: 'peach', number: 3},
   ]
 }
-const state = rhineProxy(defaultValue, 'localhost:6600/room-1')
+const state = rhineProxy(defaultValue, 'localhost:6600/room-1', true)
 
 async function test() {
   
@@ -21,8 +21,9 @@ async function test() {
   })
   
   state.fruits[3] = rhineItem({name: 'banana', number: 9})
-  state.fruits.push({name: 'banana', number: 90})
-  
+  state.fruits.forEach(item => {
+    console.log(item)
+  })
 }
 test()
 
