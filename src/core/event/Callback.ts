@@ -13,11 +13,10 @@ export type Callback<T> = (
 ) => void
 
 export type DeepCallback<T> = (
-  key: YPath,
+  path: YPath,
   value: any,
   oldValue: any,
   type: ChangeType,
-  nativeTarget: Native,
   nativeEvent: YMapEvent<any> | YArrayEvent<any>,
   nativeTransaction: Transaction
 ) => void

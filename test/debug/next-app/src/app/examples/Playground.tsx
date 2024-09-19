@@ -1,24 +1,20 @@
 "use client"
 
 import React from "react";
-import {rhineProxy, rhineItem} from "rhine-var";
+import {rhineProxy} from "rhine-var";
 
 console.log('\n\n=================== Rhine Var Playground ===================\n\n')
 
 const defaultValue = {
-  fruits: [
-    {name: 'apple', number: 4},
-    {name: 'orange', number: 1},
-    {name: 'peach', number: 3},
-  ]
+  fruits: ['apple', 'orange', 'peach']
 }
 const state = rhineProxy(defaultValue, 'localhost:6600/room-1', true)
 
 state.afterSynced(() => {
   
-  for (const fruit of state.fruits) {
-    console.log(fruit.json())
-  }
+  state.fruits[2] = 'apple'
+  
+  console.log(state.fruits[2])
   
 })
 

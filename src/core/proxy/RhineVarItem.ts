@@ -99,13 +99,12 @@ export default class RhineVarItem<T> {
     this.deepSubscribers = []
   }
   
-  emitDeep(path: YPath, value: any, oldValue: any, type: ChangeType, nativeTarget: Native, nativeEvent: YMapEvent<any> | YArrayEvent<any>, nativeTransaction: Transaction) {
-    this.deepSubscribers.forEach(subscriber => subscriber(path, value, oldValue, type, nativeTarget, nativeEvent, nativeTransaction))
+  emitDeep(path: YPath, value: any, oldValue: any, type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any>, nativeTransaction: Transaction) {
+    this.deepSubscribers.forEach(subscriber => subscriber(path, value, oldValue, type, nativeEvent, nativeTransaction))
   }
   
   
   observer = (event: YMapEvent<any> | YArrayEvent<any>, transaction: Transaction) => {}
-  deepObserver = (events: Array<YMapEvent<any> | YArrayEvent<any>>, transaction: Transaction) => {}
   
   // 开始观察当前Native的内容变化
   observe() {
@@ -137,90 +136,52 @@ export default class RhineVarItem<T> {
           if (deltaItem.delete !== undefined) {
             for (let j = 0; j < deltaItem.delete; j++) {
               i++
-              const oldValue = target.get(i)
-              log('Proxy.event: Array delete', i, ':', oldValue, '->', undefined)
+              const oldValue = i in this ? Reflect.get(this, i) : target.get(i)
+              // TODO: When 'oldValue' from 'target: Native' will be undefined, because of the value has been deleted.
+              // Solution 1: Save all property to object, include base type
               
-              Reflect.deleteProperty(this, i)
-              
-              for (let k = i + 1; k < target.length + deltaItem.delete; k++) {
-                const value = Reflect.get(this, k)
-                Reflect.set(this, k - 1, value)
-                Reflect.deleteProperty(this, k)
+              if (isObjectOrArray(oldValue)) {
+                Reflect.deleteProperty(this, i)
+                for (let k = i + 1; k < target.length + deltaItem.delete; k++) {
+                  const value = Reflect.get(this, k)
+                  Reflect.set(this, k - 1, value)
+                  Reflect.deleteProperty(this, k)
+                }
               }
               
-              this.emit(i as keyof T, undefined as any, oldValue, ChangeType.Delete, event, transaction)
+              log('Proxy.event: Array delete', i, ':', oldValue, '->', undefined)
+              this.emit(i as keyof T, undefined as any, oldValue as any, ChangeType.Delete, event, transaction)
             }
           }
           if (deltaItem.insert !== undefined && Array.isArray(deltaItem.insert)) {
             deltaItem.insert.forEach((value) => {
               i++
-              log('Proxy.event: Array add', i, ':', undefined, '->', value)
               
-              for (let k = target.length - 1; k >= i; k--) {
-                const existingValue = Reflect.get(this, k)
-                Reflect.set(this, k + 1, existingValue)
+              if (isObjectOrArray(value)) {
+                for (let k = target.length - 1; k >= i; k--) {
+                  const existingValue = Reflect.get(this, k)
+                  Reflect.set(this, k + 1, existingValue)
+                }
+                Reflect.set(this, i, rhineProxyItem(value, this))
               }
-              Reflect.set(this, i, rhineProxyItem(value, this))
               
-              this.emit(i as keyof T, value, undefined as any, ChangeType.Add, event, transaction)
+              const newValue = i in this ? Reflect.get(this, i) : target.get(i)
+              log('Proxy.event: Array add', i, ':', undefined, '->', newValue)
+              this.emit(i as keyof T, newValue as any, undefined as any, ChangeType.Add, event, transaction)
             })
           }
         })
       }
     }
     
-    this.deepObserver = (events: Array<YMapEvent<any> | YArrayEvent<any>>, transaction: Transaction) => {
-      events.forEach(event => {
-        if (event instanceof YMapEvent) {
-          const eventTarget = event.target
-          event.changes.keys.forEach(({action, oldValue}, key) => {
-            const path = event.path.concat(key)
-            const value = eventTarget.get(key)
-            // log(`Proxy.deepEvent: Map ${action} ${eventTarget} ${path}: ${oldValue} -> ${value}`)
-            this.emitDeep(path, value, oldValue, action as ChangeType, eventTarget, event, transaction)
-          })
-        } else if (event instanceof YArrayEvent) {
-          const eventTarget = event.target
-          let i = -1
-          event.delta.forEach(deltaItem => {
-            if (deltaItem.retain !== undefined) {
-              i += deltaItem.retain
-            }
-            if (deltaItem.delete !== undefined) {
-              for (let j = 0; j < deltaItem.delete; j++) {
-                i++
-                const oldValue = eventTarget.get(i)
-                const path = event.path.concat(i)
-                // log('Proxy.deepEvent: Array delete', event.path, i, ':', oldValue, '->', undefined)
-                this.emitDeep(path, undefined as any, oldValue, ChangeType.Delete, eventTarget, event, transaction)
-              }
-            }
-            if (deltaItem.insert !== undefined) {
-              i += 1
-              const oldValue = eventTarget.get(i)
-              const path = event.path.concat(i)
-              // log('Proxy.deepEvent: Array add', event.path, i, ':', undefined, '->', deltaItem.insert)
-              this.emitDeep(path, deltaItem.insert as any, oldValue, ChangeType.Add, eventTarget, event, transaction)
-            }
-          })
-        }
-      })
-    }
-    
     if (this.observer) {
       target.observe(this.observer)
-    }
-    if (this.deepObserver) {
-      target.observeDeep(this.deepObserver)
     }
   }
   
   unobserve() {
     if (this.observer) {
       this.native.unobserve(this.observer)
-    }
-    if (this.deepObserver) {
-      this.native.unobserveDeep(this.deepObserver)
     }
   }
 }
@@ -258,5 +219,4 @@ export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'observer',
   'observe',
   'unobserve',
-  'deepObserver',
 ])
