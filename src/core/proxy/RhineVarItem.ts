@@ -112,7 +112,8 @@ export default class RhineVarItem<T> {
     if (target instanceof YMap) {
       this.observer = (event, transaction) => {
         event.changes.keys.forEach(({action, oldValue}, key) => {
-          log('Proxy.event: Map', action, key, ':', oldValue, '->', target.get(key))
+          // TODO: When 'oldValue' is not BaseType, it will give Native but need ProxiedRhineVarItem
+          // Solution 1: Save all property to RhineVar, include BaseType
           
           let value = target.get(key)
           if (action === 'add' || action === 'update') {
@@ -123,7 +124,9 @@ export default class RhineVarItem<T> {
             Reflect.deleteProperty(this, key)
           }
           
-          this.emit(key as keyof T, target.get(key), oldValue, action as ChangeType, event, transaction)
+          const newValue = key in this ? Reflect.get(this, key) : value
+          log('Proxy.event: Map', action, key + ':', oldValue, '->', newValue)
+          this.emit(key as keyof T, value, oldValue, action as ChangeType, event, transaction)
         })
       }
     } else if (target instanceof YArray){
@@ -138,7 +141,7 @@ export default class RhineVarItem<T> {
               i++
               const oldValue = i in this ? Reflect.get(this, i) : target.get(i)
               // TODO: When 'oldValue' from 'target: Native' will be undefined, because of the value has been deleted.
-              // Solution 1: Save all property to object, include base type
+              // Solution 1: Save all property to RhineVar, include BaseType
               
               if (isObjectOrArray(oldValue)) {
                 Reflect.deleteProperty(this, i)
@@ -149,7 +152,7 @@ export default class RhineVarItem<T> {
                 }
               }
               
-              log('Proxy.event: Array delete', i, ':', oldValue, '->', undefined)
+              log('Proxy.event: Array delete', i + ':', oldValue, '->', undefined)
               this.emit(i as keyof T, undefined as any, oldValue as any, ChangeType.Delete, event, transaction)
             }
           }
