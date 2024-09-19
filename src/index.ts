@@ -1,4 +1,4 @@
-import {rhineProxy, rhineProxyItem} from "@/core/proxy/Proxy";
+import {rhineProxy, rhineProxyItem, rhineItem} from "@/core/proxy/Proxy";
 import RhineVarItem from "@/core/proxy/RhineVarItem";
 import {StoredRhineVarItem, ProxiedRhineVar, RecursiveCrossRhineVarItem} from "@/core/proxy/ProxiedRhineVar";
 import WebsocketRhineConnector from "@/core/connector/WebsocketRhineConnector";
@@ -13,6 +13,7 @@ export {
   StoredRhineVarItem,
   ProxiedRhineVar,
   RecursiveCrossRhineVarItem,
+  rhineItem,
   useRhine,
   useSynced,
 }

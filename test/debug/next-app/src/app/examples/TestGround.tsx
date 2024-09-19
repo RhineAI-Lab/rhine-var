@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react";
-import {rhineProxy} from "rhine-var";
+import {rhineProxy, rhineItem} from "rhine-var";
 
 
 const defaultValue = {
@@ -14,8 +14,18 @@ const defaultValue = {
 const state = rhineProxy(defaultValue, 'localhost:6600/room-1')
 
 async function test() {
+  
   await state.waitSynced()
-  console.log(state.fruits[0].root().json())
+  state.subscribeDeep((value, key, oldValue, type, nativeEvent, nativeTransaction) => {
+  
+  })
+  
+  console.log('### SET')
+  state.fruits[0].name = 'aaa'
+  
+  // console.log('### PUSH')
+  // state.fruits[3] = rhineItem({name: 'banana', number: 9})
+  
 }
 test()
 
