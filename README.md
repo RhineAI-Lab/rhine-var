@@ -21,14 +21,18 @@ Developing collaborative applications has never been this easy.
 ### Concise and Efficient Syntax Design
 RhineVar draws inspiration from the design philosophy of the Valtio state management library, `significantly reducing the learning curve`. Allowing developers to handle data seamlessly, as if `working with standard variables`.
 
-### Almost No Size Limit
-There is almost no upper limit. It can be an `Extremely Complex and Large Data Structure` to accommodate all the data for a large project. But at the very least, it is `a JavaScript Object`.
-
 ### Comprehensive Type Support
 RhineVar offers full type hints and checks, ensuring `Precise Code Completion` and `Static Analysis` during development. This not only improves the development experience but also reduces potential errors, making it especially `suitable for TypeScript projects`, enhancing code safety and reliability.
 
 ### Distributed Real-time Collaboration Algorithm
 The underlying collaboration algorithm of RhineVar is `Powered By the Robust Yjs Library`. Using the CRDT (Conflict-free Replicated Data Type) algorithm, it ensures eventual consistency even in multi-user and offline environments.
+
+### Almost No Structural Complexity Limitations
+There is almost no upper limit. It can be an `Extremely Complex and Large Data Structure` to accommodate all the data for a large project. But at the very least, it is `a JavaScript Object`.
+
+<br/>
+<details>
+<summary><b>More Advantages of RHINE-VAR</b></summary>
 
 ### High Performance with Low Bandwidth Requirements
 The data synchronization and conflict resolution mechanism is highly efficient. Leveraging Yjs's `Incremental Update Mechanism`, only necessary data changes are transmitted rather than the entire document, making it ideal for bandwidth-constrained environments and reducing unnecessary data transfers.
@@ -53,6 +57,8 @@ RhineVar offers an extensive event subscription and listening system with `Intui
 
 ### Fully Open Source
 This is a fully open-source project, licensed under the `Apache-2.0 license` on GitHub. You are `Free to use it for both Commercial and Non-commercial Projects`, and it allows modification and distribution, as long as the original copyright notice is retained.
+
+</details>
 
 <br/>
 
