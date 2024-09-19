@@ -7,7 +7,6 @@ import {ChangeType} from "@/core/event/ChangeType";
 import {Callback, DeepCallback} from "@/core/event/Callback";
 import {StoredRhineVarItem} from "@/core/proxy/ProxiedRhineVar";
 import RhineVar from "@/core/proxy/RhineVar";
-import {YEvent} from "yjs/dist/src/utils/YEvent";
 
 
 export default class RhineVarItem<T> {
@@ -104,8 +103,8 @@ export default class RhineVarItem<T> {
     // console.log('emitDeep', path, value)
     if (!parent) return undefined
     for (let key in this.parent) {
-      if (RHINE_VAR_PREDEFINED_PROPERTIES.has(key)) continue
-      if (Reflect.get(this.parent, key).origin == this) {
+      if (RHINE_VAR_PREDEFINED_PROPERTIES.has(key)) continue;
+      if (Reflect.get(this.parent, key)?.origin === this) {
         if (!isNaN(Number(key))) {
           key = Number(key) as any
         }
@@ -123,22 +122,26 @@ export default class RhineVarItem<T> {
     if (target instanceof YMap) {
       this.observer = (event, transaction) => {
         event.changes.keys.forEach(({action, oldValue}, key) => {
-          // TODO: When 'oldValue' is not BaseType, it will give Native but need ProxiedRhineVarItem
-          // Solution 1: Save all property to RhineVar, include BaseType
+          if (isObjectOrArray(oldValue)) {
+            oldValue = Reflect.get(this, key)
+            // TODO: oldValue 中的内容 从 Native 移除后 无法通过 json() 获取具体值
+          }
           
           let value = target.get(key)
           if (action === 'add' || action === 'update') {
             if (isObjectOrArray(value)) {
               Reflect.set(this, key, rhineProxyItem(value, this))
+            } else {
+              Reflect.set(this, key, value)
             }
           } else if (action === 'delete') {
             Reflect.deleteProperty(this, key)
           }
           
           const newValue = key in this ? Reflect.get(this, key) : value
-          log('Proxy.event: Map', action, key + ':', oldValue, '->', newValue)
-          this.emit(key as keyof T, value, oldValue, action as ChangeType, event, transaction)
-          this.emitDeep([key], value, oldValue, action as ChangeType, event, transaction)
+          log('Proxy.event: Map', action, key + ':', oldValue, '->', newValue.json())
+          this.emit(key as keyof T, newValue, oldValue, action as ChangeType, event, transaction)
+          this.emitDeep([key], newValue, oldValue, action as ChangeType, event, transaction)
         })
       }
     } else if (target instanceof YArray){
@@ -152,16 +155,12 @@ export default class RhineVarItem<T> {
             for (let j = 0; j < deltaItem.delete; j++) {
               i++
               const oldValue = i in this ? Reflect.get(this, i) : target.get(i)
-              // TODO: When 'oldValue' from 'target: Native' will be undefined, because of the value has been deleted.
-              // Solution 1: Save all property to RhineVar, include BaseType
               
-              if (isObjectOrArray(oldValue)) {
-                Reflect.deleteProperty(this, i)
-                for (let k = i + 1; k < target.length + deltaItem.delete; k++) {
-                  const value = Reflect.get(this, k)
-                  Reflect.set(this, k - 1, value)
-                  Reflect.deleteProperty(this, k)
-                }
+              Reflect.deleteProperty(this, i)
+              for (let k = i + 1; k < target.length + deltaItem.delete; k++) {
+                const value = Reflect.get(this, k)
+                Reflect.set(this, k - 1, value)
+                Reflect.deleteProperty(this, k)
               }
               
               log('Proxy.event: Array delete', i + ':', oldValue, '->', undefined)
@@ -173,12 +172,14 @@ export default class RhineVarItem<T> {
             deltaItem.insert.forEach((value) => {
               i++
               
+              for (let k = target.length - 1; k >= i; k--) {
+                const existingValue = Reflect.get(this, k)
+                Reflect.set(this, k + 1, existingValue)
+              }
               if (isObjectOrArray(value)) {
-                for (let k = target.length - 1; k >= i; k--) {
-                  const existingValue = Reflect.get(this, k)
-                  Reflect.set(this, k + 1, existingValue)
-                }
                 Reflect.set(this, i, rhineProxyItem(value, this))
+              } else {
+                Reflect.set(this, i, value)
               }
               
               const newValue = i in this ? Reflect.get(this, i) : target.get(i)
@@ -221,16 +222,18 @@ export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'subscribe',
   'unsubscribe',
   'unsubscribeAll',
-  'keyListeners',
+  
+  'keySubscribers',
   'subscribeKey',
   'unsubscribeKey',
   'unsubscribeAllKey',
-  'emit',
   
   'deepSubscribers',
   'subscribeDeep',
   'unsubscribeDeep',
   'unsubscribeAllDeep',
+  
+  'emit',
   'emitDeep',
   
   'observer',

@@ -2,22 +2,21 @@
 
 import React from "react";
 import {rhineProxy} from "rhine-var";
-import {ProxiedRhineVarItem} from "../../../../../../src";
 
 console.log('\n\n=================== Rhine Var Playground ===================\n\n')
 
 const defaultValue = {
-  people: ['Henry']
+  person: {name: 'Aaa', age: 20}
 }
 const state = rhineProxy(defaultValue, 'localhost:6600/room-1', true)
 
 state.afterSynced(() => {
   
   state.subscribeDeep((path, value, oldValue) => {
-    console.log('deep change:', path, value, '\n\nfrom:', oldValue)
+    console.log(path, value, oldValue)
   })
   
-  state.people[0] = 'Kitty'
+  state.person = {name: 'B', age: 0} as any
   
 })
 

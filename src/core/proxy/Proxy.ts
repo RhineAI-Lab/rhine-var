@@ -86,6 +86,8 @@ export function rhineProxyItem<T extends object>(
     let key = keyString as keyof T
     if (isNative(value)) {
       Reflect.set(object, key, rhineProxyItem<T>(value, object))
+    } else {
+      Reflect.set(object, key, value)
     }
   })
   
@@ -120,9 +122,6 @@ export function rhineProxyItem<T extends object>(
       
       const descriptor = proxyGetOwnPropertyDescriptor(proxy, p)
       if (descriptor !== undefined) return descriptor.value
-      
-      let result = nativeGet(object.native, p)
-      if (result !== undefined) return result
       
       if (object.native instanceof YArray) {
         if (typeof p === 'string') {
