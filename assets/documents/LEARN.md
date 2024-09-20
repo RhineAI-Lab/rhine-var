@@ -25,7 +25,9 @@ function Counter() {
 }
 ```
 
-When building a collaborative application using RHINE-VAR, typically, there will only be a single shared RhineVar object in your project. It can be a complex and large JSON data structure to store all the collaborative information of your project.
+When building a collaborative application using RHINE-VAR, typically, there will only be a single shared RhineVar object in your project.
+
+It can be a complex and large JSON data structure to store all the collaborative information of your project.
 
 ## rhineProxy
 
@@ -39,8 +41,8 @@ function rhineProxy<T>(defaultValue, connector, overwrite)
 
 | Parameter           | Type                       | Default  | Description                                                                 |
 |--------------|--------------------------|------|--------------------------------------------------------------------|
-| defaultValue | T                        | Required  | The default value. <br/>If there is no data for this room on the server, this default value is used as the project's initial value. <br/>Note: This value will also be returned temporarily before the first connection to the server is established. |
-| connector    | RhineConnector \| string | Required  | The connector. <br/>When a string is passed, a WebSocket connection is automatically created. The default protocol is ws://. <br/>For more information on the server, see below. |
+| defaultValue | T                        |   | The default value. <br/>If there is no data for this room on the server, this default value is used as the project's initial value. <br/>Note: This value will also be returned temporarily before the first connection to the server is established. |
+| connector    | RhineConnector \| string |   | The connector. <br/>When a string is passed, a WebSocket connection is automatically created. The default protocol is ws://. <br/>For more information on the server, see below. |
 | overwrite    | boolean                  | false | Overwrite mode. <br/>Even if there is data on the server, the default value will overwrite the server data. This is mainly used for debugging purposes.  |
 | return       | RhineVar\<T\>                 |  | The root RhineVar collaborative variable object, which contains not only collaborative data but also connection-related features.  |
 
@@ -57,7 +59,7 @@ function useRhine<T>(proxy)
 
 | Parameter           | Type                           | Default | Description                               |
 |--------------|------------------------------|----|----------------------------------|
-| proxy | RhineVar\<T\>  | Required | The RhineVar collaborative variable that needs to subscribe for updates, or any node inside it. |
+| proxy | RhineVar\<T\>  |  | The RhineVar collaborative variable that needs to subscribe for updates, or any node inside it. |
 | return       | Snapshot\<RhineVar\<T\>>         |    | The snapshot corresponding to the RhineVar.
 
 Note: Do not operate on the returned snapshot. The snapshot is only used to read data in React's JSX. All other operations (such as assigning values or subscriptions) should be done on the original RhineVar object.

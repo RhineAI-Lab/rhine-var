@@ -39,8 +39,8 @@ function rhineProxy<T>(defaultValue, connector, overwrite)
 
 | 参数           | 类型                       | 默认值  | 描述                                                                 |
 |--------------|--------------------------|------|--------------------------------------------------------------------|
-| defaultValue | T                        | 必填  | 默认值。<br/>服务端没有该房间号的数据时，使用该默认值作为项目初始值。 <br/>附：还未初次连接到服务器时，也会暂时返回该值。 |
-| connector    | RhineConnector \| string | 必填  | 连接器。<br/>传入字符串时，自动创建 Websocket 连接。默认协议 `ws://`。<br/>更多服务端相关信息请见下文。 |
+| defaultValue | T                        |   | 默认值。<br/>服务端没有该房间号的数据时，使用该默认值作为项目初始值。 <br/>附：还未初次连接到服务器时，也会暂时返回该值。 |
+| connector    | RhineConnector \| string |   | 连接器。<br/>传入字符串时，自动创建 Websocket 连接。默认协议 `ws://`。<br/>更多服务端相关信息请见下文。 |
 | overwrite    | boolean                  | false | 覆盖模式。<br/>即使服务器中有数据，也使用默认值覆盖服务器中的数据。一般用于调试期间。                      |
 | return       | RhineVar\<T\>                 |  | RhineVar 协同变量根对象，除协同外还含有连接相关功能。                                    |
 
@@ -57,7 +57,7 @@ function useRhine<T>(proxy)
 
 | 参数           | 类型                           | 默认值 | 描述                               |
 |--------------|------------------------------|----|----------------------------------|
-| proxy | RhineVar\<T\>  | 必填 | 需要订阅更新的 RhineVar 协同变量，或其内部的任意节点。 |
+| proxy | RhineVar\<T\>  |  | 需要订阅更新的 RhineVar 协同变量，或其内部的任意节点。 |
 | return       | Snapshot\<RhineVar\<T\>>         |    | RhineVar 所对应的快照。                 |
 
 注意：请勿操作返回的快照，快照仅用于在 React 的 XML 中读取数据。其他所有操作（如赋值或订阅等）请操作原 RhineVar 对象。
