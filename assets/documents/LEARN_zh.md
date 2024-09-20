@@ -124,55 +124,41 @@ group.people[1].subscribe(() => {
 ```typescript
 // 和 JavaScript 中一样 任意读取或操作他
 console.log('第一个人的名字:', group.people[0].name)
-/**
- * 第一个人的名字: Henry
- */
+// LOG: 第一个人的名字: Henry
 
 console.log('修改 group 的 id 为 group-2')
 group.id = 'group-2'
-/**
- * 修改 group 的 id 为 group-2
- * group.subscribeKey id update :  group-1 -> group-2
- * group.subscribeDeep ['id'] update :  group-1 -> group-2
- */
+// LOG: 修改 group 的 id 为 group-2
+// LOG: group.subscribeKey id update :  group-1 -> group-2
+// LOG: group.subscribeDeep ['id'] update :  group-1 -> group-2
 
 console.log('删除第一个的 description 属性')
 delete group.people[0].description
-/**
- * 删除第一个的 description 属性
- * group.subscribeDeep ['people', 0, 'description'] delete :  A young man. -> undefined
- */
+// LOG: 删除第一个的 description 属性
+// LOG: group.subscribeDeep ['people', 0, 'description'] delete :  A young man. -> undefined
 ```
 
 ```typescript
 // 像操作 Array 一样操作 RhineVar
 console.log('当前 group 中的人数为:', group.people.length)
-/**
- * 当前 group 中的人数为: 2
- */
+// LOG: 当前 group 中的人数为: 2
 
 console.log('添加一个新成员 Jessica')
 group.people.push( {name: 'Jessica', age: 19} )
-/**
- * 添加一个新成员 Jessica
- * group.subscribeDeep ['people', 2] add :  undefined -> Proxy(RhineVarItem){xxx}
- */
+// LOG: 添加一个新成员 Jessica
+// LOG: group.subscribeDeep ['people', 2] add :  undefined -> Proxy(RhineVarItem){xxx}
 ```
 
 更多信息
 ```typescript
 // 通过 .json() 更清晰的打印无代理信息的数据
 console.log('当前 people 数据:', group.people.json())
-/**
- * 当前 people 数据: [{…}, {…}, {…}]
- */
+// LOG: 当前 people 数据: [{…}, {…}, {…}]
 
 // 注意，在 TypeScript 中通过 “ = ” 赋值一个对象时，可能出现类型校验不通过情况，可通过 as 修改类型
 group.people[1] = {name: 'Jessica', age: 19} as ProxiedRhineVarItem<Person>  // 当然你也可以直接使用 “ as any ”
-/** 
- * group.subscribeDeep ['people', 1] delete :  {name: 'Emily', age: 22} -> undefined
- * group.subscribeDeep ['people', 1] add :  undefined -> Proxy(RhineVarItem){}
- */
+// LOG: group.subscribeDeep ['people', 1] delete :  {name: 'Emily', age: 22} -> undefined
+// LOG: group.subscribeDeep ['people', 1] add :  undefined -> Proxy(RhineVarItem){}
 ```
 
 <br/>

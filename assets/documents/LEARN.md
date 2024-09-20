@@ -59,7 +59,6 @@ function useRhine<T>(proxy)
 |--------------|------------------------------|----|----------------------------------|
 | proxy | RhineVar\<T\>  | Required | The RhineVar collaborative variable that needs to subscribe for updates, or any node inside it. |
 | return       | Snapshot\<RhineVar\<T\>>         |    | The snapshot corresponding to the RhineVar.
-|
 
 Note: Do not operate on the returned snapshot. The snapshot is only used to read data in React's JSX. All other operations (such as assigning values or subscriptions) should be done on the original RhineVar object.
 
@@ -125,17 +124,13 @@ Operation
 ```typescript
 // Access or modify it just like in JavaScript
 console.log('The first person\'s name:', group.people[0].name)
-/**
- * The first person's name: Henry
- */
+// LOG: The first person's name: Henry
 
 console.log('Changing group id to group-2')
 group.id = 'group-2'
-/**
- * Changing group id to group-2
- * group.subscribeKey id update :  group-1 -> group-2
- * group.subscribeDeep ['id'] update :  group-1 -> group-2
- */
+// LOG: Changing group id to group-2
+// LOG: group.subscribeKey id update :  group-1 -> group-2
+// LOG: group.subscribeDeep ['id'] update :  group-1 -> group-2
 
 console.log('Deleting the description property of the first person')
 delete group.people[0].description
@@ -148,32 +143,24 @@ delete group.people[0].description
 ```typescript
 // Operate on a RhineVar like an Array
 console.log('Current number of people in group:', group.people.length)
-/**
- * Current number of people in group: 2
- */
+// LOG: Current number of people in group: 2
 
 console.log('Adding a new member, Jessica')
 group.people.push({name: 'Jessica', age: 19})
-/**
- * Adding a new member, Jessica
- * group.subscribeDeep ['people', 2] add :  undefined -> Proxy(RhineVarItem){xxx}
- */
+// LOG: Adding a new member, Jessica
+// LOG: group.subscribeDeep ['people', 2] add :  undefined -> Proxy(RhineVarItem){xxx}
 ```
 
 Additional
 ```typescript
 // Use .json() to print data without proxy information more clearly
 console.log('Current people data:', group.people.json())
-/**
- * Current people data: [{…}, {…}, {…}]
- */
+// LOG: Current people data: [{…}, {…}, {…}]
 
 // Note, when assigning a new object with " = " in TypeScript, there may be type-checking issues. You can use "as" to modify the type.
 group.people[1] = {name: 'Jessica', age: 19} as ProxiedRhineVarItem<Person>  // You can also use "as any"
-/**
- * group.subscribeDeep ['people', 1] delete :  {name: 'Emily', age: 22} -> undefined
- * group.subscribeDeep ['people', 1] add :  undefined -> Proxy(RhineVarItem){}
- */
+// LOG: group.subscribeDeep ['people', 1] delete :  {name: 'Emily', age: 22} -> undefined
+// LOG: group.subscribeDeep ['people', 1] add :  undefined -> Proxy(RhineVarItem){}
 ```
 
 <br/>
