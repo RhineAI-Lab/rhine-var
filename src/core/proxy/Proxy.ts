@@ -22,11 +22,11 @@ export const DEFAULT_PROTOCOL_LIST = PROTOCOL_LIST[0]
 
 
 export function rhineProxy<T extends object>(
-  data: T | Native,
+  defaultValue: T | Native,
   connector: WebsocketRhineConnector | string,
   overwrite: boolean | number = false
 ): ProxiedRhineVar<T> {
-  let target: Native = ensureNative<T>(data)
+  let target: Native = ensureNative<T>(defaultValue)
   
   if (connector) {
     if (typeof connector === 'string') {

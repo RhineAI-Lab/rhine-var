@@ -12,6 +12,14 @@
 
 <br/>
 
+### **Document:** [LEARN_zh.md](assets/documents/LEARN_zh.md)
+
+### **Github:** [https://github.com/RhineAI-Lab/rhine-var](https://github.com/RhineAI-Lab/rhine-var)
+
+### **Npm:** [https://www.npmjs.com/package/rhine-var](https://www.npmjs.com/package/rhine-var)
+
+<br/>
+
 ## 为什么选择 RHINE-VAR ?
 
 <div style="height: 6px"></div>
@@ -93,43 +101,47 @@ yarn add rhine-var
 ## Usage
 
 ```typescript jsx
-const defaultValue = {value: 0}
-const count = rhineProxy(defaultValue, 'localhost:6600/room-0')
+const defaultValue = {count: 0}
+const state = rhineProxy(defaultValue, 'localhost:6600/room-id')
 
 function Counter() {
   
-  const countSnap = useRhine(count)
+  const snap = useRhine(state)
   
   return <div>
-    <button onClick={() => count.value-- }> - 1 </button>
-    <span>{countSnap.value}</span>
-    <button onClick={() => count.value++ }> + 1 </button>
+    <button onClick={() => state.count-- }> - 1 </button>
+    <span>{snap.count}</span>
+    <button onClick={() => state.count++ }> + 1 </button>
   </div>
 }
 ```
-### Default Value
-
-当服务端无信息时，将使用 DefaultValue 作为默认内容。未连接到服务器时，也将根据默认值进行返回。
 
 ### Room ID
 
 一个房间号对应一个状态变量, 加入到一个房间中的用户会参与到多人协同中。
 
-关于服务端，下方将会提及。
+### Default Value
+
+当服务端无信息时，将使用 DefaultValue 作为项目默认内容。
 
 ### rhineProxy
 
-用于创建一个 `RhineVariable` 它的值会和房间中的其他人共享并同步。
+用于创建一个 `RhineVar 对象` 它的属性的值会和房间中的其他人共享并同步。
 
-你可以像操作 JavaScript 中的普通变量一样直接随意操作它。
+你可以像操作 `JavaScript` 中的普通变量一样直接随意操作它。
 
-它内部的数据结构可以很复杂，但至少是 JavaScript 中的一个 object。
+他内部数据结构可以很复杂，但至少需要是 `JavaScript` 中的一个 `object`。
 
 ### useRhine
 
-一个 `React` 的 `Hook` 函数. 它将为 `RhineVariable` 创建一个快照, 用于自动热重载更新页面。当任何人对值做出修改时，它会把最新的值立刻更新到所有人的屏幕上。
+一个 `React` 的 `Hook` 函数. 它将为 `RhineVariable` 创建一个快照, 用于自动更新页面。
 
-只有页面需要数据的时候使用 `useRhine` 创造的快照。在其它操作，例如赋值时，请操作原来的 `RhineVariable`。
+当任何人对值做出修改时，它会把最新的值立刻更新到所有人的屏幕上。
+
+<br/>
+
+#### [点击查看 完整文档 LEARN_zh.md](assets/documents/LEARN_zh.md)
+
 
 <br/>
 
@@ -141,7 +153,7 @@ cd test/server
 yarn install
 yarn start
 ```
-默认运行在 `端口 6600`, 你可以通过连接 `ws://localhost:6600/<room-id>` 连接它，`<room-id>` 可以是任意文本，一个房间号对应一个 `RhineVariable`。
+默认运行在 `端口 6600`, 你可以通过连接 `ws://localhost:6600/<room-id>` 连接它，`<room-id>` 可以是任意文本，一个房间号对应一个 `RhineVar 对象`。
 
 更多服务端开发信息请参考: [https://docs.yjs.dev/ecosystem/connection-provider/y-websocket](https://docs.yjs.dev/ecosystem/connection-provider/y-websocket)
 
@@ -149,9 +161,12 @@ yarn start
 
 ## Develop
 
+欢迎参与 RHINE-VAR 库的共同开发。本库内有基本的服务端，和调试用 NextJS 项目，可以满足大部分开发过程基本需求。
+
 ```bash
 # 开始 typescript 自动构建更新
 yarn run watch
+yarn link
 
 # 开启临时服务端
 cd test/server
@@ -160,9 +175,12 @@ yarn start
 
 # 开始 NextJS 的热环境调试测试项目
 cd test/debug/next-app
+yarn link rhine-var  # 从本地目录安装 rhine-var 以用于实时开发
 yarn install
 yarn start
 # 浏览器访问 http://localhost:3000
+
 ```
 
 <br/>
+

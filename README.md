@@ -14,6 +14,12 @@ Developing collaborative applications has never been this easy.
 
 <br/>
 
+### **Document:** [LEARN.md](assets/documents/LEARN.md)
+
+### **Github:** [https://github.com/RhineAI-Lab/rhine-var](https://github.com/RhineAI-Lab/rhine-var)
+
+### **Npm:** [https://www.npmjs.com/package/rhine-var](https://www.npmjs.com/package/rhine-var)
+
 <br/>
 
 ## Why Choose RHINE-VAR ?
@@ -98,27 +104,29 @@ function Counter() {
   </div>
 }
 ```
+
+### Room ID
+
+&lt;room-id&gt; can be any text, with each Room ID corresponding to a RhineVar, and users who join with the same Room ID will experience real-time multi-user collaboration.
+
 ### Default Value
 
 When the room does not exist on the server, a default value will be used to create the room. If not connected to the server, data from the default value will also be returned.
 
-### Room ID
-
-&lt;room-id&gt; can be any text, with each Room ID corresponding to a RhineVariable, and users who join with the same Room ID will experience real-time multi-user collaboration.
-
-Regarding the server-side, it will be mentioned below.
-
 ### rhineProxy
 
-Create a `RhineVariable` that anyone in the room can directly modify, and the value will be synchronized to everyone real-time.
+Create a `RhineVar Object` that anyone in the room can directly modify, and the value will be synchronized to everyone real-time.
 
 Its data structure `can be quite complex`, but `at least`, it is `an object` in JavaScript.
 
 ### useRhine
 
-A hook for use with React. It creates a snapshot of a `RhineVariable`, and whenever someone modifies this value, the information will be `updated on everyone's screen` in real-time.
+A hook for use with React. It creates a snapshot of a `RhineVar Object`, and whenever someone modifies this value, the information will be `updated on everyone's screen` in real-time.
 
-Use snapshot only when data needs to be displayed on the React page. For other operations, such as modifying values, please use RhineVariable itself.
+<br/>
+
+#### [Click to view the full document: LEARN.md](assets/documents/LEARN.md)
+
 
 <br/>
 
@@ -141,6 +149,7 @@ More information about server develop: [https://docs.yjs.dev/ecosystem/connectio
 ```bash
 # start watch and build by typescript
 yarn run watch
+yarn link
 
 # start a easy websocket server
 cd test/server
@@ -149,6 +158,7 @@ yarn start
 
 # start a nextjs playground for develop debug
 cd test/debug/next-app
+yarn link rhine-var  # Install rhine-var from local
 yarn install
 yarn start
 # Open http://localhost:3000 in browser

@@ -8,6 +8,7 @@ export default function useRhine<T extends object>(proxy: ProxiedRhineVar<T>) {
   
   useEffect(() => {
     proxy.subscribe(() => {
+      // TODO: 提高性能
       setState(proxy.json() as T)
     })
     proxy.connector?.addSyncedListener(() => {
