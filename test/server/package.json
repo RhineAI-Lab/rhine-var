@@ -1,8 +1,8 @@
 {
   "name": "rhine-var-easy-server",
   "scripts": {
-    "start-with-environment": "$Env:YPERSISTENCE=\"./dbDir\"; node src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "start-with-environment": "$Env:YPERSISTENCE=\"./dbDir\"; node src/server.js"
   },
   "dependencies": {
     "http": "^0.0.1-security",

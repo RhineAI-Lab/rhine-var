@@ -160,7 +160,7 @@ yarn start
 cd test/debug/next-app
 yarn link rhine-var  # Install rhine-var from local
 yarn install
-yarn start
+yarn run dev
 # Open http://localhost:3000 in browser
 ```
 
