@@ -4,7 +4,7 @@ import {ProxiedRhineVar} from "@/core/proxy/ProxiedRhineVar";
 
 export default function useRhine<T extends object>(proxy: ProxiedRhineVar<T>) {
 
-  const [state, setState] = useState<T>(proxy.json() as T)
+  const [state, setState] = useState<T>(proxy?.json() as T)
   
   useEffect(() => {
     proxy.subscribe(() => {

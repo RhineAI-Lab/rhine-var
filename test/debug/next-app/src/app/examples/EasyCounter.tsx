@@ -1,20 +1,18 @@
-
 import {rhineProxy, useRhine} from 'rhine-var'
 
-const defaultValue = {value: 0}
-const count = rhineProxy(defaultValue, 'localhost:6600/room-0')
+const defaultValue = {count: 0}
+const url = 'wss://rhineai.com/ws/room-0'
+const state = rhineProxy(defaultValue, url, false)
 
 function Counter() {
   
-  const countSnap = useRhine(count)
+  const snap = useRhine(state)
   
   return <div className='page'>
-    <button onClick={() => count.value-- }> - 1 </button>
-    <span>{countSnap.value}</span>
-    <button onClick={() => count.value++ }> + 1 </button>
+    <button onClick={() => state.count-- }> - 1 </button>
+    <span>{snap.count}</span>
+    <button onClick={() => state.count++ }> + 1 </button>
   </div>
 }
-
-
 
 export default Counter

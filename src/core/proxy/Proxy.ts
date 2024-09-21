@@ -59,6 +59,8 @@ export function rhineProxy<T extends object>(
           syncedValue.forEach((value: any, key: string) => {
             if (isNative(value)) {
               Reflect.set(object.origin, key, rhineProxyItem(value, object))
+            } else {
+              Reflect.set(object.origin, key, value)
             }
           })
         } else {
@@ -138,12 +140,7 @@ export function rhineProxyItem<T extends object>(
       
       value = ensureRhineVar(value, object)
       
-      let result = false
-      if (isObjectOrArray(value)) {
-        result = nativeSet(object.native, p, value.native)
-      } else {
-        result = nativeSet(object.native, p, value)
-      }
+      let result = nativeSet(object.native, p, value)
       if (!result) console.error('Failed to set value')
       return result
     },

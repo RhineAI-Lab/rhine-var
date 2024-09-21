@@ -173,12 +173,12 @@ export default class RhineVarItem<T> {
           if (action === 'add' || action === 'update') {
             value = target.get(key)
             if (isObjectOrArray(value)) {
-              Reflect.set(this, key, rhineProxyItem(value, this))
+              Reflect.set(this.origin, key, rhineProxyItem(value, this))
             } else {
-              Reflect.set(this, key, value)
+              Reflect.set(this.origin, key, value)
             }
           } else if (action === 'delete') {
-            Reflect.deleteProperty(this, key)
+            Reflect.deleteProperty(this.origin, key)
           }
           
           const newValue = key in this ? Reflect.get(this, key) : value
@@ -202,11 +202,11 @@ export default class RhineVarItem<T> {
                 oldValue = oldValue.frozenJson()
               }
               
-              Reflect.deleteProperty(this, i)
+              Reflect.deleteProperty(this.origin, i)
               for (let k = i + 1; k < target.length + deltaItem.delete; k++) {
                 const value = Reflect.get(this, k)
-                Reflect.set(this, k - 1, value)
-                Reflect.deleteProperty(this, k)
+                Reflect.set(this.origin, k - 1, value)
+                Reflect.deleteProperty(this.origin, k)
               }
               
               log('Proxy.event: Array delete', i + ':', oldValue, '->', undefined)
@@ -220,12 +220,12 @@ export default class RhineVarItem<T> {
               
               for (let k = target.length - 1; k >= i; k--) {
                 const existingValue = Reflect.get(this, k)
-                Reflect.set(this, k + 1, existingValue)
+                Reflect.set(this.origin, k + 1, existingValue)
               }
               if (isObjectOrArray(value)) {
-                Reflect.set(this, i, rhineProxyItem(value, this))
+                Reflect.set(this.origin, i, rhineProxyItem(value, this))
               } else {
-                Reflect.set(this, i, value)
+                Reflect.set(this.origin, i, value)
               }
               
               const newValue = i in this ? Reflect.get(this, i) : target.get(i)
