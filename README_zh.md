@@ -163,23 +163,26 @@ yarn start
 
 欢迎参与 RHINE-VAR 库的共同开发。本库内有基本的服务端，和调试用 NextJS 项目，可以满足大部分开发过程基本需求。
 
+
+### 准备工作 仅初次使用时需执行
 ```bash
-# 开始 typescript 自动构建更新
+# 安装依赖
+yarn install
+# 安装 NextJs 环境调试项目的依赖
+yarn run install-next
+# 链接本库到 NextJs 环境调试项目
+yarn run link-next
+```
+
+### 开始调试
+```bash
+# 启用 typescript 实时编译
 yarn run watch
-yarn link
-
-# 开启临时服务端
-cd test/server
-yarn install
-yarn start
-
-# 开始 NextJS 的热环境调试测试项目
-cd test/debug/next-app
-yarn link rhine-var  # 从本地目录安装 rhine-var 以用于实时开发
-yarn install
-yarn start
-# 浏览器访问 http://localhost:3000
-
+# 启用临时本地服务端 默认端口6600 
+yarn run server
+# 启动 NextJs 环境调试项目 默认端口6700
+yarn run next
+# 浏览器将跳转至 http://localhost:6700
 ```
 
 <br/>

@@ -146,22 +146,25 @@ More information about server develop: [https://docs.yjs.dev/ecosystem/connectio
 
 ## Develop
 
+### Preparation (Only needed for the first-time setup)
 ```bash
-# start watch and build by typescript
+# Install dependencies
+yarn install
+# Install dependencies for the NextJs environment debugging project
+yarn run install-next
+# Link this library to the NextJs environment debugging project
+yarn run link-next
+```
+
+### Start Debugging
+```bash
+# Enable real-time TypeScript compilation
 yarn run watch
-yarn link
-
-# start a easy websocket server
-cd test/server
-yarn install
-yarn start
-
-# start a nextjs playground for develop debug
-cd test/debug/next-app
-yarn link rhine-var  # Install rhine-var from local
-yarn install
-yarn run dev
-# Open http://localhost:3000 in browser
+# Start the temporary local server, default port is 6600
+yarn run server
+# Start the NextJs environment debugging project, default port is 6700
+yarn run next
+# The browser will navigate to http://localhost:6700
 ```
 
 <br/>
