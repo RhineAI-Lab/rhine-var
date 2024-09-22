@@ -10,7 +10,7 @@
 ## 最简使用案例
 
 ```typescript jsx
-const defaultValue = {value: 0}
+const defaultValue = {count: 0}
 const url = 'ws://localhost:6600/room-0'
 
 const state = rhineProxy(defaultValue, url)

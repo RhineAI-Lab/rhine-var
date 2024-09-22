@@ -12,7 +12,7 @@ Rhine Variable — A self-synchronizing variable for collaboration.
 </div>
 
 ```typescript jsx
-const state = rhineProxy({value: 0}, 'room-0')   // Create
+const state = rhineProxy({count: 0}, 'room-0')   // Create
 function Counter() {
   const snap = useRhine(state)   // Hook for React
   return <div>
