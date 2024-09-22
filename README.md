@@ -3,22 +3,37 @@
 # RHINE-VAR: Simplest and Powerful CRDT Library
 
 Rhine Variable — A self-synchronizing variable for collaboration.
-Developing collaborative applications has never been this easy.
 
 
 [English](README.md) &nbsp; | &nbsp; [中文](README_zh.md)
 
-<img src='./assets/images/example1.png' style="border-radius: 10px"/>
+<img src='./assets/images/example_counter.png' style="border-radius: 10px"/>
 
 </div>
 
+```typescript jsx
+const state = rhineProxy({value: 0}, 'room-0')   // Create
+function Counter() {
+  const snap = useRhine(state)   // Hook for React
+  return <div>
+    <span>{snap.count}</span>   // Automatic Update
+    <button onClick={() => state.count-- }> -1 </button>   // Operate Anyway
+    <button onClick={() => state.count++ }> +1 </button>
+  </div>
+} 
+```
+
+Try: [https://rv.rhineai.com/examples/counter](https://rv.rhineai.com/examples/counter)
+
 <br/>
 
-### **Document:** [LEARN.md](assets/documents/LEARN.md)
+## Overview
 
-### **Github:** [https://github.com/RhineAI-Lab/rhine-var](https://github.com/RhineAI-Lab/rhine-var)
+**Document:** [LEARN_zh.md](assets/documents/LEARN_zh.md)
 
-### **Npm:** [https://www.npmjs.com/package/rhine-var](https://www.npmjs.com/package/rhine-var)
+**Github:** [https://github.com/RhineAI-Lab/rhine-var](https://github.com/RhineAI-Lab/rhine-var)
+
+**Npm:** [https://www.npmjs.com/package/rhine-var](https://www.npmjs.com/package/rhine-var)
 
 <br/>
 
