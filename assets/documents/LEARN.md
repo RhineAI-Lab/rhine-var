@@ -41,12 +41,12 @@ Typically, a project will use it only once, as only one root RhineVar object is 
 function rhineProxy<T>(defaultValue, connector, overwrite)
 ```
 
-| Parameter           | Type                       | Default  | Description                                                                                                                                                                                                             |
-|--------------|--------------------------|------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| defaultValue | T                        |   | Default Value <br/>If there is no data for this room on the server, this default value is used as the project's initial value.                                                                                          |
-| connector    | RhineConnector \| string |   | Connector<br/>Pass in a connector object, a WebSocket link, or a simple room name.<br/>When a simple room name is provided, our public server will be used.<br/>For server-related information, please refer to README. |
-| overwrite    | boolean                  | false | Overwrite Mode <br/>Even if there is data on the server, the default value will overwrite the server data. This is mainly used for debugging purposes.                                                                  |
-| return       | RhineVar\<T\>                 |  | Root RhineVar <br/>Collaborative variable object, which contains not only collaborative data but also connection-related features.                                                                                      |
+| Parameter           | Type                       | Default | Description                                                                                                                                                                                                             |
+|--------------|--------------------------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| defaultValue | T                        |         | Default Value <br/>If there is no data for this room on the server, this default value is used as the project's initial value.                                                                                          |
+| connector    | RhineConnector \| string |         | Connector<br/>Pass in a connector object, a WebSocket link, or a simple room name.<br/>When a simple room name is provided, our public server will be used.<br/>For server-related information, please refer to README. |
+| overwrite    | boolean                  | false   | Overwrite Mode <br/>Even if there is data on the server, the default value will overwrite the server data. This is mainly used for debugging purposes.                                                                  |
+| return       | RhineVar\<T\>                 | /       | Root RhineVar <br/>Collaborative variable object, which contains not only collaborative data but also connection-related features.                                                                                      |
 
 Default Value will also be returned temporarily before the first connection to the server is established.
 
@@ -63,9 +63,9 @@ function useRhine<T>(proxy)
 ```
 
 | Parameter           | Type                           | Default | Description                               |
-|--------------|------------------------------|----|----------------------------------|
-| proxy | RhineVar\<T\>  |  | The RhineVar collaborative variable that needs to subscribe for updates, or any node inside it. |
-| return       | Snapshot\<RhineVar\<T\>>         |    | The snapshot corresponding to the RhineVar.
+|--------------|------------------------------|---------|----------------------------------|
+| proxy | RhineVar\<T\>  |         | The RhineVar collaborative variable that needs to subscribe for updates, or any node inside it. |
+| return       | Snapshot\<RhineVar\<T\>>         | /       | The snapshot corresponding to the RhineVar.
 
 Note: Do not operate on the returned snapshot. The snapshot is only used to read data in React's JSX. All other operations (such as assigning values or subscriptions) should be done on the original RhineVar object.
 
