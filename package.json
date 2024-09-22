@@ -1,7 +1,6 @@
 {
   "name": "rhine-var",
-  "version": "0.4.6",
-
+  "version": "0.4.8",
   "description": "Variables that support multi-user collaboration and persistence, making collaboration and variable operations as simple as possible, with strict and well-defined type hints.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,18 +8,31 @@
     "prepare": "ts-patch install -s",
     "install-next": "npm install --prefix ./test/debug/next-app",
     "link-next": "npm link && npm link rhine-var --prefix ./test/debug/next-app",
-
     "server": "npm run start --prefix ./test/server",
     "watch": "tsc --watch",
     "next": "npm run dev --prefix ./test/debug/next-app",
-
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "publish": "npm publish"
   },
   "author": "RhineAI",
   "license": "Apache-2.0",
-  "keywords": ["CRDT", "state", "data-persistence", "offline-first", "shared-editing", "proxy", "collaboration", "websocket", "strongly-typed", "real-time", "concise", "concise", "rigorous", "concurrency"],
+  "keywords": [
+    "CRDT",
+    "state",
+    "data-persistence",
+    "offline-first",
+    "shared-editing",
+    "proxy",
+    "collaboration",
+    "websocket",
+    "strongly-typed",
+    "real-time",
+    "concise",
+    "concise",
+    "rigorous",
+    "concurrency"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/RhineAI-Lab/rhine-var.git"
@@ -37,13 +49,12 @@
     "@types/puppeteer": "^7.0.4",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
-    "typescript": "^5.5.4",
     "jest": "^29.7.0",
     "jest-puppeteer": "^10.1.1",
     "puppeteer": "^23.3.0",
     "ts-jest": "^29.2.5",
-    "ts-node": "^10.9.2",
     "ts-patch": "^3.2.1",
+    "typescript": "5.5.4",
     "typescript-transform-paths": "^3.5.0"
   },
   "dependencies": {
@@ -51,7 +62,7 @@
     "yjs": "^13.6.18"
   },
   "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   }
 }

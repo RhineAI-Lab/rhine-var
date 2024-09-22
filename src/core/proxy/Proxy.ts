@@ -18,7 +18,7 @@ import RhineVar from "@/core/proxy/RhineVar";
 
 
 export const PROTOCOL_LIST = ['ws://', "wss://"]
-export const DEFAULT_PUBLIC_URL = 'wss://rhineai.com/'
+export const DEFAULT_PUBLIC_URL = 'wss://rpw.rhineai.com/'
 
 
 export function rhineProxy<T extends object>(
