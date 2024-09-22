@@ -205,22 +205,22 @@ The callback function for subscription events provides the following information
 
 ### DeepCallback
 
-与 Callback 的唯一区别是 key 变为 path。其他属性不再重复列出。
+The only difference from Callback is that 'key' is replaced with 'path.' Other properties are not listed again.
 
-| 属性   | 类型                   | 描述                     |
-|------|----------------------|------------------------|
-| path | (string \| number)[] | 变化属性的路径，从订阅的节点到变化的目标属性 |
+| Parameter   | Type                 | Description                    |
+|------|----------------------|-----------------------|
+| path | (string \| number)[] | The path of the changed property, from the subscribed node to the target property that has changed. |
 
 ### ChangeType
 
 An enum representing the event type, as shown below.
 
-| 属性     | 值      | 可触发对象          | 描述       |
-|--------|--------|----------------|----------|
-| Add    | add    | YMap \| YArray | Triggered when a new property is added  | 
-| Update | update | YMap           | Triggered when a property value is updated | 
-| Delete | delete | YMap \| YArray | Triggered when a property is removed  | 
-| Sync   | sync   | RhineConnector | Triggered during the first connection  | 
+| Property | Value  | Trigger From   | Description       |
+|----------|--------|----------------|----------|
+| Add      | add    | YMap \| YArray | Triggered when a new property is added  | 
+| Update   | update | YMap           | Triggered when a property value is updated | 
+| Delete   | delete | YMap \| YArray | Triggered when a property is removed  | 
+| Sync     | sync   | RhineConnector | Triggered during the first connection  | 
 
 Note: Due to the collaborative algorithm of Yjs using Quill's Delta protocol, updates to array elements will not trigger the Update event. Instead, Delete and Add will be triggered in combination.
 
