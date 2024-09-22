@@ -29,7 +29,7 @@ Try: [https://rv.rhineai.com/examples/counter](https://rv.rhineai.com/examples/c
 
 ## Overview
 
-**Document:** [LEARN_zh.md](assets/documents/LEARN_zh.md)
+**Document:** [LEARN.md](assets/documents/LEARN.md)
 
 **Github:** [https://github.com/RhineAI-Lab/rhine-var](https://github.com/RhineAI-Lab/rhine-var)
 
