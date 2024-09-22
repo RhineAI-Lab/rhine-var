@@ -11,7 +11,7 @@
 
 ```typescript jsx
 const defaultValue = {count: 0}
-const state = rhineProxy(defaultValue, 'localhost:6600/room-id')
+const state = rhineProxy(defaultValue, 'ws://localhost:6600/room-id')
 
 function Counter() {
   
@@ -37,13 +37,14 @@ function Counter() {
 function rhineProxy<T>(defaultValue, connector, overwrite)
 ```
 
-| 参数           | 类型                       | 默认值  | 描述                                                                 |
-|--------------|--------------------------|------|--------------------------------------------------------------------|
-| defaultValue | T                        |   | 默认值。<br/>服务端没有该房间号的数据时，使用该默认值作为项目初始值。 <br/>附：还未初次连接到服务器时，也会暂时返回该值。 |
-| connector    | RhineConnector \| string |   | 连接器。<br/>传入字符串时，自动创建 Websocket 连接。默认协议 `ws://`。<br/>更多服务端相关信息请见下文。 |
-| overwrite    | boolean                  | false | 覆盖模式。<br/>即使服务器中有数据，也使用默认值覆盖服务器中的数据。一般用于调试期间。                      |
-| return       | RhineVar\<T\>                 |  | RhineVar 协同变量根对象，除协同外还含有连接相关功能。                                    |
+| 参数           | 类型                       | 默认值  | 描述                                                                                       |
+|--------------|--------------------------|------|------------------------------------------------------------------------------------------|
+| defaultValue | T                        |   | 默认值。<br/>服务端没有该房间号的数据时，使用该默认值作为项目初始值。 <br/>附：还未初次连接到服务器时，也会暂时返回该值。                       |
+| connector    | RhineConnector \| string |   | 连接器。<br/>传入连接器对象，或 websocket 链接，或简单房间名。<br/>传入简单的房间名时，将使用我们提供的公共服务器。<br/>服务端信息可见 README。 |
+| overwrite    | boolean                  | false | 覆盖模式。<br/>即使服务器中有数据，也使用默认值覆盖服务器中的数据。一般用于调试期间。                                            |
+| return       | RhineVar\<T\>                 |  | RhineVar 协同变量根对象，除协同外还含有连接相关功能。                                                          |
 
+公共服务器可用于测试，他无法保证性能和安全。等价于访问链接 `wss://rwq.rhineai.com/<room-id>`。
 
 ## useRhine
 
@@ -89,7 +90,7 @@ const defaultValue: Group = {
     {name: 'Emily', age: 22},
   ]
 }
-const group = rhineProxy<Group>(defaultValue, 'localhost:6600/room-1')
+const group = rhineProxy<Group>(defaultValue, 'ws://localhost:6600/room-1')
 
 await group.waitSynced()  // 在 Async Function 中使用，用于等待与服务器连接完成
 ```

@@ -28,7 +28,7 @@ const defaultValue: Group = {
     {name: 'Emily', age: 22},
   ]
 }
-const group = rhineProxy<Group>(defaultValue, 'localhost:6600/room-1', true)
+const group = rhineProxy<Group>(defaultValue, 'ws://localhost:6600/room-1', true)
 
 group.afterSynced(() => {
 

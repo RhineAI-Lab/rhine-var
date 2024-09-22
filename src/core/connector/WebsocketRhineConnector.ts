@@ -1,4 +1,4 @@
-import {Map as YMap, Array as YArray, Doc as YDoc} from "yjs";
+import {Doc as YDoc, Map as YMap} from "yjs";
 import {WebsocketProvider} from "y-websocket";
 import {ConnectorStatus} from "@/core/connector/ConnectorStatus";
 import {log} from "@/core/utils/Logger";
@@ -114,6 +114,18 @@ export default class WebsocketRhineConnector {
       })
     })
     
+  }
+  
+  async disconnect() {
+    throw new Error('Disconnecting and switching connections are not supported at the moment.')
+    /*
+    if (this.provider) {
+      this.provider.disconnect()
+    }
+    this.provider = null
+    this.synced = false
+    this.websocketStatus = ConnectorStatus.DISCONNECTED
+    */
   }
   
 }

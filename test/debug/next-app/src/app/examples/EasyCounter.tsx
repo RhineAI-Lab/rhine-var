@@ -1,7 +1,7 @@
 import {rhineProxy, useRhine} from 'rhine-var'
 
 const defaultValue = {count: 0}
-const url = 'wss://rhineai.com/ws/room-0'
+const url = 'room-0'
 const state = rhineProxy(defaultValue, url, false)
 
 function Counter() {

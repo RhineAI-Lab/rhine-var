@@ -102,7 +102,7 @@ yarn add rhine-var
 
 ```typescript jsx
 const defaultValue = {count: 0}
-const state = rhineProxy(defaultValue, 'localhost:6600/room-id')
+const state = rhineProxy(defaultValue, 'room-0')
 
 function Counter() {
   
@@ -118,7 +118,7 @@ function Counter() {
 
 ### Room ID
 
-一个房间号对应一个状态变量, 加入到一个房间中的用户会参与到多人协同中。
+一个房间号对应一个状态变量, 加入到一个房间中的用户会参与到多人协同中。支持使用自己的服务端，甚至其他链接协议。
 
 ### Default Value
 
@@ -146,7 +146,14 @@ function Counter() {
 <br/>
 
 ## Server
-我们提供了一个简单的服务器例子，位于本项目中的 `/test/server` 处。 服务端完全兼容所有的 Yjs 的 Websocket 服务器，将来会支持更多。
+
+我们提供了一个位于公网的公共服务器，可以用于试用和测试 RHINE-VAR。你可以通过 `wss://rwq.rhineai.com/<room-id>` 连接它。
+
+注意，该服务器无法保证安全和性能，并会对大规模使用的用户做出一定限制。
+
+<br/>
+
+本仓库中提供了一个简单的服务器例子，位于本项目中的 `/test/server` 处。 服务端完全兼容所有的 Yjs 的 Websocket 服务器，将来会支持更多。
 ```
 git clone https://github.com/RhineAI-Lab/rhine-var.git
 cd test/server

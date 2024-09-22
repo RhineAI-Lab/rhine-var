@@ -18,22 +18,22 @@ import RhineVar from "@/core/proxy/RhineVar";
 
 
 export const PROTOCOL_LIST = ['ws://', "wss://"]
-export const DEFAULT_PROTOCOL_LIST = PROTOCOL_LIST[0]
+export const DEFAULT_PUBLIC_URL = 'wss://rhineai.com/'
 
 
 export function rhineProxy<T extends object>(
   defaultValue: T | Native,
-  connector: WebsocketRhineConnector | string,
+  connector: WebsocketRhineConnector | string | number,
   overwrite: boolean | number = false
 ): ProxiedRhineVar<T> {
   let target: Native = ensureNative<T>(defaultValue)
   
   if (connector) {
-    if (typeof connector === 'string') {
-      if (PROTOCOL_LIST.every(protocol => !(connector as string).startsWith(protocol))) {
-        connector = DEFAULT_PROTOCOL_LIST + connector
+    if (!(connector instanceof WebsocketRhineConnector)) {
+      if (PROTOCOL_LIST.every(protocol => !(String(connector)).startsWith(protocol))) {
+        connector = DEFAULT_PUBLIC_URL + connector
       }
-      connector = websocketRhineConnect(connector)
+      connector = websocketRhineConnect(String(connector))
     }
     target = connector.bind(target, Boolean(overwrite))
   }

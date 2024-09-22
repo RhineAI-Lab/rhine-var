@@ -11,7 +11,7 @@
 
 ```typescript jsx
 const defaultValue = {count: 0}
-const state = rhineProxy(defaultValue, 'localhost:6600/room-id')
+const state = rhineProxy(defaultValue, 'ws://localhost:6600/room-id')
 
 function Counter() {
   
@@ -39,13 +39,16 @@ Typically, a project will use it only once, as only one root RhineVar object is 
 function rhineProxy<T>(defaultValue, connector, overwrite)
 ```
 
-| Parameter           | Type                       | Default  | Description                                                                 |
-|--------------|--------------------------|------|--------------------------------------------------------------------|
-| defaultValue | T                        |   | The default value. <br/>If there is no data for this room on the server, this default value is used as the project's initial value. <br/>Note: This value will also be returned temporarily before the first connection to the server is established. |
-| connector    | RhineConnector \| string |   | The connector. <br/>When a string is passed, a WebSocket connection is automatically created. The default protocol is ws://. <br/>For more information on the server, see below. |
-| overwrite    | boolean                  | false | Overwrite mode. <br/>Even if there is data on the server, the default value will overwrite the server data. This is mainly used for debugging purposes.  |
-| return       | RhineVar\<T\>                 |  | The root RhineVar collaborative variable object, which contains not only collaborative data but also connection-related features.  |
+| Parameter           | Type                       | Default  | Description                                                                                                                                                                                                             |
+|--------------|--------------------------|------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| defaultValue | T                        |   | Default Value <br/>If there is no data for this room on the server, this default value is used as the project's initial value.                                                                                          |
+| connector    | RhineConnector \| string |   | Connector<br/>Pass in a connector object, a WebSocket link, or a simple room name.<br/>When a simple room name is provided, our public server will be used.<br/>For server-related information, please refer to README. |
+| overwrite    | boolean                  | false | Overwrite Mode <br/>Even if there is data on the server, the default value will overwrite the server data. This is mainly used for debugging purposes.                                                                  |
+| return       | RhineVar\<T\>                 |  | Root RhineVar <br/>Collaborative variable object, which contains not only collaborative data but also connection-related features.                                                                                      |
 
+Default Value will also be returned temporarily before the first connection to the server is established.
+
+The public server can be used for testing, but it does not guarantee performance or security. It is equivalent to accessing the link `wss://rwq.rhineai.com/<room-id>`.
 
 ## useRhine
 

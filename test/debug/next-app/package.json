@@ -1,7 +1,7 @@
 {
   "name": "rhine-var-test-next-app",
   "scripts": {
-    "dev": "next dev -p 6700 & open http://localhost:6700"
+    "dev": "start http://localhost:6700 && next dev -p 6700"
   },
   "dependencies": {
     "next": "14.2.7",
@@ -13,7 +13,6 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "open": "^10.1.0",
     "typescript": "^5"
   }
 }

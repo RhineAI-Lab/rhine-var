@@ -91,7 +91,8 @@ If you don't have `yarn`, you can install it via `npm i rhine-var`, or install `
 
 ```typescript jsx
 const defaultValue = {value: 0}
-const count = rhineProxy(defaultValue, 'localhost:6600/room-0')
+const url = 'ws://localhost:6600/room-0'
+const count = rhineProxy(defaultValue, url)
 
 function Counter() {
   
@@ -107,7 +108,8 @@ function Counter() {
 
 ### Room ID
 
-&lt;room-id&gt; can be any text, with each Room ID corresponding to a RhineVar, and users who join with the same Room ID will experience real-time multi-user collaboration.
+A room number corresponds to a state variable, and users who join the room will participate in collaborative activities.  
+It supports using your own server and even other connection protocols.
 
 ### Default Value
 
@@ -131,6 +133,13 @@ A hook for use with React. It creates a snapshot of a `RhineVar Object`, and whe
 <br/>
 
 ## Server
+
+We provide a public server accessible over the internet for trying out and testing RHINE-VAR. You can connect to it via wss://rwq.rhineai.com/<room-id>.
+
+Please note that this server does not guarantee security and performance and may impose certain restrictions on users with large-scale usage.
+
+<br/>
+
 We provide a simple server as a reference, located at `/test/server` in this project. The server is fully compatible with all Yjs websocket servers.
 ```
 git clone https://github.com/RhineAI-Lab/rhine-var.git
