@@ -10,17 +10,19 @@
 ## 最简使用案例
 
 ```typescript jsx
-const defaultValue = {count: 0}
-const state = rhineProxy(defaultValue, 'ws://localhost:6600/room-id')
+const defaultValue = {value: 0}
+const url = 'ws://localhost:6600/room-0'
+
+const state = rhineProxy(defaultValue, url)
 
 function Counter() {
   
   const snap = useRhine(state)
   
   return <div>
-    <button onClick={() => state.count-- }> - 1 </button>
+    <button onClick={() => state.count-- }> -1 </button>
     <span>{snap.count}</span>
-    <button onClick={() => state.count++ }> + 1 </button>
+    <button onClick={() => state.count++ }> +1 </button>
   </div>
 }
 ```

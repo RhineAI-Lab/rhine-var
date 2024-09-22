@@ -92,16 +92,17 @@ If you don't have `yarn`, you can install it via `npm i rhine-var`, or install `
 ```typescript jsx
 const defaultValue = {value: 0}
 const url = 'ws://localhost:6600/room-0'
-const count = rhineProxy(defaultValue, url)
+
+const state = rhineProxy(defaultValue, url)
 
 function Counter() {
   
-  const countSnap = useRhine(count)
+  const snap = useRhine(state)
   
   return <div>
-    <button onClick={() => count.value-- }> - 1 </button>
-    <span>{countSnap.value}</span>
-    <button onClick={() => count.value++ }> + 1 </button>
+    <button onClick={() => state.count-- }> -1 </button>
+    <span>{snap.count}</span>
+    <button onClick={() => state.count++ }> +1 </button>
   </div>
 }
 ```

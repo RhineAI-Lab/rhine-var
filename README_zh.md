@@ -101,17 +101,19 @@ yarn add rhine-var
 ## Usage
 
 ```typescript jsx
-const defaultValue = {count: 0}
-const state = rhineProxy(defaultValue, 'room-0')
+const defaultValue = {value: 0}
+const url = 'ws://localhost:6600/room-0'
+
+const state = rhineProxy(defaultValue, url)
 
 function Counter() {
   
   const snap = useRhine(state)
   
   return <div>
-    <button onClick={() => state.count-- }> - 1 </button>
+    <button onClick={() => state.count-- }> -1 </button>
     <span>{snap.count}</span>
-    <button onClick={() => state.count++ }> + 1 </button>
+    <button onClick={() => state.count++ }> +1 </button>
   </div>
 }
 ```
