@@ -3,8 +3,7 @@ import {WebsocketProvider} from "y-websocket";
 import {ConnectorStatus} from "@/core/connector/ConnectorStatus";
 import {log} from "@/core/utils/Logger";
 import {Native} from "@/core/native/Native";
-
-export type SyncedListener = (synced: boolean) => void
+import {SyncedCallback} from "@/core/event/Callback";
 
 export default class WebsocketRhineConnector {
   
@@ -21,28 +20,32 @@ export default class WebsocketRhineConnector {
   websocketStatus: ConnectorStatus = ConnectorStatus.DISCONNECTED
   
   
-  syncedListeners: SyncedListener[] = []
-  addSyncedListener(listener: SyncedListener) {
-    this.syncedListeners.push(listener)
+  private syncedSubscribers: SyncedCallback[] = []
+  subscribeSynced(callback: SyncedCallback) {
+    this.syncedSubscribers.push(callback)
+    return () => this.unsubscribeSynced(callback)
   }
-  removeSyncedListener(listener: SyncedListener) {
-    this.syncedListeners = this.syncedListeners.filter(l => l !== listener)
+  unsubscribeSynced(callback: SyncedCallback) {
+    this.syncedSubscribers = this.syncedSubscribers.filter(listener => listener !== callback)
+  }
+  unsubscribeAllSynced() {
+    this.syncedSubscribers = []
   }
   emitSynced(synced: boolean) {
-    this.syncedListeners.forEach(listener => listener(synced))
+    this.syncedSubscribers.forEach(subscriber => subscriber(synced))
   }
   
   afterSynced(callback: () => void) {
     if (this.synced) {
       callback()
     } else {
-      const listener = (synced: boolean) => {
+      const subscriber = (synced: boolean) => {
         if (synced) {
-          this.removeSyncedListener(listener)
+          this.unsubscribeSynced(subscriber)
           callback()
         }
       }
-      this.addSyncedListener(listener)
+      this.subscribeSynced(subscriber)
     }
   }
   waitSynced(): Promise<void> {

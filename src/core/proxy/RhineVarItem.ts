@@ -4,7 +4,7 @@ import {log} from "@/core/utils/Logger";
 import {isObjectOrArray} from "@/core/utils/DataUtils";
 import {Native, YPath} from "@/core/native/Native";
 import {ChangeType} from "@/core/event/ChangeType";
-import {Callback, DeepCallback} from "@/core/event/Callback";
+import {Callback, DeepCallback, SyncedCallback} from "@/core/event/Callback";
 import {StoredRhineVarItem} from "@/core/proxy/ProxiedRhineVar";
 import RhineVar from "@/core/proxy/RhineVar";
 
@@ -84,8 +84,24 @@ export default class RhineVarItem<T> {
     return {} as T
   }
   
-  toString() {
-    return String(this.json())
+  string(indent = 2) {
+    return JSON.stringify(this.json(), null, indent)
+  }
+  
+  private syncedSubscribers: SyncedCallback[] = []
+  subscribeSynced(callback: SyncedCallback) {
+    this.syncedSubscribers.push(callback)
+    return () => this.unsubscribeSynced(callback)
+  }
+  unsubscribeSynced(callback: SyncedCallback) {
+    this.syncedSubscribers = this.syncedSubscribers.filter(listener => listener !== callback)
+  }
+  unsubscribeAllSynced() {
+    this.syncedSubscribers = []
+  }
+  
+  private emitSynced(synced: boolean) {
+    this.syncedSubscribers.forEach(subscriber => subscriber(synced))
   }
   
   
@@ -158,6 +174,7 @@ export default class RhineVarItem<T> {
   
   // 开始观察当前Native的内容变化
   observe() {
+    
     const target = this.native
     if (target instanceof YMap) {
       this.observer = (event, transaction) => {
@@ -256,13 +273,18 @@ export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'native',
   'connector',
   'json',
-  'toString',
+  'string',
   'parent',
   'isRoot',
   'root',
   
   'afterSynced',
   'waitSynced',
+  
+  'syncedSubscribers',
+  'subscribeSynced',
+  'unsubscribeSynced',
+  'unsubscribeAllSynced',
   
   'subscribers',
   'subscribe',
@@ -279,6 +301,7 @@ export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'unsubscribeDeep',
   'unsubscribeAllDeep',
   
+  'emitSynced',
   'emit',
   'emitDeep',
   

@@ -21,3 +21,5 @@ export type DeepCallback<T> = (
   nativeEvent: YMapEvent<any> | YArrayEvent<any>,
   nativeTransaction: Transaction
 ) => void
+
+export type SyncedCallback = (synced: boolean) => void

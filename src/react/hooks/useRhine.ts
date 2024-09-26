@@ -4,19 +4,19 @@ import {ProxiedRhineVar} from "@/core/proxy/ProxiedRhineVar";
 
 export default function useRhine<T extends object>(proxy: ProxiedRhineVar<T>) {
   
-  const getState = () => proxy.json() as T
-  const [state, setState] = useState<T>(getState)
+  const createSnapshot = () => proxy.json() as T
+  const [state, setState] = useState<T>(createSnapshot)
   
   useEffect(() => {
-    proxy.subscribeDeep(() => {
-      // TODO: 提高性能
-      setState(getState)
-    })
-    proxy.connector?.addSyncedListener(() => {
-      setState(getState)
-    })
-  }, [])
+    const updateState = () => {
+      setState(createSnapshot)
+    }
+    proxy.subscribeDeep(updateState)
+    proxy.afterSynced(updateState)
+    return () => {
+      proxy.unsubscribeDeep(updateState)
+    }
+  }, [proxy])
   
   return state
 }
-
