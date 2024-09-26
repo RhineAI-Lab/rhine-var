@@ -52,9 +52,9 @@ export function rhineProxy<T extends object>(
           object.native.forEach((value: any, key: string | number) => {
             Reflect.deleteProperty(object.origin, key)
           })
-          object.unobserve()
+          Reflect.get(object, 'unobserve').call(object)
           object.native = syncedValue
-          object.observe()
+          Reflect.get(object, 'observe').call(object)
           log('Proxy.synced: Update synced native')
           syncedValue.forEach((value: any, key: string) => {
             if (isNative(value)) {
@@ -166,7 +166,7 @@ export function rhineProxyItem<T extends object>(
     getOwnPropertyDescriptor: proxyGetOwnPropertyDescriptor,
   }
   
-  object.observe()
+  Reflect.get(object, 'observe').call(object)
   
   return new Proxy(object, handler) as ProxiedRhineVarItem<T>
 }

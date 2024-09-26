@@ -7,6 +7,7 @@ import {ChangeType} from "@/core/event/ChangeType";
 import {Callback, DeepCallback, SyncedCallback} from "@/core/event/Callback";
 import {StoredRhineVarItem} from "@/core/proxy/ProxiedRhineVar";
 import RhineVar from "@/core/proxy/RhineVar";
+import WebsocketRhineConnector from "@/core/connector/WebsocketRhineConnector";
 
 
 export default class RhineVarItem<T> {
@@ -23,6 +24,10 @@ export default class RhineVarItem<T> {
   
   root(): RhineVar<any> {
     return this.parent!.root()
+  }
+  
+  getConnector(): WebsocketRhineConnector | null {
+    return this.root().connector
   }
   
   
@@ -170,15 +175,15 @@ export default class RhineVarItem<T> {
   }
   
   
-  observer = (event: YMapEvent<any> | YArrayEvent<any>, transaction: Transaction) => {}
-  syncedObserver: SyncedCallback = (synced: boolean) => {}
+  private observer = (event: YMapEvent<any> | YArrayEvent<any>, transaction: Transaction) => {}
+  private syncedObserver: SyncedCallback = (synced: boolean) => {}
   
   // 开始观察当前Native的内容变化
-  observe() {
+  private observe() {
     this.syncedObserver = (synced: boolean) => {
       this.emitSynced(synced)
     }
-    this.root().connector?.subscribeSynced(this.syncedObserver)
+    this.getConnector()?.subscribeSynced(this.syncedObserver)
     
     const target = this.native
     if (target instanceof YMap) {
@@ -265,12 +270,12 @@ export default class RhineVarItem<T> {
     }
   }
   
-  unobserve() {
+  private unobserve() {
     if (this.observer) {
       this.native.unobserve(this.observer)
     }
     if (this.syncedObserver) {
-      this.root().connector?.unsubscribeSynced(this.syncedObserver)
+      this.getConnector()?.unsubscribeSynced(this.syncedObserver)
     }
   }
 }
@@ -285,6 +290,7 @@ export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'parent',
   'isRoot',
   'root',
+  'getConnector',
   
   'afterSynced',
   'waitSynced',
