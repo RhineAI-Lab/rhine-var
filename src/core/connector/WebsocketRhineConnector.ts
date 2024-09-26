@@ -26,7 +26,7 @@ export default class WebsocketRhineConnector {
     return () => this.unsubscribeSynced(callback)
   }
   unsubscribeSynced(callback: SyncedCallback) {
-    this.syncedSubscribers = this.syncedSubscribers.filter(listener => listener !== callback)
+    this.syncedSubscribers = this.syncedSubscribers.filter(subscriber => subscriber !== callback)
   }
   unsubscribeAllSynced() {
     this.syncedSubscribers = []

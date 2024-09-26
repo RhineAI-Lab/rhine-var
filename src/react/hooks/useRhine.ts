@@ -8,13 +8,12 @@ export default function useRhine<T extends object>(proxy: ProxiedRhineVar<T>) {
   const [state, setState] = useState<T>(createSnapshot)
   
   useEffect(() => {
-    const updateState = () => {
-      setState(createSnapshot)
-    }
-    proxy.subscribeDeep(updateState)
-    proxy.afterSynced(updateState)
+    const updateState = () => setState(createSnapshot)
+    const unsubscribeSynced = proxy.subscribeSynced(updateState)
+    const unsubscribeDeep = proxy.subscribeDeep(updateState)
     return () => {
-      proxy.unsubscribeDeep(updateState)
+      unsubscribeSynced()
+      unsubscribeDeep()
     }
   }, [proxy])
   

@@ -94,7 +94,7 @@ export default class RhineVarItem<T> {
     return () => this.unsubscribeSynced(callback)
   }
   unsubscribeSynced(callback: SyncedCallback) {
-    this.syncedSubscribers = this.syncedSubscribers.filter(listener => listener !== callback)
+    this.syncedSubscribers = this.syncedSubscribers.filter(subscriber => subscriber !== callback)
   }
   unsubscribeAllSynced() {
     this.syncedSubscribers = []
@@ -111,7 +111,7 @@ export default class RhineVarItem<T> {
     return () => this.unsubscribe(callback)
   }
   unsubscribe(callback: Callback<T>) {
-    this.subscribers = this.subscribers.filter(listener => listener !== callback)
+    this.subscribers = this.subscribers.filter(subscriber => subscriber !== callback)
   }
   unsubscribeAll() {
     this.subscribers = []
@@ -126,8 +126,8 @@ export default class RhineVarItem<T> {
     return () => this.unsubscribeKey(callback)
   }
   unsubscribeKey(callback: Callback<T>) {
-    this.keySubscribers.forEach((listeners, key) => {
-      this.keySubscribers.set(key, listeners.filter(listener => listener !== callback))
+    this.keySubscribers.forEach((subscribers, key) => {
+      this.keySubscribers.set(key, subscribers.filter(subscriber => subscriber !== callback))
     })
   }
   unsubscribeAllKey() {
@@ -137,7 +137,7 @@ export default class RhineVarItem<T> {
   private emit(key: keyof T, value: T[keyof T], oldValue: T[keyof T], type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any>, nativeTransaction: Transaction) {
     this.subscribers.forEach(subscriber => subscriber(key, value, oldValue, type, nativeEvent, nativeTransaction))
     if (this.keySubscribers.has(key)) {
-      this.keySubscribers.get(key)!.forEach(listener => listener(key, value, oldValue, type, nativeEvent, nativeTransaction))
+      this.keySubscribers.get(key)!.forEach(subscriber => subscriber(key, value, oldValue, type, nativeEvent, nativeTransaction))
     }
   }
   
@@ -148,7 +148,7 @@ export default class RhineVarItem<T> {
     return () => this.unsubscribeDeep(callback)
   }
   unsubscribeDeep(callback: DeepCallback<T>) {
-    this.deepSubscribers = this.deepSubscribers.filter(listener => listener !== callback)
+    this.deepSubscribers = this.deepSubscribers.filter(subscriber => subscriber !== callback)
   }
   unsubscribeAllDeep() {
     this.deepSubscribers = []
@@ -171,9 +171,14 @@ export default class RhineVarItem<T> {
   
   
   observer = (event: YMapEvent<any> | YArrayEvent<any>, transaction: Transaction) => {}
+  syncedObserver: SyncedCallback = (synced: boolean) => {}
   
   // 开始观察当前Native的内容变化
   observe() {
+    this.syncedObserver = (synced: boolean) => {
+      this.emitSynced(synced)
+    }
+    this.root().connector?.subscribeSynced(this.syncedObserver)
     
     const target = this.native
     if (target instanceof YMap) {
@@ -263,6 +268,9 @@ export default class RhineVarItem<T> {
   unobserve() {
     if (this.observer) {
       this.native.unobserve(this.observer)
+    }
+    if (this.syncedObserver) {
+      this.root().connector?.unsubscribeSynced(this.syncedObserver)
     }
   }
 }

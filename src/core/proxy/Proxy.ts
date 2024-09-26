@@ -43,7 +43,7 @@ export function rhineProxy<T extends object>(
   object.connector = connector
   
   if (connector && !connector.synced) {
-    connector.addSyncedListener((synced: boolean) => {
+    connector.subscribeSynced((synced: boolean) => {
       
       if (synced) {
         let syncedValue = target.clone()
