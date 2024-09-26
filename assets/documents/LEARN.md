@@ -174,55 +174,65 @@ group.people[1] = {name: 'Jessica', age: 19} as ProxiedRhineVarItem<Person>  // 
 
 ## Event System
 
-Subscriptions can be added at any point on RhineVar and its internal nodes. Examples of how to use subscriptions can be found in the "Subscribing to events" section above. There are three types of subscriptions, as shown below.
+RhineVar and all its internal nodes can add subscriptions anywhere. Examples of usage can be seen in the "Subscribe to Events" section of the previous block. There are three forms of subscription, detailed as follows.
 
-| Type   | Subscribe Function          | Unsubscribe Function          | Unsubscribe All Function             | Callback Type       |
-|------|---------------|-----------------|--------------------|--------------|
-| Base | subscribe     | unsubscribe     | unsubscribeAll     | Callback     |
-| Key  | subscribeKey  | unsubscribeKey  | unsubscribeAllKey  | Callback     |
-| Deep | subscribeDeep | unsubscribeDeep | unsubscribeAllDeep | DeepCallback |
+| Type     | Subscribe Function    | Unsubscribe Function    | Unsubscribe All Function    | Callback Function Type |
+|----------|-----------------------|-------------------------|-----------------------------|------------------------|
+| Base     | subscribe             | unsubscribe             | unsubscribeAll              | Callback               |
+| Key      | subscribeKey          | unsubscribeKey          | unsubscribeAllKey           | Callback               |
+| Deep     | subscribeDeep         | unsubscribeDeep         | unsubscribeAllDeep          | DeepCallback           |
+| Synced   | subscribeSynced       | unsubscribeSynced       | unsubscribeAllSynced        | SyncedCallback         |
 
-Subscription and unsubscription functions require a corresponding callback function.
+The subscription and unsubscription functions require passing a corresponding type of callback function.
 
 ```
-Base: Subscribe to direct changes in the properties of the current node  
-Key: Subscribe to changes in a specific property under the current node  
-Deep: Subscribe to changes in all properties and their descendants
+Base: Subscribe to direct change events of the current node's direct properties
+Key: Subscribe to direct change events of a specified property under the current node
+Deep: Subscribe to change events of all properties and their descendants within the current node
+Synced: Events of state changes synchronized with the server
 ```
 
 ### Callback
 
-The callback function for subscription events provides the following information, typically the first four are commonly used.
+The information that the callback function for subscription events can provide is as follows, with the first four items being the most commonly used.
 
-| Parameter                | Type                                            | Description        |
-|-------------------|-----------------------------------------------|-----------|
+| Property          | Type                                          | Description                     |
+|-------------------|-----------------------------------------------|---------------------------------|
 | key               | keyof T                                       | The key of the changed property |
-| value             | T[keyof T] \| ProxiedRhineVarItem<T[keyof T]> | The value after the change     |
-| oldValue          | T[keyof T]                                    | The value before the change     |
-| type              | ChangeType                                    | The event type      |
-| nativeEvent       | YMapEvent<any> \| YArrayEvent<any>            | The native Yjs event   |
-| nativeTransaction | Transaction                                   | The native Yjs transaction   |
+| value             | T[keyof T] \| ProxiedRhineVarItem<T[keyof T]> | The new value                   |
+| oldValue          | T[keyof T]                                    | The old value                   |
+| type              | ChangeType                                    | The event type                  |
+| nativeEvent       | YMapEvent<any> \| YArrayEvent<any>            | Native Yjs event                |
+| nativeTransaction | Transaction                                   | Native Yjs transaction          |
 
-### DeepCallback
+### DeepCallback &nbsp; `extends Callback`
 
-The only difference from Callback is that 'key' is replaced with 'path.' Other properties are not listed again.
+The only difference from Callback is that key changes to path. Other properties are not repeated.
 
-| Parameter   | Type                 | Description                    |
-|------|----------------------|-----------------------|
-| path | (string \| number)[] | The path of the changed property, from the subscribed node to the target property that has changed. |
+| Property | Type                 | Description                                                                       |
+|----------|----------------------|-----------------------------------------------------------------------------------|
+| path     | (string \| number)[] | The path of the changed property, from the subscribed node to the target property |
 
 ### ChangeType
 
-An enum representing the event type, as shown below.
+An enum representing event types, detailed as follows.
 
-| Property | Value  | Trigger From   | Description       |
-|----------|--------|----------------|----------|
-| Add      | add    | YMap \| YArray | Triggered when a new property is added  | 
+| Property | Value  | Trigger Object | Description                                |
+|----------|--------|----------------|--------------------------------------------|
+| Add      | add    | YMap \| YArray | Triggered when a new property is added     | 
 | Update   | update | YMap           | Triggered when a property value is updated | 
-| Delete   | delete | YMap \| YArray | Triggered when a property is removed  | 
-| Sync     | sync   | RhineConnector | Triggered during the first connection  | 
+| Delete   | delete | YMap \| YArray | Triggered when a property is removed       | 
+| Sync     | sync   | RhineConnector | Triggered upon the first connection        | 
 
-Note: Due to the collaborative algorithm of Yjs using Quill's Delta protocol, updates to array elements will not trigger the Update event. Instead, Delete and Add will be triggered in combination.
+Note that due to Yjs's collaborative algorithm adopting Quill's Delta protocol, when array elements update their values, it will not trigger the Update event. Instead, it will first trigger Delete and then Add, completing the combination.
+
+### SyncedCallback
+
+Callback for state change events synchronized with the server. Provides current synchronization state parameters.
+
+| Property | Type    | Description                                               |
+|----------|---------|-----------------------------------------------------------|
+| synced   | boolean | Whether the current state is synchronized with the server |
 
 <br/>
 
@@ -286,6 +296,18 @@ Even after the Yjs object is removed from the context, the last data can still b
 
 ```typescript
 state.frozenJson()
+```
+
+### string(indent: number = 2): string
+
+```typescript
+state.string()
+```
+
+### getConnector(): WebsocketConnector | null
+
+```typescript
+state.getConnector()
 ```
 
 <br/>

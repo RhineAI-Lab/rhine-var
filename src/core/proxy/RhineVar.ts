@@ -1,9 +1,9 @@
 import RhineVarItem from "@/core/proxy/RhineVarItem";
-import WebsocketRhineConnector from "@/core/connector/WebsocketRhineConnector";
+import WebsocketConnector from "@/core/connector/WebsocketConnector";
 
 export default class RhineVar<T> extends RhineVarItem<T> {
   
-  connector: WebsocketRhineConnector | null = null
+  connector: WebsocketConnector | null = null
   
   isRoot(): boolean {
     return true

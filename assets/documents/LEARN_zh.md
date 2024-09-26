@@ -170,11 +170,12 @@ group.people[1] = {name: 'Jessica', age: 19} as ProxiedRhineVarItem<Person>  // 
 
 RhineVar 及其内部所有节点，任意处都可添加订阅。使用示例可见上一板块的“订阅事件”部分。一共有三种订阅形式，具体如下。
 
-| 类型   | 订阅函数          | 取消订阅函数          | 取消全部函数             | 回调函数类型       |
-|------|---------------|-----------------|--------------------|--------------|
-| Base | subscribe     | unsubscribe     | unsubscribeAll     | Callback     |
-| Key  | subscribeKey  | unsubscribeKey  | unsubscribeAllKey  | Callback     |
-| Deep | subscribeDeep | unsubscribeDeep | unsubscribeAllDeep | DeepCallback |
+| 类型     | 订阅函数          | 取消订阅函数          | 取消全部函数             | 回调函数类型       |
+|--------|---------------|-----------------|--------------------|--------------|
+| Base   | subscribe     | unsubscribe     | unsubscribeAll     | Callback     |
+| Key    | subscribeKey  | unsubscribeKey  | unsubscribeAllKey  | Callback     |
+| Deep   | subscribeDeep | unsubscribeDeep | unsubscribeAllDeep | DeepCallback |
+| Synced | subscribeSynced | unsubscribeSynced | unsubscribeAllSynced | SyncedCallback |
 
 订阅函数及取消订阅函数需要传入一个对应类型的回调函数。
 
@@ -182,6 +183,7 @@ RhineVar 及其内部所有节点，任意处都可添加订阅。使用示例�
 Base: 订阅当前节点直属属性的直接变化事件  
 Key: 订阅当前节点下指定属性的直接变化事件  
 Deep: 订阅当前节点内部所有属性及其子孙属性的变化事件
+Synced: 与服务端同步状态变化事件
 ```
 
 ### Callback
@@ -197,7 +199,7 @@ Deep: 订阅当前节点内部所有属性及其子孙属性的变化事件
 | nativeEvent       | YMapEvent<any> \| YArrayEvent<any>            | Yjs原生事件   |
 | nativeTransaction | Transaction                                   | Yjs原生事务   |
 
-### DeepCallback
+### DeepCallback &nbsp; `extends Callback`
 
 与 Callback 的唯一区别是 key 变为 path。其他属性不再重复列出。
 
@@ -217,6 +219,14 @@ Deep: 订阅当前节点内部所有属性及其子孙属性的变化事件
 | Sync   | sync   | RhineConnector | 首次连接时触发  | 
 
 注意，由于 Yjs 协同算法采用 Quill 的 Delta 协议。 数组元素更新值时，不会触发 Update 事件，而是会先触发 Delete 再触发 Add，组合完成。
+
+### SyncedCallback
+
+与服务端同步状态变化事件的回调。提供当前同步状态参数。
+
+| 属性     | 类型      | 描述      |
+|--------|---------|---------|
+| synced | boolean | 当前是否已与服务端同步状态 |
 
 <br/>
 
@@ -280,6 +290,22 @@ state.parent()
 
 ```typescript
 state.frozenJson()
+```
+
+### string(indent: number = 2): string
+
+转换成Json文本，可传入缩进空格数，默认为2.
+
+```typescript
+state.string()
+```
+
+### getConnector(): WebsocketConnector | null
+
+获取当前对象所属RhineVar的连接器。
+
+```typescript
+state.getConnector()
 ```
 
 <br/>

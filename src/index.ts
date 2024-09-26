@@ -8,13 +8,13 @@ import {
   ProxiedRhineVar,
   RecursiveCrossRhineVar,
 } from "@/core/proxy/ProxiedRhineVar";
-import WebsocketRhineConnector from "@/core/connector/WebsocketRhineConnector";
+import WebsocketConnector from "@/core/connector/WebsocketConnector";
 import useRhine from "@/react/hooks/useRhine"
 import useSynced from "@/react/hooks/useSynced"
 import {Native, YPath} from "@/core/native/Native";
 
 export {
-  WebsocketRhineConnector,
+  WebsocketConnector,
   rhineProxy,
   rhineProxyItem,
   RhineVarItem,

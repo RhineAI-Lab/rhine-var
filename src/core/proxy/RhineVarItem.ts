@@ -7,7 +7,7 @@ import {ChangeType} from "@/core/event/ChangeType";
 import {Callback, DeepCallback, SyncedCallback} from "@/core/event/Callback";
 import {StoredRhineVarItem} from "@/core/proxy/ProxiedRhineVar";
 import RhineVar from "@/core/proxy/RhineVar";
-import WebsocketRhineConnector from "@/core/connector/WebsocketRhineConnector";
+import WebsocketConnector from "@/core/connector/WebsocketConnector";
 
 
 export default class RhineVarItem<T> {
@@ -26,7 +26,7 @@ export default class RhineVarItem<T> {
     return this.parent!.root()
   }
   
-  getConnector(): WebsocketRhineConnector | null {
+  getConnector(): WebsocketConnector | null {
     return this.root().connector
   }
   

@@ -5,7 +5,7 @@ import {log} from "@/core/utils/Logger";
 import {Native} from "@/core/native/Native";
 import {SyncedCallback} from "@/core/event/Callback";
 
-export default class WebsocketRhineConnector {
+export default class WebsocketConnector {
   
   static STATE_KEY = 'state'
   
@@ -63,14 +63,14 @@ export default class WebsocketRhineConnector {
   
   bind(defaultValue: Native, overwrite: boolean = false) {
     if (this.synced) {
-      if (!overwrite && this.yBaseMap.has(WebsocketRhineConnector.STATE_KEY)) {
-        return this.yBaseMap.get(WebsocketRhineConnector.STATE_KEY)
+      if (!overwrite && this.yBaseMap.has(WebsocketConnector.STATE_KEY)) {
+        return this.yBaseMap.get(WebsocketConnector.STATE_KEY)
       }
-      this.yBaseMap.set(WebsocketRhineConnector.STATE_KEY, defaultValue)
+      this.yBaseMap.set(WebsocketConnector.STATE_KEY, defaultValue)
       return defaultValue
     } else {
       const tempMap = new YDoc().getMap()
-      tempMap.set(WebsocketRhineConnector.STATE_KEY, defaultValue)
+      tempMap.set(WebsocketConnector.STATE_KEY, defaultValue)
       return defaultValue
     }
   }
@@ -135,7 +135,7 @@ export default class WebsocketRhineConnector {
 
 
 export function websocketRhineConnect(url: string) {
-  const connector = new WebsocketRhineConnector()
+  const connector = new WebsocketConnector()
   if (typeof window !== 'undefined') {
     connector.connect(url)
   }

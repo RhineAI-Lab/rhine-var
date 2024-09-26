@@ -1,5 +1,5 @@
 import {Array as YArray, Map as YMap} from "yjs";
-import WebsocketRhineConnector, {websocketRhineConnect} from "@/core/connector/WebsocketRhineConnector";
+import WebsocketConnector, {websocketRhineConnect} from "@/core/connector/WebsocketConnector";
 import RhineVarItem, {RHINE_VAR_PREDEFINED_PROPERTIES} from "@/core/proxy/RhineVarItem";
 import {ensureNative, ensureRhineVar, isObjectOrArray} from "@/core/utils/DataUtils";
 import {log} from "@/core/utils/Logger";
@@ -23,13 +23,13 @@ export const DEFAULT_PUBLIC_URL = 'wss://rpw.rhineai.com/'
 
 export function rhineProxy<T extends object>(
   defaultValue: T | Native,
-  connector: WebsocketRhineConnector | string | number,
+  connector: WebsocketConnector | string | number,
   overwrite: boolean | number = false
 ): ProxiedRhineVar<T> {
   let target: Native = ensureNative<T>(defaultValue)
   
   if (connector) {
-    if (!(connector instanceof WebsocketRhineConnector)) {
+    if (!(connector instanceof WebsocketConnector)) {
       if (PROTOCOL_LIST.every(protocol => !(String(connector)).startsWith(protocol))) {
         connector = DEFAULT_PUBLIC_URL + connector
       }
@@ -37,7 +37,7 @@ export function rhineProxy<T extends object>(
     }
     target = connector.bind(target, Boolean(overwrite))
   }
-  connector = connector as WebsocketRhineConnector
+  connector = connector as WebsocketConnector
   
   const object = rhineProxyItem<T>(target) as ProxiedRhineVar<T>
   object.connector = connector
@@ -47,8 +47,8 @@ export function rhineProxy<T extends object>(
       
       if (synced) {
         let syncedValue = target.clone()
-        if (!overwrite && connector.yBaseMap.has(WebsocketRhineConnector.STATE_KEY)) {
-          syncedValue = connector.yBaseMap.get(WebsocketRhineConnector.STATE_KEY) as YMap<any>
+        if (!overwrite && connector.yBaseMap.has(WebsocketConnector.STATE_KEY)) {
+          syncedValue = connector.yBaseMap.get(WebsocketConnector.STATE_KEY) as YMap<any>
           object.native.forEach((value: any, key: string | number) => {
             Reflect.deleteProperty(object.origin, key)
           })
@@ -64,7 +64,7 @@ export function rhineProxy<T extends object>(
             }
           })
         } else {
-          connector.yBaseMap.set(WebsocketRhineConnector.STATE_KEY, syncedValue)
+          connector.yBaseMap.set(WebsocketConnector.STATE_KEY, syncedValue)
         }
       }
       
