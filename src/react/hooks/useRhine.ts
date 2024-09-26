@@ -2,10 +2,10 @@
 import {useEffect, useState} from "react";
 import {ProxiedRhineVar} from "@/core/proxy/ProxiedRhineVar";
 
-export default function useRhine<T extends object>(proxy: ProxiedRhineVar<T>) {
+export default function useRhine<T extends object>(proxy: ProxiedRhineVar<T>): Readonly<T> {
   
-  const createSnapshot = () => proxy.json() as T
-  const [state, setState] = useState<T>(createSnapshot)
+  const createSnapshot = () => proxy.json() as Readonly<T>
+  const [state, setState] = useState(createSnapshot)
   
   useEffect(() => {
     const updateState = () => setState(createSnapshot)
