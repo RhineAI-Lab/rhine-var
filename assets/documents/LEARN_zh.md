@@ -63,7 +63,7 @@ function useRhine<T>(proxy)
 | proxy | RhineVar\<T\>  |  | 需要订阅更新的 RhineVar 协同变量，或其内部的任意节点。 |
 | return       | Snapshot\<RhineVar\<T\>>         |    | RhineVar 所对应的快照。                 |
 
-注意：请勿操作返回的快照，快照仅用于在 React 的 XML 中读取数据。其他所有操作（如赋值或订阅等）请操作原 RhineVar 对象。
+注意：返回的快照为只读，请勿对其做出操作！快照仅用于在 React 的 XML 中读取数据。其他所有操作（如赋值或订阅等）请操作原 RhineVar 对象。
 
 <br/>
 

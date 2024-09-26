@@ -67,7 +67,7 @@ function useRhine<T>(proxy)
 | proxy | RhineVar\<T\>  |         | The RhineVar collaborative variable that needs to subscribe for updates, or any node inside it. |
 | return       | Snapshot\<RhineVar\<T\>>         | /       | The snapshot corresponding to the RhineVar.
 
-Note: Do not operate on the returned snapshot. The snapshot is only used to read data in React's JSX. All other operations (such as assigning values or subscriptions) should be done on the original RhineVar object.
+Note: The returned snapshot is read-only. Please do not perform any operations on it! The snapshot is only for reading data within React's XML. For all other operations (such as assignment or subscription), please operate on the original RhineVar object.
 
 <br/>
 

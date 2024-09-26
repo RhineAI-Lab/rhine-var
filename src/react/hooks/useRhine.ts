@@ -8,7 +8,7 @@ export default function useRhine<T extends object>(proxy: ProxiedRhineVar<T>) {
   const [state, setState] = useState<T>(getState)
   
   useEffect(() => {
-    proxy.subscribe(() => {
+    proxy.subscribeDeep(() => {
       // TODO: 提高性能
       setState(getState)
     })

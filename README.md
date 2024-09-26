@@ -141,6 +141,8 @@ Its data structure `can be quite complex`, but `at least`, it is `an object` in 
 
 A hook for use with React. It creates a snapshot of a `RhineVar Object`, and whenever someone modifies this value, the information will be `updated on everyone's screen` in real-time.
 
+Note: The returned snapshot is read-only. Please do not perform any operations on it! The snapshot is only for reading data within React's XML. For all other operations (such as assignment or subscription), please operate on the original RhineVar object.
+
 <br/>
 
 #### [Click to view the full document: LEARN.md](assets/documents/LEARN.md)
