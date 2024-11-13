@@ -1,16 +1,16 @@
 {
   "name": "rhine-var",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Variables that support multi-user collaboration and persistence, making collaboration and variable operations as simple as possible, with strict and well-defined type hints.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "prepare": "ts-patch install -s",
-    "install-next": "npm install --prefix ./test/debug/next-app",
-    "link-next": "npm link && npm link rhine-var --prefix ./test/debug/next-app",
+    "install-next": "npm install --prefix playground/next-app",
+    "link-next": "npm link && npm link rhine-var --prefix playground/next-app",
     "server": "npm run start --prefix ./test/server",
     "watch": "tsc --watch",
-    "next": "npm run dev --prefix ./test/debug/next-app",
+    "next": "npm run dev --prefix playground/next-app",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "publish": "npm publish"

@@ -5,6 +5,7 @@
 .pnp.js
 .yarn/install-state.gz
 package-lock.json
+yarn.lock
 
 # testing
 /coverage
@@ -15,6 +16,7 @@ package-lock.json
 
 # production
 /build
+/out
 
 # misc
 .DS_Store

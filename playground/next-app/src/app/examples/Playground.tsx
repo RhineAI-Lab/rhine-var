@@ -2,7 +2,7 @@
 
 import React from "react";
 import {rhineProxy} from "rhine-var";
-import {ProxiedRhineVarItem} from "../../../../../../src";
+import {ProxiedRhineVarItem} from "../../../../../src";
 
 console.log('\n\n=================== Rhine Var Playground ===================\n\n')
 
