@@ -173,8 +173,7 @@ export default class RhineVarItem<T> {
       }
     }
   }
-  
-  
+
   private observer = (event: YMapEvent<any> | YArrayEvent<any>, transaction: Transaction) => {}
   private syncedObserver: SyncedCallback = (synced: boolean) => {}
   
@@ -184,7 +183,7 @@ export default class RhineVarItem<T> {
       this.emitSynced(synced)
     }
     this.getConnector()?.subscribeSynced(this.syncedObserver)
-    
+
     const target = this.native
     if (target instanceof YMap) {
       this.observer = (event, transaction) => {
@@ -320,6 +319,7 @@ export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'emitDeep',
   
   'observer',
+  'syncedObserver',
   'observe',
   'unobserve',
 ])
