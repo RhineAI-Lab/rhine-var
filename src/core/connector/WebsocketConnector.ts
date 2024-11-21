@@ -1,9 +1,10 @@
 import {Doc as YDoc, Map as YMap} from "yjs";
 import {WebsocketProvider} from "y-websocket";
 import {ConnectorStatus} from "@/core/connector/ConnectorStatus";
-import {log} from "@/core/utils/Logger";
+import {log} from "@/utils/logger";
 import {Native} from "@/core/native/Native";
 import {SyncedCallback} from "@/core/event/Callback";
+import RhineVarConfig from "@/config/config";
 
 export default class WebsocketConnector {
   
@@ -96,11 +97,15 @@ export default class WebsocketConnector {
         log('WebsocketRhineConnector.event status:', event.status)
       })
       
-      this.provider.on('sync', (synced: boolean) => {
+      this.provider.on('sync', async (synced: boolean) => {
         log('WebsocketRhineConnector.event sync:', synced)
         if (synced) {
           this.synced = true
           this.clientId = this.yDoc.clientID
+          console.log(this.yBaseMap.toJSON())
+          if (RhineVarConfig.ENABLE_SYNC_HANDSHAKE_CHECK) {
+
+          }
           this.emitSynced(synced)
           resolve()
         }

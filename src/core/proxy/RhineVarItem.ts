@@ -1,6 +1,6 @@
 import {Array as YArray, Map as YMap, Transaction, YArrayEvent, YMapEvent} from "yjs";
 import {rhineProxyItem} from "@/core/proxy/Proxy";
-import {log} from "@/core/utils/Logger";
+import {log} from "@/utils/logger";
 import {isObjectOrArray} from "@/core/utils/DataUtils";
 import {Native, YPath} from "@/core/native/Native";
 import {ChangeType} from "@/core/event/ChangeType";

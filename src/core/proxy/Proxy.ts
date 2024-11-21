@@ -1,15 +1,14 @@
 import {Array as YArray, Map as YMap} from "yjs";
 import WebsocketConnector, {websocketRhineConnect} from "@/core/connector/WebsocketConnector";
 import RhineVarItem, {RHINE_VAR_PREDEFINED_PROPERTIES} from "@/core/proxy/RhineVarItem";
-import {ensureNative, ensureRhineVar, isObjectOrArray} from "@/core/utils/DataUtils";
-import {log} from "@/core/utils/Logger";
+import {ensureNative, ensureRhineVar} from "@/core/utils/DataUtils";
+import {log} from "@/utils/logger";
 import {convertArrayProperty} from "@/core/utils/ConvertProperty";
 import {ProxiedRhineVar, ProxiedRhineVarItem} from "@/core/proxy/ProxiedRhineVar";
 import {Native} from "@/core/native/Native";
 import {
   isNative,
   nativeDelete,
-  nativeGet,
   nativeHas,
   nativeOwnKeys,
   nativeSet

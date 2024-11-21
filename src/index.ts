@@ -12,6 +12,7 @@ import WebsocketConnector from "@/core/connector/WebsocketConnector";
 import useRhine from "@/react/hooks/useRhine"
 import useSynced from "@/react/hooks/useSynced"
 import {Native, YPath} from "@/core/native/Native";
+import { getRhineVarConfig, enableRhineVarLog, enableRhineVarSyncHandshakeCheck } from "./config/config";
 
 export {
   WebsocketConnector,
@@ -26,6 +27,9 @@ export {
   RecursiveCrossRhineVar,
   YPath,
   Native,
+  enableRhineVarLog,
+  enableRhineVarSyncHandshakeCheck,
+  getRhineVarConfig,
   useRhine,
   useSynced,
 }

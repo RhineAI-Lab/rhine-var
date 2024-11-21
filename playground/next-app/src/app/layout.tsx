@@ -6,7 +6,7 @@ import './layout.css'
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Rhine Var Playground",
+  title: "RHINE VAR Playground",
   description: "The world's most intuitive and reliable strongly-typed collaborative library",
 }
 

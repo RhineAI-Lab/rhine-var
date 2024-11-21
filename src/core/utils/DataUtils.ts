@@ -1,9 +1,8 @@
 import {StoredRhineVarItem} from "@/core/proxy/ProxiedRhineVar";
 import {isNative, jsonToNative} from "@/core/native/NativeUtils";
 import RhineVarItem from "@/core/proxy/RhineVarItem";
-import {rhineProxy, rhineProxyItem} from "@/core/proxy/Proxy";
+import {rhineProxyItem} from "@/core/proxy/Proxy";
 import {Native} from "@/core/native/Native";
-import {YMap} from "yjs/dist/src/types/YMap";
 
 export function isObject(value: any) {
   return value !== null && typeof value === 'object' && !Array.isArray(value);

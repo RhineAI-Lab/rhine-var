@@ -1,7 +1,9 @@
-import {rhineProxy, useRhine} from 'rhine-var'
+import {rhineProxy, useRhine, enableRhineVarLog} from 'rhine-var'
+
+enableRhineVarLog(false)
 
 const defaultValue = {count: 0}
-const url = 'room-1'
+const url = 'room-66662432'
 const state = rhineProxy(defaultValue, url, false)
 
 function Counter() {
