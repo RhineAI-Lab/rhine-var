@@ -1,6 +1,6 @@
 import {rhineProxy, useRhine, enableRhineVarLog} from 'rhine-var'
 
-enableRhineVarLog(false)
+enableRhineVarLog(true)
 
 const defaultValue = {count: 0}
 const url = 'room-66662432'

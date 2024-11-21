@@ -5,6 +5,7 @@ import {log} from "@/utils/logger";
 import {Native} from "@/core/native/Native";
 import {SyncedCallback} from "@/core/event/Callback";
 import RhineVarConfig from "@/config/config";
+import SyncHandshakeCheck from "@/core/connector/SyncHandshakeCheck";
 
 export default class WebsocketConnector {
   
@@ -102,9 +103,8 @@ export default class WebsocketConnector {
         if (synced) {
           this.synced = true
           this.clientId = this.yDoc.clientID
-          console.log(this.yBaseMap.toJSON())
           if (RhineVarConfig.ENABLE_SYNC_HANDSHAKE_CHECK) {
-
+            await SyncHandshakeCheck.wait(this.yBaseMap)
           }
           this.emitSynced(synced)
           resolve()
