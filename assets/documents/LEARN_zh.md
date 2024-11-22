@@ -234,7 +234,7 @@ Synced: 与服务端同步状态变化事件
 
 ### enableRhineVarLog(value: Boolean): void
 
-启用/关闭RhineVar调试输出日志，默认为开启。
+启用/关闭RhineVar调试输出日志，默认为关闭。
 
 ```typescript
 enableRhineVarLog(false)

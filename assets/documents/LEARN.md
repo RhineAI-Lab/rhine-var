@@ -240,7 +240,7 @@ Callback for state change events synchronized with the server. Provides current 
 
 ### enableRhineVarLog(value: Boolean): void
 
-Enable/disable RhineVar debug output logs. Enabled by default.
+Enable/disable RhineVar debug output logs. Disabled by default.
 
 ```typescript
 enableRhineVarLog(false)
