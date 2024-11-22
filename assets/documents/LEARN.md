@@ -236,6 +236,26 @@ Callback for state change events synchronized with the server. Provides current 
 
 <br/>
 
+## Config
+
+### enableRhineVarLog(value: Boolean): void
+
+Enable/disable RhineVar debug output logs. Enabled by default.
+
+```typescript
+enableRhineVarLog(false)
+```
+
+### enableRhineVarSyncHandshakeCheck(value: Boolean): void
+
+Enable/disable the RhineVar secondary handshake synchronization check. Enabled by default.
+
+```typescript
+enableRhineVarSyncHandshakeCheck(false)
+```
+
+<br/>
+
 ## More Functions
 
 Additional common methods for RhineVar objects and their internal nodes. Examples of usage can be found in the sections above.

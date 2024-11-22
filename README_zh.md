@@ -167,22 +167,37 @@ function Counter() {
 
 ## Server
 
-我们提供了一个位于公网的公共服务器，可以用于试用和测试 RHINE-VAR。你可以通过 `wss://rwq.rhineai.com/<room-id>` 连接它。
+我们提供了一个位于公网的公共服务器，可以用于试用和测试 RHINE-VAR。你可以通过 `wss://rvp.rhineai.com/<room-id>` 连接它。
 
-注意，该服务器无法保证安全和性能，并会对大规模使用的用户做出一定限制。
+注意，该服务器无法保证安全和性能，并会对大规模使用的用户和IP做出一定限制。
 
 <br/>
 
-本仓库中提供了一个简单的服务器例子，位于本项目中的 `/test/server` 处。 服务端完全兼容所有的 Yjs 的 Websocket 服务器，将来会支持更多。
+我们提供了一个基本的服务器例子，您可以自己部署，详情请见: https://github.com/RhineAI-Lab/rhine-var-server 
+
 ```
-git clone https://github.com/RhineAI-Lab/rhine-var.git
-cd test/server
+git clone https://github.com/RhineAI-Lab/rhine-var-server.git
 yarn install
 yarn start
 ```
+
 默认运行在 `端口 6600`, 你可以通过连接 `ws://localhost:6600/<room-id>` 连接它，`<room-id>` 可以是任意文本，一个房间号对应一个 `RhineVar 对象`。
 
+<br/>
+
+服务端目前完全兼容所有的 Yjs 的 Websocket 服务器。
+
+将来会支持更多通信协议，现在您也可以自己开发 `Connector` 对象，以适配自己的通信协议。
+
 更多服务端开发信息请参考: [https://docs.yjs.dev/ecosystem/connection-provider/y-websocket](https://docs.yjs.dev/ecosystem/connection-provider/y-websocket)
+
+当你使用自己开发的服务器时，请关闭 RhineVar 默认的二次握手校验连接，除非你的服务器支持了他。
+
+```typescript
+import {enableRhineVarSyncHandshakeCheck} from 'rhine-var'
+
+enableRhineVarSyncHandshakeCheck(false)
+```
 
 <br/>
 

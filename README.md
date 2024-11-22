@@ -152,22 +152,38 @@ Note: The returned snapshot is read-only. Please do not perform any operations o
 
 ## Server
 
-We provide a public server accessible over the internet for trying out and testing RHINE-VAR. You can connect to it via wss://rwq.rhineai.com/<room-id>.
+## Server
 
-Please note that this server does not guarantee security and performance and may impose certain restrictions on users with large-scale usage.
+We provide a public server on the internet for testing and trying out RHINE-VAR. You can connect to it via `wss://rvp.rhineai.com/<room-id>`.
+
+Note that this server does not guarantee security or performance and will impose certain restrictions on users and IPs with large-scale usage.
 
 <br/>
 
-We provide a simple server as a reference, located at `/test/server` in this project. The server is fully compatible with all Yjs websocket servers.
+We also provide a basic server example that you can deploy yourself. For more details, see: https://github.com/RhineAI-Lab/rhine-var-server
+
 ```
-git clone https://github.com/RhineAI-Lab/rhine-var.git
-cd test/server
+git clone https://github.com/RhineAI-Lab/rhine-var-server.git
 yarn install
 yarn start
 ```
 It will run on `Port 6600`, and you can connect to it via `ws://localhost:6600/<room-id>`. `<room-id>` can be any text, with each room ID corresponding to a `RhineVariable`.
 
-More information about server develop: [https://docs.yjs.dev/ecosystem/connection-provider/y-websocket](https://docs.yjs.dev/ecosystem/connection-provider/y-websocket)
+<br/>
+
+The server is currently fully compatible with all Yjs WebSocket servers.
+
+In the future, more communication protocols will be supported. You can also develop your own `Connector` object to adapt to your custom communication protocol.
+
+For more information on server development, refer to: [https://docs.yjs.dev/ecosystem/connection-provider/y-websocket](https://docs.yjs.dev/ecosystem/connection-provider/y-websocket)
+
+When using your own server, disable RhineVar's default handshake verification unless your server supports it.
+
+```typescript
+import {enableRhineVarSyncHandshakeCheck} from 'rhine-var'
+
+enableRhineVarSyncHandshakeCheck(false)
+```
 
 <br/>
 

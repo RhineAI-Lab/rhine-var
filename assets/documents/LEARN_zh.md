@@ -230,6 +230,26 @@ Synced: 与服务端同步状态变化事件
 
 <br/>
 
+## Config
+
+### enableRhineVarLog(value: Boolean): void
+
+启用/关闭RhineVar调试输出日志，默认为开启。
+
+```typescript
+enableRhineVarLog(false)
+```
+
+### enableRhineVarSyncHandshakeCheck(value: Boolean): void
+
+启用/关闭RhineVar二次握手检查协同成功，默认为开启。
+
+```typescript
+enableRhineVarSyncHandshakeCheck(false)
+```
+
+<br/>
+
 ## More Functions
 
 更多 RhineVar 对象及其任意节点 的内置公用方法。使用示例可见上上板块。
