@@ -99,13 +99,13 @@ export default class WebsocketConnector {
       })
       
       this.provider.on('sync', async (synced: boolean) => {
-        log('WebsocketRhineConnector.event sync:', synced)
         if (synced) {
-          this.synced = true
-          this.clientId = this.yDoc.clientID
           if (RhineVarConfig.ENABLE_SYNC_HANDSHAKE_CHECK) {
             await SyncHandshakeCheck.wait(this.yBaseMap)
           }
+          log('WebsocketRhineConnector.event sync:', synced)
+          this.synced = true
+          this.clientId = this.yDoc.clientID
           this.emitSynced(synced)
           resolve()
         }

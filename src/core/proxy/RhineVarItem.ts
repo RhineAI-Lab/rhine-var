@@ -176,13 +176,16 @@ export default class RhineVarItem<T> {
 
   private observer = (event: YMapEvent<any> | YArrayEvent<any>, transaction: Transaction) => {}
   private syncedObserver: SyncedCallback = (synced: boolean) => {}
-  
-  // 开始观察当前Native的内容变化
+
   private observe() {
-    this.syncedObserver = (synced: boolean) => {
-      this.emitSynced(synced)
+    const connector = this.getConnector()
+    if (connector) {
+      this.syncedObserver = (synced: boolean) => {
+        this.emitSynced(synced)
+      }
+      connector.subscribeSynced(this.syncedObserver)
+      this.emitSynced(connector.synced)
     }
-    this.getConnector()?.subscribeSynced(this.syncedObserver)
 
     const target = this.native
     if (target instanceof YMap) {
