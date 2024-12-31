@@ -1,10 +1,10 @@
 import {rhineProxy, useRhine, enableRhineVarLog, enableRhineVarSyncHandshakeCheck} from 'rhine-var'
 
 enableRhineVarLog(true)
-enableRhineVarSyncHandshakeCheck(true)
+// enableRhineVarSyncHandshakeCheck(true)
 
 const defaultValue = {count: 0}
-const url = 'room-1'
+const url = 'ws://localhost:11600/room-0'
 const state = rhineProxy(defaultValue, url, false)
 
 function Counter() {
@@ -13,7 +13,7 @@ function Counter() {
   
   return <div className='page'>
     <button onClick={() => state.count-- }> - 1 </button>
-    <span>{snap.count}</span>
+    <span onClick={() => state.count = 0}>{snap.count}</span>
     <button onClick={() => state.count++ }> + 1 </button>
   </div>
 }

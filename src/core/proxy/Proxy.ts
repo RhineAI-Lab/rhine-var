@@ -28,13 +28,14 @@ export function rhineProxy<T extends object>(
   let target: Native = ensureNative<T>(defaultValue)
   
   if (connector) {
-    if (!(connector instanceof WebsocketConnector)) {
+    // Connector is String: Default for Websocket Connector
+    if (typeof connector === 'string') {
       if (PROTOCOL_LIST.every(protocol => !(String(connector)).startsWith(protocol))) {
         connector = DEFAULT_PUBLIC_URL + connector
       }
       connector = websocketRhineConnect(String(connector))
     }
-    target = connector.bind(target, Boolean(overwrite))
+    target = (connector as WebsocketConnector).bind(target, Boolean(overwrite))
   }
   connector = connector as WebsocketConnector
   
