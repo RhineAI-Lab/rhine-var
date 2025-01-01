@@ -25,26 +25,30 @@ export function rhineProxy<T extends object>(
   connector: WebsocketConnector | string | number,
   overwrite: boolean | number = false
 ): ProxiedRhineVar<T> {
-  let target: Native = ensureNative<T>(defaultValue)
-  
+
+  // Create Connector
   if (connector) {
-    // Connector is String: Default for Websocket Connector
+    // Input Connector is String: Default for Websocket Connector
     if (typeof connector === 'string') {
       if (PROTOCOL_LIST.every(protocol => !(String(connector)).startsWith(protocol))) {
         connector = DEFAULT_PUBLIC_URL + connector
       }
       connector = websocketRhineConnect(String(connector))
     }
-    target = (connector as WebsocketConnector).bind(target, Boolean(overwrite))
+    // TODO: Bind Target
+    // target = (connector as WebsocketConnector).bind(target, Boolean(overwrite))
   }
   connector = connector as WebsocketConnector
-  
-  const object = rhineProxyItem<T>(target) as ProxiedRhineVar<T>
+
+  // Create RhineVar
+  const object = rhineProxyItem<T>(defaultValue) as ProxiedRhineVar<T>
   object.connector = connector
-  
+
+  // Manage synced
   if (connector && !connector.synced) {
+
+    // Bind data after Synced
     connector.subscribeSynced((synced: boolean) => {
-      
       if (synced) {
         let syncedValue = target.clone()
         if (!overwrite && connector.yBaseMap.has(WebsocketConnector.STATE_KEY)) {
@@ -67,8 +71,8 @@ export function rhineProxy<T extends object>(
           connector.yBaseMap.set(WebsocketConnector.STATE_KEY, syncedValue)
         }
       }
-      
     })
+
   }
 
   return object
@@ -79,10 +83,9 @@ export function rhineProxyItem<T extends object>(
   data: T | Native,
   parent: RhineVar<any> | RhineVarItem<any> | null = null
 ): ProxiedRhineVarItem<T> | ProxiedRhineVar<T> {
-  let target = ensureNative<T>(data)
   
   // log('rhineProxyNative', target)
-  const object = parent ? new RhineVarItem<T>(target, parent) : new RhineVar<T>(target)
+  const object = parent ? new RhineVarItem<T>(data, parent) : new RhineVar<T>(data)
   
   object.native.forEach((value, keyString) => {
     let key = keyString as keyof T

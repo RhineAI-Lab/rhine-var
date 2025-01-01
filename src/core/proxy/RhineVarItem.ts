@@ -11,12 +11,16 @@ import WebsocketConnector from "@/core/connector/WebsocketConnector";
 
 
 export default class RhineVarItem<T> {
-  
+
+  public native: Native = undefined as any
+
+  public origin: StoredRhineVarItem<T> = this as any
+
   constructor(
-    public native: Native,
+    public defaultValue: any,
     public parent: RhineVar<any> | RhineVarItem<any> | null = null,
-    public origin: StoredRhineVarItem<T> = this as any
-  ) {}
+  ) {
+  }
   
   isRoot(): boolean {
     return false
