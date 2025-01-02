@@ -50,9 +50,8 @@ export function rhineProxy<T extends object>(
     // Bind data after Synced
     connector.subscribeSynced((synced: boolean) => {
       if (synced) {
-        let syncedValue = target.clone()
         if (!overwrite && connector.yBaseMap.has(WebsocketConnector.STATE_KEY)) {
-          syncedValue = connector.yBaseMap.get(WebsocketConnector.STATE_KEY) as YMap<any>
+          const syncedValue = connector.yBaseMap.get(WebsocketConnector.STATE_KEY) as YMap<any>
           object.native.forEach((value: any, key: string | number) => {
             Reflect.deleteProperty(object.origin, key)
           })
@@ -68,6 +67,7 @@ export function rhineProxy<T extends object>(
             }
           })
         } else {
+          const syncedValue = ensureNative(defaultValue)
           connector.yBaseMap.set(WebsocketConnector.STATE_KEY, syncedValue)
         }
       }
@@ -80,12 +80,11 @@ export function rhineProxy<T extends object>(
 
 
 export function rhineProxyItem<T extends object>(
-  data: T | Native,
+  defaultValue: T | Native,
   parent: RhineVar<any> | RhineVarItem<any> | null = null
 ): ProxiedRhineVarItem<T> | ProxiedRhineVar<T> {
-  
-  // log('rhineProxyNative', target)
-  const object = parent ? new RhineVarItem<T>(data, parent) : new RhineVar<T>(data)
+
+  const object = parent ? new RhineVarItem<T>(defaultValue, parent) : new RhineVar<T>(defaultValue)
   
   object.native.forEach((value, keyString) => {
     let key = keyString as keyof T

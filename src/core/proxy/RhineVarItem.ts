@@ -17,7 +17,7 @@ export default class RhineVarItem<T> {
   public origin: StoredRhineVarItem<T> = this as any
 
   constructor(
-    public defaultValue: any,
+    defaultValue: T | Native,
     public parent: RhineVar<any> | RhineVarItem<any> | null = null,
   ) {
   }
