@@ -1,8 +1,10 @@
 "use client"
 
 import React from "react";
-import {rhineProxy} from "rhine-var";
-import {ProxiedRhineVarItem} from "../../../../../src";
+import {rhineProxy, enableRhineVarLog, ProxiedRhineVarItem} from "rhine-var";
+
+
+enableRhineVarLog(true)
 
 console.log('\n\n=================== Rhine Var Playground ===================\n\n')
 
@@ -28,7 +30,11 @@ const defaultValue: Group = {
     {name: 'Emily', age: 22},
   ]
 }
-const group = rhineProxy<Group>(defaultValue, 'ws://localhost:6600/room-1', true)
+const group = rhineProxy<Group>(defaultValue, 'ws://localhost:11600/room-0', true)
+
+for (const person of group.people) {
+  console.log(person.json())
+}
 
 group.afterSynced(() => {
 

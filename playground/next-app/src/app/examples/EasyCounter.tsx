@@ -3,9 +3,10 @@ import {rhineProxy, useRhine, enableRhineVarLog, enableRhineVarSyncHandshakeChec
 enableRhineVarLog(true)
 // enableRhineVarSyncHandshakeCheck(true)
 
-const defaultValue = {count: 0}
+const defaultValue = {count: 0, testArray: []}
 const url = 'ws://localhost:11600/room-0'
 const state = rhineProxy(defaultValue, url, false)
+
 
 function Counter() {
   

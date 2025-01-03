@@ -1,13 +1,14 @@
 import {Array as YArray, Map as YMap, Transaction, YArrayEvent, YMapEvent} from "yjs";
 import {rhineProxyItem} from "@/core/proxy/Proxy";
 import {log} from "@/utils/logger";
-import {isObjectOrArray} from "@/core/utils/DataUtils";
+import {ensureNative, isObjectOrArray} from "@/core/utils/DataUtils";
 import {Native, YPath} from "@/core/native/Native";
 import {ChangeType} from "@/core/event/ChangeType";
 import {Callback, DeepCallback, SyncedCallback} from "@/core/event/Callback";
 import {StoredRhineVarItem} from "@/core/proxy/ProxiedRhineVar";
 import RhineVar from "@/core/proxy/RhineVar";
 import WebsocketConnector from "@/core/connector/WebsocketConnector";
+import {isNative} from "@/core/native/NativeUtils";
 
 
 export default class RhineVarItem<T> {
@@ -15,15 +16,26 @@ export default class RhineVarItem<T> {
   public defaultValue: T
   public native: Native | null = null
 
-  public parent: RhineVar<any> | RhineVarItem<any> | null = null
-
   public origin: StoredRhineVarItem<T> = this as any
+
+  public parent: RhineVar<any> | RhineVarItem<any> | null
 
   constructor(
     defaultValue?: T | Native,
     parent?: RhineVar<any> | RhineVarItem<any>,
   ) {
-    this.defaultValue = defaultValue as T
+    this.parent = parent ?? null
+
+    if (isNative(defaultValue)) {
+      this.defaultValue = (defaultValue as Native).toJSON() as T
+    } else {
+      this.defaultValue = defaultValue as T
+    }
+
+    if (this.parent?.synced()) {
+      this.native = ensureNative(defaultValue)
+    }
+
   }
   
   isRoot(): boolean {
@@ -203,7 +215,7 @@ export default class RhineVarItem<T> {
       this.emitSynced(connector.synced)
     }
 
-    // TODO: Observe
+    // TODO: Observe need move to after synced
     // const target = this.native
     // if (target instanceof YMap) {
     //   this.observer = (event, transaction) => {
@@ -302,12 +314,14 @@ export default class RhineVarItem<T> {
 
 export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'origin',
+  'defaultValue',
   'native',
   'connector',
   'json',
   'string',
   'parent',
   'isRoot',
+  'synced',
   'root',
   'getConnector',
   
