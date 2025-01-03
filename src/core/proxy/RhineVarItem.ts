@@ -205,7 +205,12 @@ export default class RhineVarItem<T> {
   private observer = (event: YMapEvent<any> | YArrayEvent<any>, transaction: Transaction) => {}
   private syncedObserver: SyncedCallback = (synced: boolean) => {}
 
+  private firstSynced() {
+
+  }
+
   private observe() {
+    // TODO: Split sync observe and target observe
     const connector = this.getConnector()
     if (connector) {
       this.syncedObserver = (synced: boolean) => {
@@ -215,7 +220,6 @@ export default class RhineVarItem<T> {
       this.emitSynced(connector.synced)
     }
 
-    // TODO: Observe need move to after synced
     // const target = this.native
     // if (target instanceof YMap) {
     //   this.observer = (event, transaction) => {

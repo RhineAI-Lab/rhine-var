@@ -32,10 +32,6 @@ const defaultValue: Group = {
 }
 const group = rhineProxy<Group>(defaultValue, 'ws://localhost:11600/room-0', true)
 
-for (const person of group.people) {
-  console.log(person.json())
-}
-
 group.afterSynced(() => {
 
   // 基本的监听 监听当前节点的直接属性变化
