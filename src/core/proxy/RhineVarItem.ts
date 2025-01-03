@@ -12,14 +12,18 @@ import WebsocketConnector from "@/core/connector/WebsocketConnector";
 
 export default class RhineVarItem<T> {
 
-  public native: Native = undefined as any
+  public defaultValue: T
+  public native: Native | null = null
+
+  public parent: RhineVar<any> | RhineVarItem<any> | null = null
 
   public origin: StoredRhineVarItem<T> = this as any
 
   constructor(
-    defaultValue: T | Native,
-    public parent: RhineVar<any> | RhineVarItem<any> | null = null,
+    defaultValue?: T | Native,
+    parent?: RhineVar<any> | RhineVarItem<any>,
   ) {
+    this.defaultValue = defaultValue as T
   }
   
   isRoot(): boolean {
@@ -32,6 +36,10 @@ export default class RhineVarItem<T> {
   
   getConnector(): WebsocketConnector | null {
     return this.root().connector
+  }
+
+  synced(): boolean {
+    return Boolean(this.getConnector()?.synced)
   }
   
   
@@ -50,7 +58,11 @@ export default class RhineVarItem<T> {
   
   
   json(): T {
-    return this.native.toJSON() as T
+    if (this.synced() && this.native) {
+      return this.native.toJSON() as T
+    } else {
+      return this.defaultValue
+    }
   }
   
   frozenJson(): T {
@@ -191,93 +203,94 @@ export default class RhineVarItem<T> {
       this.emitSynced(connector.synced)
     }
 
-    const target = this.native
-    if (target instanceof YMap) {
-      this.observer = (event, transaction) => {
-        event.changes.keys.forEach(({action, oldValue}, key) => {
-          if (isObjectOrArray(oldValue)) {
-            oldValue = Reflect.get(this, key)
-            if (oldValue instanceof RhineVarItem) {
-              oldValue = oldValue.frozenJson()
-            }
-          }
-          
-          let value = undefined
-          if (action === 'add' || action === 'update') {
-            value = target.get(key)
-            if (isObjectOrArray(value)) {
-              Reflect.set(this.origin, key, rhineProxyItem(value, this))
-            } else {
-              Reflect.set(this.origin, key, value)
-            }
-          } else if (action === 'delete') {
-            Reflect.deleteProperty(this.origin, key)
-          }
-          
-          const newValue = key in this ? Reflect.get(this, key) : value
-          log('Proxy.event: Map', action, key + ':', oldValue, '->', newValue)
-          this.emit(key as keyof T, newValue, oldValue, action as ChangeType, event, transaction)
-          this.emitDeep([key], newValue, oldValue, action as ChangeType, event, transaction)
-        })
-      }
-    } else if (target instanceof YArray){
-      this.observer = (event, transaction) => {
-        let i = -1
-        event.delta.forEach(deltaItem => {
-          if (deltaItem.retain !== undefined) {
-            i += deltaItem.retain
-          }
-          if (deltaItem.delete !== undefined) {
-            for (let j = 0; j < deltaItem.delete; j++) {
-              i++
-              let oldValue = i in this ? Reflect.get(this, i) : target.get(i)
-              if (oldValue instanceof RhineVarItem) {
-                oldValue = oldValue.frozenJson()
-              }
-              
-              Reflect.deleteProperty(this.origin, i)
-              for (let k = i + 1; k < target.length + deltaItem.delete; k++) {
-                const value = Reflect.get(this, k)
-                Reflect.set(this.origin, k - 1, value)
-                Reflect.deleteProperty(this.origin, k)
-              }
-              
-              log('Proxy.event: Array delete', i + ':', oldValue, '->', undefined)
-              this.emit(i as keyof T, undefined as any, oldValue as any, ChangeType.Delete, event, transaction)
-              this.emitDeep([i], undefined, oldValue, ChangeType.Delete, event, transaction)
-            }
-          }
-          if (deltaItem.insert !== undefined && Array.isArray(deltaItem.insert)) {
-            deltaItem.insert.forEach((value) => {
-              i++
-              
-              for (let k = target.length - 1; k >= i; k--) {
-                const existingValue = Reflect.get(this, k)
-                Reflect.set(this.origin, k + 1, existingValue)
-              }
-              if (isObjectOrArray(value)) {
-                Reflect.set(this.origin, i, rhineProxyItem(value, this))
-              } else {
-                Reflect.set(this.origin, i, value)
-              }
-              
-              const newValue = i in this ? Reflect.get(this, i) : target.get(i)
-              log('Proxy.event: Array add', i, ':', undefined, '->', newValue)
-              this.emit(i as keyof T, newValue as any, undefined as any, ChangeType.Add, event, transaction)
-              this.emitDeep([i], newValue, undefined, ChangeType.Add, event, transaction)
-            })
-          }
-        })
-      }
-    }
-    
-    if (this.observer) {
-      target.observe(this.observer)
-    }
+    // TODO: Observe
+    // const target = this.native
+    // if (target instanceof YMap) {
+    //   this.observer = (event, transaction) => {
+    //     event.changes.keys.forEach(({action, oldValue}, key) => {
+    //       if (isObjectOrArray(oldValue)) {
+    //         oldValue = Reflect.get(this, key)
+    //         if (oldValue instanceof RhineVarItem) {
+    //           oldValue = oldValue.frozenJson()
+    //         }
+    //       }
+    //
+    //       let value = undefined
+    //       if (action === 'add' || action === 'update') {
+    //         value = target.get(key)
+    //         if (isObjectOrArray(value)) {
+    //           Reflect.set(this.origin, key, rhineProxyItem(value, this))
+    //         } else {
+    //           Reflect.set(this.origin, key, value)
+    //         }
+    //       } else if (action === 'delete') {
+    //         Reflect.deleteProperty(this.origin, key)
+    //       }
+    //
+    //       const newValue = key in this ? Reflect.get(this, key) : value
+    //       log('Proxy.event: Map', action, key + ':', oldValue, '->', newValue)
+    //       this.emit(key as keyof T, newValue, oldValue, action as ChangeType, event, transaction)
+    //       this.emitDeep([key], newValue, oldValue, action as ChangeType, event, transaction)
+    //     })
+    //   }
+    // } else if (target instanceof YArray){
+    //   this.observer = (event, transaction) => {
+    //     let i = -1
+    //     event.delta.forEach(deltaItem => {
+    //       if (deltaItem.retain !== undefined) {
+    //         i += deltaItem.retain
+    //       }
+    //       if (deltaItem.delete !== undefined) {
+    //         for (let j = 0; j < deltaItem.delete; j++) {
+    //           i++
+    //           let oldValue = i in this ? Reflect.get(this, i) : target.get(i)
+    //           if (oldValue instanceof RhineVarItem) {
+    //             oldValue = oldValue.frozenJson()
+    //           }
+    //
+    //           Reflect.deleteProperty(this.origin, i)
+    //           for (let k = i + 1; k < target.length + deltaItem.delete; k++) {
+    //             const value = Reflect.get(this, k)
+    //             Reflect.set(this.origin, k - 1, value)
+    //             Reflect.deleteProperty(this.origin, k)
+    //           }
+    //
+    //           log('Proxy.event: Array delete', i + ':', oldValue, '->', undefined)
+    //           this.emit(i as keyof T, undefined as any, oldValue as any, ChangeType.Delete, event, transaction)
+    //           this.emitDeep([i], undefined, oldValue, ChangeType.Delete, event, transaction)
+    //         }
+    //       }
+    //       if (deltaItem.insert !== undefined && Array.isArray(deltaItem.insert)) {
+    //         deltaItem.insert.forEach((value) => {
+    //           i++
+    //
+    //           for (let k = target.length - 1; k >= i; k--) {
+    //             const existingValue = Reflect.get(this, k)
+    //             Reflect.set(this.origin, k + 1, existingValue)
+    //           }
+    //           if (isObjectOrArray(value)) {
+    //             Reflect.set(this.origin, i, rhineProxyItem(value, this))
+    //           } else {
+    //             Reflect.set(this.origin, i, value)
+    //           }
+    //
+    //           const newValue = i in this ? Reflect.get(this, i) : target.get(i)
+    //           log('Proxy.event: Array add', i, ':', undefined, '->', newValue)
+    //           this.emit(i as keyof T, newValue as any, undefined as any, ChangeType.Add, event, transaction)
+    //           this.emitDeep([i], newValue, undefined, ChangeType.Add, event, transaction)
+    //         })
+    //       }
+    //     })
+    //   }
+    // }
+    //
+    // if (this.observer) {
+    //   target.observe(this.observer)
+    // }
   }
   
   private unobserve() {
-    if (this.observer) {
+    if (this.observer && this.native) {
       this.native.unobserve(this.observer)
     }
     if (this.syncedObserver) {

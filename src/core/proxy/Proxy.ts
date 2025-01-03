@@ -2,7 +2,7 @@ import {Array as YArray, Map as YMap} from "yjs";
 import WebsocketConnector, {websocketRhineConnect} from "@/core/connector/WebsocketConnector";
 import RhineVarItem, {RHINE_VAR_PREDEFINED_PROPERTIES} from "@/core/proxy/RhineVarItem";
 import {ensureNative, ensureRhineVar} from "@/core/utils/DataUtils";
-import {log} from "@/utils/logger";
+import {log, warn} from "@/utils/logger";
 import {convertArrayProperty} from "@/core/utils/ConvertProperty";
 import {ProxiedRhineVar, ProxiedRhineVarItem} from "@/core/proxy/ProxiedRhineVar";
 import {Native} from "@/core/native/Native";
@@ -48,30 +48,30 @@ export function rhineProxy<T extends object>(
   if (connector && !connector.synced) {
 
     // Bind data after Synced
-    connector.subscribeSynced((synced: boolean) => {
-      if (synced) {
-        if (!overwrite && connector.yBaseMap.has(WebsocketConnector.STATE_KEY)) {
-          const syncedValue = connector.yBaseMap.get(WebsocketConnector.STATE_KEY) as YMap<any>
-          object.native.forEach((value: any, key: string | number) => {
-            Reflect.deleteProperty(object.origin, key)
-          })
-          Reflect.get(object, 'unobserve').call(object)
-          object.native = syncedValue
-          Reflect.get(object, 'observe').call(object)
-          log('Proxy.synced: Update synced native')
-          syncedValue.forEach((value: any, key: string) => {
-            if (isNative(value)) {
-              Reflect.set(object.origin, key, rhineProxyItem(value, object))
-            } else {
-              Reflect.set(object.origin, key, value)
-            }
-          })
-        } else {
-          const syncedValue = ensureNative(defaultValue)
-          connector.yBaseMap.set(WebsocketConnector.STATE_KEY, syncedValue)
-        }
-      }
-    })
+    // connector.subscribeSynced((synced: boolean) => {
+    //   if (synced) {
+    //     if (!overwrite && connector.yBaseMap.has(WebsocketConnector.STATE_KEY)) {
+    //       const syncedValue = connector.yBaseMap.get(WebsocketConnector.STATE_KEY) as YMap<any>
+    //       object.native.forEach((value: any, key: string | number) => {
+    //         Reflect.deleteProperty(object.origin, key)
+    //       })
+    //       Reflect.get(object, 'unobserve').call(object)
+    //       object.native = syncedValue
+    //       Reflect.get(object, 'observe').call(object)
+    //       log('Proxy.synced: Update synced native')
+    //       syncedValue.forEach((value: any, key: string) => {
+    //         if (isNative(value)) {
+    //           Reflect.set(object.origin, key, rhineProxyItem(value, object))
+    //         } else {
+    //           Reflect.set(object.origin, key, value)
+    //         }
+    //       })
+    //     } else {
+    //       const syncedValue = ensureNative(defaultValue)
+    //       connector.yBaseMap.set(WebsocketConnector.STATE_KEY, syncedValue)
+    //     }
+    //   }
+    // })
 
   }
 
@@ -85,19 +85,22 @@ export function rhineProxyItem<T extends object>(
 ): ProxiedRhineVarItem<T> | ProxiedRhineVar<T> {
 
   const object = parent ? new RhineVarItem<T>(defaultValue, parent) : new RhineVar<T>(defaultValue)
-  
-  object.native.forEach((value, keyString) => {
-    let key = keyString as keyof T
-    if (isNative(value)) {
-      Reflect.set(object, key, rhineProxyItem<T>(value, object))
-    } else {
-      Reflect.set(object, key, value)
-    }
-  })
-  
+
+  // TODO: Move native create on sync
+  // object.native.forEach((value, keyString) => {
+  //   let key = keyString as keyof T
+  //   if (isNative(value)) {
+  //     Reflect.set(object, key, rhineProxyItem<T>(value, object))
+  //   } else {
+  //     Reflect.set(object, key, value)
+  //   }
+  // })
+
   const proxyGetOwnPropertyDescriptor = (proxy: RhineVarItem<T>, p: string | symbol) => {
     log('Proxy.handler.getOwnPropertyDescriptor:', p, '  ', object)
+
     if (p === Symbol.iterator) {
+      // Support iterator like for...of
       return {
         value: function* () {
           if (object.native instanceof YMap) {
@@ -114,6 +117,7 @@ export function rhineProxyItem<T extends object>(
         configurable: true,
       }
     }
+
     return Reflect.getOwnPropertyDescriptor(object, p)
   }
   
@@ -141,28 +145,52 @@ export function rhineProxyItem<T extends object>(
       log('Proxy.handler.set:', p, 'to', value, '  ', object, receiver)
       
       value = ensureRhineVar(value, object)
-      
-      let result = nativeSet(object.native, p, value)
-      if (!result) console.error('Failed to set value')
-      return result
+
+      if (object.native) {
+        let result = nativeSet(object.native, p, value)
+        if (!result) console.error('Failed to set value')
+        return result
+      } else {
+        warn('Operate \'set\' cannot be performed before synchronization.')
+        // TIP: Just warn but return true when deleteProperty before synchronization
+        return true
+      }
     },
     
     deleteProperty(proxy: RhineVarItem<T>, p: string | symbol): boolean {
-      if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return false
+      if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) {
+        warn('The built-in method in RhineVar cannot be deleted.')
+        return false
+      }
       log('Proxy.handler.deleteProperty:', p)
-      
-      let result = nativeDelete(object.native, p)
-      if (!result) console.error('Failed to delete value')
-      return result
+
+      if (object.native) {
+        let result = nativeDelete(object.native, p)
+        if (!result) console.error('Failed to delete value')
+        return result
+      } else {
+        warn('Operate \'deleteProperty\' cannot be performed before synchronization.')
+        // TIP: Just warn, but return true when deleteProperty before synchronization
+        return true
+      }
     },
     
     has(proxy: RhineVarItem<T>, p: string | symbol): boolean {
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return false
-      return nativeHas(object.native, p)
+
+      if (object.native) {
+        return nativeHas(object.native, p)
+      } else {
+        return Reflect.has(object.defaultValue, p)
+      }
     },
     
-    ownKeys(proxy: RhineVarItem<T>): string[] {
-      return nativeOwnKeys(object.native)
+    ownKeys(proxy: RhineVarItem<T>): (string | symbol)[] {
+      if (object.native) {
+        return nativeOwnKeys(object.native)
+      } else {
+        return Reflect.ownKeys(object.defaultValue)
+      }
     },
     
     getOwnPropertyDescriptor: proxyGetOwnPropertyDescriptor,
