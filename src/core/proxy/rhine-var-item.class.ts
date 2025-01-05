@@ -203,10 +203,6 @@ export default class RhineVarItem<T> {
   private observer = (event: YMapEvent<any> | YArrayEvent<any>, transaction: Transaction) => {}
   private syncedObserver: SyncedCallback = (synced: boolean) => {}
 
-  private firstSynced() {
-
-  }
-
   private observe() {
     // TODO: Split sync observe and target observe
     const connector = this.getConnector()

@@ -33,7 +33,11 @@ export function ensureNative<T>(value: T | RhineVarItem<T> | Native): Native | a
     return value
   }
   if (value instanceof RhineVarItem) {
-    return value.native
+    if (value.native) {
+      return value.native
+    } else {
+      return jsonToNative(value.defaultValue)
+    }
   }
   if (isObjectOrArray(value)) {
     return jsonToNative(value)

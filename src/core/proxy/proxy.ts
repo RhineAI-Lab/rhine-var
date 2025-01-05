@@ -112,6 +112,7 @@ export function rhineProxyItem<T extends object>(
   }
 
   const proxyGetOwnPropertyDescriptor = (proxy: RhineVarItem<T>, p: string | symbol) => {
+    if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return
     log('Proxy.handler.getOwnPropertyDescriptor:', p, '  ', object)
 
     if (object.native) {
@@ -234,7 +235,8 @@ export function rhineProxyItem<T extends object>(
     getOwnPropertyDescriptor: proxyGetOwnPropertyDescriptor,
   }
 
-  Reflect.get(object, 'observe').call(object)
+  // Observe after synced
+  // Reflect.get(object, 'observe').call(object)
   
   return new Proxy(object, handler) as ProxiedRhineVarItem<T>
 }
