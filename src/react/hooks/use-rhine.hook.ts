@@ -1,6 +1,6 @@
 "use client"
 import {useEffect, useState} from "react";
-import {ProxiedRhineVar} from "@/core/proxy/ProxiedRhineVar";
+import {ProxiedRhineVar} from "@/core/proxy/proxied-rhine-var.type";
 
 export default function useRhine<T extends object>(proxy: ProxiedRhineVar<T>): Readonly<T> {
   

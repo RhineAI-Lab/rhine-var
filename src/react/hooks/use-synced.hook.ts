@@ -1,9 +1,9 @@
-import WebsocketConnector from "@/core/connector/WebsocketConnector";
+import WebsocketConnector from "@/core/connector/websocket-connector";
 import {useEffect, useState} from "react";
-import {ProxiedRhineVar} from "@/core/proxy/ProxiedRhineVar";
-import RhineVarItem from "@/core/proxy/RhineVarItem";
+import {ProxiedRhineVar} from "@/core/proxy/proxied-rhine-var.type";
+import RhineVarItem from "@/core/proxy/rhine-var-item.class";
 
-export default function useSynced(target?: WebsocketConnector | ProxiedRhineVar<any>) {
+export default function useSyncedHook(target?: WebsocketConnector | ProxiedRhineVar<any>) {
   
   const checkSynced = (): boolean => {
     let connector: WebsocketConnector | null = null

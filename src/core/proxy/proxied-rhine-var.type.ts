@@ -1,5 +1,5 @@
-import RhineVarItem from "@/core/proxy/RhineVarItem";
-import RhineVar from "@/core/proxy/RhineVar";
+import RhineVarItem from "@/core/proxy/rhine-var-item.class";
+import RhineVar from "@/core/proxy/rhine-var.class";
 
 export type RecursiveCrossRhineVarItem<T> = {
   [K in keyof T]: T[K] extends object ? RecursiveCrossRhineVarItem<T[K]> & RhineVarItem<T[K]> : T[K]
