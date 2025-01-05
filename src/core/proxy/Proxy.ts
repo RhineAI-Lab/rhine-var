@@ -1,4 +1,4 @@
-import {Array as YArray, Map as YMap} from "yjs";
+import {Array as YArray, Map as YMap, Doc as YDoc} from "yjs";
 import WebsocketConnector, {websocketRhineConnect} from "@/core/connector/WebsocketConnector";
 import RhineVarItem, {RHINE_VAR_PREDEFINED_PROPERTIES} from "@/core/proxy/RhineVarItem";
 import {ensureNative, ensureRhineVar} from "@/core/utils/DataUtils";
@@ -26,50 +26,30 @@ export function rhineProxy<T extends object>(
   overwrite: boolean | number = false
 ): ProxiedRhineVar<T> {
   let target: Native = ensureNative<T>(defaultValue)
-  
-  if (connector) {
+  const tempMap = new YDoc().getMap()
+  tempMap.set(WebsocketConnector.STATE_KEY, target)
+
+  const object = rhineProxyItem<T>(target) as ProxiedRhineVar<T>
+
+  if (typeof connector === 'string' || typeof connector === 'number') {
     // Connector is String: Default for Websocket Connector
-    if (typeof connector === 'string') {
-      if (PROTOCOL_LIST.every(protocol => !(String(connector)).startsWith(protocol))) {
-        connector = DEFAULT_PUBLIC_URL + connector
-      }
-      connector = websocketRhineConnect(String(connector))
+    if (PROTOCOL_LIST.every(protocol => !(String(connector)).startsWith(protocol))) {
+      connector = DEFAULT_PUBLIC_URL + connector
     }
-    target = (connector as WebsocketConnector).bind(target, Boolean(overwrite))
+    connector = websocketRhineConnect(String(connector))
   }
   connector = connector as WebsocketConnector
-  
-  const object = rhineProxyItem<T>(target) as ProxiedRhineVar<T>
   object.connector = connector
-  
-  if (connector && !connector.synced) {
-    connector.subscribeSynced((synced: boolean) => {
-      
-      if (synced) {
-        let syncedValue = target.clone()
-        if (!overwrite && connector.yBaseMap.has(WebsocketConnector.STATE_KEY)) {
-          syncedValue = connector.yBaseMap.get(WebsocketConnector.STATE_KEY) as YMap<any>
-          object.native.forEach((value: any, key: string | number) => {
-            Reflect.deleteProperty(object.origin, key)
-          })
-          Reflect.get(object, 'unobserve').call(object)
-          object.native = syncedValue
-          Reflect.get(object, 'observe').call(object)
-          log('Proxy.synced: Update synced native')
-          syncedValue.forEach((value: any, key: string) => {
-            if (isNative(value)) {
-              Reflect.set(object.origin, key, rhineProxyItem(value, object))
-            } else {
-              Reflect.set(object.origin, key, value)
-            }
-          })
-        } else {
-          connector.yBaseMap.set(WebsocketConnector.STATE_KEY, syncedValue)
-        }
-      }
-      
-    })
-  }
+
+  connector.subscribeSynced((synced: boolean) => {
+    if (overwrite) {
+      connector.setState(ensureNative(target.toJSON()))
+    }
+    if (!connector.hasState()) {
+      connector.setState(ensureNative(target.toJSON()))
+    }
+    object.initialize(connector.getState())
+  })
 
   return object
 }

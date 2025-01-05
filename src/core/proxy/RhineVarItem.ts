@@ -8,6 +8,8 @@ import {Callback, DeepCallback, SyncedCallback} from "@/core/event/Callback";
 import {StoredRhineVarItem} from "@/core/proxy/ProxiedRhineVar";
 import RhineVar from "@/core/proxy/RhineVar";
 import WebsocketConnector from "@/core/connector/WebsocketConnector";
+import {isNative} from "@/core/native/NativeUtils";
+import {keepItem} from "yjs/dist/src/structs/Item";
 
 
 export default class RhineVarItem<T> {
@@ -28,6 +30,27 @@ export default class RhineVarItem<T> {
   
   getConnector(): WebsocketConnector | null {
     return this.root().connector
+  }
+
+  // Call after every synced
+  initialize(native: Native) {
+    console.log('initialize')
+    console.log(this.native.toJSON())
+    this.native.forEach((value: any, key: string | number) => {
+      Reflect.deleteProperty(this.origin, key)
+    })
+    this.unobserve()
+    console.log(native.toJSON())
+    this.native = native
+    this.observe()
+    log('Proxy.synced: Update synced native', native.toJSON())
+    native.forEach((value: any, key: string | number) => {
+      if (isNative(value)) {
+        Reflect.set(this.origin, key, rhineProxyItem(value, this))
+      } else {
+        Reflect.set(this.origin, key, value)
+      }
+    })
   }
   
   
@@ -177,7 +200,7 @@ export default class RhineVarItem<T> {
   private observer = (event: YMapEvent<any> | YArrayEvent<any>, transaction: Transaction) => {}
   private syncedObserver: SyncedCallback = (synced: boolean) => {}
 
-  private observe() {
+  observe() {
     const connector = this.getConnector()
     if (connector) {
       this.syncedObserver = (synced: boolean) => {
@@ -272,7 +295,7 @@ export default class RhineVarItem<T> {
     }
   }
   
-  private unobserve() {
+  unobserve() {
     if (this.observer) {
       this.native.unobserve(this.observer)
     }
@@ -287,6 +310,7 @@ export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'origin',
   'native',
   'connector',
+  'initialize',
   'json',
   'string',
   'parent',

@@ -56,13 +56,13 @@ export default class WebsocketConnector {
     })
   }
   
-  
   constructor(url = '') {
     this.yDoc = new YDoc()
     this.yBaseMap = this.yDoc.getMap()
     url && this.connect(url)
   }
-  
+
+  // TODO: remove bind
   bind(defaultValue: Native, overwrite: boolean = false) {
     if (this.synced) {
       if (!overwrite && this.yBaseMap.has(WebsocketConnector.STATE_KEY)) {
@@ -75,6 +75,18 @@ export default class WebsocketConnector {
       tempMap.set(WebsocketConnector.STATE_KEY, defaultValue)
       return defaultValue
     }
+  }
+
+  hasState(): boolean {
+    return this.yBaseMap.has(WebsocketConnector.STATE_KEY)
+  }
+
+  getState(): Native {
+    return this.yBaseMap.get(WebsocketConnector.STATE_KEY)
+  }
+
+  setState(state: Native) {
+    this.yBaseMap.set(WebsocketConnector.STATE_KEY, state)
   }
   
   async connect(url: string): Promise<void> {
@@ -99,6 +111,7 @@ export default class WebsocketConnector {
       })
       
       this.provider.on('sync', async (synced: boolean) => {
+        console.log(this.yBaseMap.toJSON())
         if (synced) {
           if (RhineVarConfig.ENABLE_SYNC_HANDSHAKE_CHECK) {
             await SyncHandshakeCheck.wait(this.yBaseMap)
