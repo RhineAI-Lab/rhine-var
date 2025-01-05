@@ -13,4 +13,10 @@ export default class RhineVar<T> extends RhineVarItem<T> {
     return this
   }
 
+  bindConnector(connector: WebsocketConnector) {
+
+    this.connector = connector
+
+  }
+
 }

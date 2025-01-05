@@ -35,6 +35,7 @@ export function rhineProxy<T extends object>(
       }
       connector = websocketRhineConnect(String(connector))
     }
+
     // TODO: Bind Target
     // target = (connector as WebsocketConnector).bind(target, Boolean(overwrite))
   }
@@ -42,6 +43,8 @@ export function rhineProxy<T extends object>(
 
   // Create RhineVar
   const object = rhineProxyItem<T>(defaultValue) as ProxiedRhineVar<T>
+
+  connector.bind<T>(object, Boolean(overwrite))
   object.connector = connector
 
   // Manage synced

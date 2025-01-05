@@ -6,6 +6,7 @@ import {Native} from "@/core/native/native.type";
 import {SyncedCallback} from "@/core/event/callback";
 import RhineVarConfig from "@/config/config";
 import SyncHandshakeCheck from "@/core/connector/sync-handshake-check";
+import RhineVar from "@/core/proxy/rhine-var.class";
 
 export default class WebsocketConnector {
   
@@ -63,18 +64,20 @@ export default class WebsocketConnector {
     url && this.connect(url)
   }
   
-  bind(defaultValue: Native, overwrite: boolean = false) {
-    if (this.synced) {
-      if (!overwrite && this.yBaseMap.has(WebsocketConnector.STATE_KEY)) {
-        return this.yBaseMap.get(WebsocketConnector.STATE_KEY)
-      }
-      this.yBaseMap.set(WebsocketConnector.STATE_KEY, defaultValue)
-      return defaultValue
-    } else {
-      const tempMap = new YDoc().getMap()
-      tempMap.set(WebsocketConnector.STATE_KEY, defaultValue)
-      return defaultValue
-    }
+  bind<T>(object: RhineVar<T>, overwrite: boolean = false) {
+
+
+    // if (this.synced) {
+    //   if (!overwrite && this.yBaseMap.has(WebsocketConnector.STATE_KEY)) {
+    //     return this.yBaseMap.get(WebsocketConnector.STATE_KEY)
+    //   }
+    //   this.yBaseMap.set(WebsocketConnector.STATE_KEY, defaultValue)
+    //   return defaultValue
+    // } else {
+    //   const tempMap = new YDoc().getMap()
+    //   tempMap.set(WebsocketConnector.STATE_KEY, defaultValue)
+    //   return defaultValue
+    // }
   }
   
   async connect(url: string): Promise<void> {
