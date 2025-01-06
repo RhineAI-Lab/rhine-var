@@ -25,12 +25,15 @@ export function rhineProxy<T extends object>(
   connector: WebsocketConnector | string | number,
   overwrite: boolean | number = false
 ): ProxiedRhineVar<T> {
+  // Create local temp YDoc and YMap
   let target: Native = ensureNative<T>(defaultValue)
   const tempMap = new YDoc().getMap()
   tempMap.set(WebsocketConnector.STATE_KEY, target)
 
+  // Create core proxied rhine-var object
   const object = rhineProxyItem<T>(target) as ProxiedRhineVar<T>
 
+  // Create connector by string, number or direct
   if (typeof connector === 'string' || typeof connector === 'number') {
     // Connector is String: Default for Websocket Connector
     if (PROTOCOL_LIST.every(protocol => !(String(connector)).startsWith(protocol))) {
@@ -41,12 +44,13 @@ export function rhineProxy<T extends object>(
   connector = connector as WebsocketConnector
   object.connector = connector
 
+  // Bind connector
   connector.subscribeSynced((synced: boolean) => {
     if (overwrite) {
-      connector.setState(ensureNative(target.toJSON()))
+      connector.setState(ensureNative(object.json()))
     }
     if (!connector.hasState()) {
-      connector.setState(ensureNative(target.toJSON()))
+      connector.setState(ensureNative(object.json()))
     }
     object.initialize(connector.getState())
   })
@@ -60,8 +64,7 @@ export function rhineProxyItem<T extends object>(
   parent: RhineVar<any> | RhineVarItem<any> | null = null
 ): ProxiedRhineVarItem<T> | ProxiedRhineVar<T> {
   let target = ensureNative<T>(data)
-  
-  // log('rhineProxyNative', target)
+
   const object = parent ? new RhineVarItem<T>(target, parent) : new RhineVar<T>(target)
   
   object.native.forEach((value, keyString) => {

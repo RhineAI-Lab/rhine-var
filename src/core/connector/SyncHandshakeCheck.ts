@@ -14,7 +14,6 @@ export default class SyncHandshakeCheck {
             if (syncMap.get('role') === 'server') {
               log('Sync handshake successfully', syncMap.toJSON())
               syncMap.unobserve(syncObserver)
-              log('Sync State:', baseMap.get('state')?.toJSON())
               resolve()
             }
           }
@@ -27,7 +26,6 @@ export default class SyncHandshakeCheck {
       } else {
         log('Sync handshake waiting...')
         const mapObserver = () => {
-          console.log(baseMap.toJSON())
           if (baseMap.has('sync')) {
             baseMap.unobserve(mapObserver)
             waitSync(baseMap.get('sync'))

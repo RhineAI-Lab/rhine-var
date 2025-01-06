@@ -34,16 +34,13 @@ export default class RhineVarItem<T> {
 
   // Call after every synced
   initialize(native: Native) {
-    console.log('initialize')
-    console.log(this.native.toJSON())
+    log('Synced initialize:', this.json(), native.toJSON())
     this.native.forEach((value: any, key: string | number) => {
       Reflect.deleteProperty(this.origin, key)
     })
     this.unobserve()
-    console.log(native.toJSON())
     this.native = native
     this.observe()
-    log('Proxy.synced: Update synced native', native.toJSON())
     native.forEach((value: any, key: string | number) => {
       if (isNative(value)) {
         Reflect.set(this.origin, key, rhineProxyItem(value, this))
