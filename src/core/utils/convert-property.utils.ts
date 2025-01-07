@@ -1,8 +1,8 @@
 import {Array as YArray} from "yjs";
-import RhineVarItem from "@/core/proxy/RhineVarItem";
-import {ensureNative} from "@/core/utils/DataUtils";
-import {isNative} from "@/core/native/NativeUtils";
-import {Native} from "@/core/native/Native";
+import RhineVarItem from "@/core/proxy/rhine-var-item.class";
+import {ensureNative} from "@/core/utils/data.utils";
+import {isNative} from "@/core/native/native.utils";
+import {Native} from "@/core/native/native.type";
 
 /**
  * 提供类似于JS原生Array的函数 通过函数名 返回同时用于操作YArray和RhineVar的模拟函数

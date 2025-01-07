@@ -1,14 +1,14 @@
 import {Array as YArray, Map as YMap, Transaction, YArrayEvent, YMapEvent} from "yjs";
-import {rhineProxyItem} from "@/core/proxy/Proxy";
+import {rhineProxyItem} from "@/core/proxy/proxy";
 import {log} from "@/utils/logger";
-import {isObjectOrArray} from "@/core/utils/DataUtils";
-import {Native, YPath} from "@/core/native/Native";
-import {ChangeType} from "@/core/event/ChangeType";
-import {Callback, DeepCallback, SyncedCallback} from "@/core/event/Callback";
-import {StoredRhineVarItem} from "@/core/proxy/ProxiedRhineVar";
-import RhineVar from "@/core/proxy/RhineVar";
-import WebsocketConnector from "@/core/connector/WebsocketConnector";
-import {isNative} from "@/core/native/NativeUtils";
+import {isObjectOrArray} from "@/core/utils/data.utils";
+import {Native, YPath} from "@/core/native/native.type";
+import {ChangeType} from "@/core/event/change-type.enum";
+import {Callback, DeepCallback, SyncedCallback} from "@/core/event/callback";
+import {StoredRhineVarItem} from "@/core/proxy/proxied-rhine-var.type";
+import RhineVar from "@/core/proxy/rhine-var.class";
+import WebsocketConnector from "@/core/connector/websocket-connector.class";
+import {isNative} from "@/core/native/native.utils";
 import {keepItem} from "yjs/dist/src/structs/Item";
 
 

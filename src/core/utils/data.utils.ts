@@ -1,8 +1,8 @@
-import {StoredRhineVarItem} from "@/core/proxy/ProxiedRhineVar";
-import {isNative, jsonToNative} from "@/core/native/NativeUtils";
-import RhineVarItem from "@/core/proxy/RhineVarItem";
-import {rhineProxyItem} from "@/core/proxy/Proxy";
-import {Native} from "@/core/native/Native";
+import {StoredRhineVarItem} from "@/core/proxy/proxied-rhine-var.type";
+import {isNative, jsonToNative} from "@/core/native/native.utils";
+import RhineVarItem from "@/core/proxy/rhine-var-item.class";
+import {rhineProxyItem} from "@/core/proxy/proxy";
+import {Native} from "@/core/native/native.type";
 
 export function isObject(value: any) {
   return value !== null && typeof value === 'object' && !Array.isArray(value);

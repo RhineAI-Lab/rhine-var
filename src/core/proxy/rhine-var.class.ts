@@ -1,5 +1,5 @@
-import RhineVarItem from "@/core/proxy/RhineVarItem";
-import WebsocketConnector from "@/core/connector/WebsocketConnector";
+import RhineVarItem from "@/core/proxy/rhine-var-item.class";
+import WebsocketConnector from "@/core/connector/websocket-connector.class";
 
 export default class RhineVar<T> extends RhineVarItem<T> {
 

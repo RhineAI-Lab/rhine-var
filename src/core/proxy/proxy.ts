@@ -1,19 +1,19 @@
 import {Array as YArray, Map as YMap, Doc as YDoc} from "yjs";
-import WebsocketConnector, {websocketRhineConnect} from "@/core/connector/WebsocketConnector";
-import RhineVarItem, {RHINE_VAR_PREDEFINED_PROPERTIES} from "@/core/proxy/RhineVarItem";
-import {ensureNative, ensureRhineVar} from "@/core/utils/DataUtils";
+import WebsocketConnector, {websocketRhineConnect} from "@/core/connector/websocket-connector.class";
+import RhineVarItem, {RHINE_VAR_PREDEFINED_PROPERTIES} from "@/core/proxy/rhine-var-item.class";
+import {ensureNative, ensureRhineVar} from "@/core/utils/data.utils";
 import {log} from "@/utils/logger";
-import {convertArrayProperty} from "@/core/utils/ConvertProperty";
-import {ProxiedRhineVar, ProxiedRhineVarItem} from "@/core/proxy/ProxiedRhineVar";
-import {Native} from "@/core/native/Native";
+import {convertArrayProperty} from "@/core/utils/convert-property.utils";
+import {ProxiedRhineVar, ProxiedRhineVarItem} from "@/core/proxy/proxied-rhine-var.type";
+import {Native} from "@/core/native/native.type";
 import {
   isNative,
   nativeDelete,
   nativeHas,
   nativeOwnKeys,
   nativeSet
-} from "@/core/native/NativeUtils";
-import RhineVar from "@/core/proxy/RhineVar";
+} from "@/core/native/native.utils";
+import RhineVar from "@/core/proxy/rhine-var.class";
 
 
 export const PROTOCOL_LIST = ['ws://', "wss://"]

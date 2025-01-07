@@ -1,7 +1,7 @@
-import WebsocketConnector from "@/core/connector/WebsocketConnector";
+import WebsocketConnector from "@/core/connector/websocket-connector.class";
 import {useEffect, useState} from "react";
-import {ProxiedRhineVar} from "@/core/proxy/ProxiedRhineVar";
-import RhineVarItem from "@/core/proxy/RhineVarItem";
+import {ProxiedRhineVar} from "@/core/proxy/proxied-rhine-var.type";
+import RhineVarItem from "@/core/proxy/rhine-var-item.class";
 
 export default function useSynced(target?: WebsocketConnector | ProxiedRhineVar<any>) {
   

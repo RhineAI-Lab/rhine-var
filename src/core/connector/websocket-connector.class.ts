@@ -1,11 +1,11 @@
 import {Doc as YDoc, Map as YMap} from "yjs";
 import {WebsocketProvider} from "y-websocket";
-import {ConnectorStatus} from "@/core/connector/ConnectorStatus";
+import {ConnectorStatus} from "@/core/connector/connector-status.enum";
 import {log} from "@/utils/logger";
-import {Native} from "@/core/native/Native";
-import {SyncedCallback} from "@/core/event/Callback";
+import {Native} from "@/core/native/native.type";
 import RhineVarConfig from "@/config/config";
-import SyncHandshakeCheck from "@/core/connector/SyncHandshakeCheck";
+import SyncHandshakeCheck from "@/core/connector/sync-handshake-check.class";
+import {SyncedCallback} from "@/core/event/callback";
 
 export default class WebsocketConnector {
   

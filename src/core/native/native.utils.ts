@@ -1,7 +1,7 @@
 import {Map as YMap, Array as YArray} from "yjs"
-import {Native} from "@/core/native/Native";
-import {isArray, isObject} from "@/core/utils/DataUtils";
-import RhineVarItem from "@/core/proxy/RhineVarItem";
+import {Native} from "@/core/native/native.type";
+import {isArray, isObject} from "@/core/utils/data.utils";
+import RhineVarItem from "@/core/proxy/rhine-var-item.class";
 
 
 export function isNative(value: any): boolean {
