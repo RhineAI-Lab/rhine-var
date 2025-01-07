@@ -4,8 +4,8 @@ enableRhineVarLog(true)
 enableRhineVarSyncHandshakeCheck(true)
 
 const defaultValue = {count: 0}
-const url = 'ws://localhost:11600/room-0'
-const state = rhineProxy(defaultValue, url, false)
+const url = 'ws://0.0.0.0:1234/bbb'
+const state = rhineProxy(defaultValue, url)
 
 function Counter() {
   
