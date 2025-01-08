@@ -6,73 +6,9 @@ import {Native} from "@/core/native/native.type";
 import RhineVarConfig from "@/config/config";
 import SyncHandshakeCheck from "@/core/connector/sync-handshake-check.class";
 import {SyncedCallback} from "@/core/event/callback";
+import Connector from "@/core/connector/connector.class";
 
-export default class WebsocketConnector {
-  
-  static STATE_KEY = 'state'
-  
-  yDoc: YDoc
-  yBaseMap: YMap<any>
-  url: string = ''
-  
-  clientId = -1
-  synced = false
-  
-  provider: WebsocketProvider | null = null
-  websocketStatus: ConnectorStatus = ConnectorStatus.DISCONNECTED
-  
-  
-  private syncedSubscribers: SyncedCallback[] = []
-  subscribeSynced(callback: SyncedCallback) {
-    this.syncedSubscribers.push(callback)
-    return () => this.unsubscribeSynced(callback)
-  }
-  unsubscribeSynced(callback: SyncedCallback) {
-    this.syncedSubscribers = this.syncedSubscribers.filter(subscriber => subscriber !== callback)
-  }
-  unsubscribeAllSynced() {
-    this.syncedSubscribers = []
-  }
-  emitSynced(synced: boolean) {
-    this.syncedSubscribers.forEach(subscriber => subscriber(synced))
-  }
-  
-  afterSynced(callback: () => void) {
-    if (this.synced) {
-      callback()
-    } else {
-      const subscriber = (synced: boolean) => {
-        if (synced) {
-          this.unsubscribeSynced(subscriber)
-          callback()
-        }
-      }
-      this.subscribeSynced(subscriber)
-    }
-  }
-  waitSynced(): Promise<void> {
-    return new Promise((resolve) => {
-      this.afterSynced(resolve)
-    })
-  }
-  
-  constructor(url = '') {
-    this.yDoc = new YDoc()
-    this.yBaseMap = this.yDoc.getMap()
-    url && this.connect(url)
-  }
-
-  hasState(): boolean {
-    return this.yBaseMap.has(WebsocketConnector.STATE_KEY)
-  }
-
-  getState(): Native {
-    return this.yBaseMap.get(WebsocketConnector.STATE_KEY)
-  }
-
-  setState(state: Native) {
-    this.yBaseMap.set(WebsocketConnector.STATE_KEY, state)
-  }
+export default class WebsocketConnector extends Connector{
   
   async connect(url: string): Promise<void> {
     this.url = url
@@ -91,7 +27,7 @@ export default class WebsocketConnector {
       this.provider.shouldConnect = true
       
       this.provider.on('status', (event: any) => {
-        this.websocketStatus = event.status
+        this.status = event.status
         log('WebsocketRhineConnector.event status:', event.status)
       })
       
@@ -110,12 +46,12 @@ export default class WebsocketConnector {
       })
       
       this.provider.on('connection-close', (e: any) => {
-        this.websocketStatus = ConnectorStatus.DISCONNECTED
+        this.status = ConnectorStatus.DISCONNECTED
         log('WebsocketRhineConnector.event connection-close:', e)
       })
       
       this.provider.on('connection-error', (error: any) => {
-        this.websocketStatus = ConnectorStatus.DISCONNECTED
+        this.status = ConnectorStatus.DISCONNECTED
         log('WebsocketRhineConnector.event connection-error:', error)
       })
     })
@@ -134,13 +70,4 @@ export default class WebsocketConnector {
     */
   }
   
-}
-
-
-export function websocketRhineConnect(url: string) {
-  const connector = new WebsocketConnector()
-  if (typeof window !== 'undefined') {
-    connector.connect(url)
-  }
-  return connector
 }

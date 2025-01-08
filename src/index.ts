@@ -8,14 +8,14 @@ import {
   ProxiedRhineVar,
   RecursiveCrossRhineVar,
 } from "@/core/proxy/proxied-rhine-var.type";
-import WebsocketConnector from "@/core/connector/websocket-connector.class";
+import Connector from "@/core/connector/connector.class";
 import useRhine from "@/react/hooks/use-rhine.hook"
 import useSynced from "@/react/hooks/use-synced.hook"
 import {Native, YPath} from "@/core/native/native.type";
 import { getRhineVarConfig, enableRhineVarLog, enableRhineVarSyncHandshakeCheck } from "./config/config";
 
 export {
-  WebsocketConnector,
+  Connector,
   rhineProxy,
   rhineProxyItem,
   RhineVarItem,

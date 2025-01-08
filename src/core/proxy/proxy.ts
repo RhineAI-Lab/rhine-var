@@ -1,5 +1,5 @@
 import {Array as YArray, Map as YMap, Doc as YDoc} from "yjs";
-import WebsocketConnector, {websocketRhineConnect} from "@/core/connector/websocket-connector.class";
+import Connector, {websocketRhineConnect} from "@/core/connector/connector.class";
 import RhineVarItem, {RHINE_VAR_PREDEFINED_PROPERTIES} from "@/core/proxy/rhine-var-item.class";
 import {ensureNative, ensureRhineVar} from "@/core/utils/data.utils";
 import {log} from "@/utils/logger";
@@ -14,6 +14,7 @@ import {
   nativeSet
 } from "@/core/native/native.utils";
 import RhineVar from "@/core/proxy/rhine-var.class";
+import {createConnector} from "@/core/connector/create-connector";
 
 
 export const PROTOCOL_LIST = ['ws://', "wss://"]
@@ -22,26 +23,22 @@ export const DEFAULT_PUBLIC_URL = 'wss://rvp.rhineai.com/'
 
 export function rhineProxy<T extends object>(
   defaultValue: T | Native,
-  connector: WebsocketConnector | string | number,
+  connector: Connector | string | number,
   overwrite: boolean | number = false
 ): ProxiedRhineVar<T> {
   // Create local temp YDoc and YMap
   let target: Native = ensureNative<T>(defaultValue)
   const tempMap = new YDoc().getMap()
-  tempMap.set(WebsocketConnector.STATE_KEY, target)
+  tempMap.set(Connector.STATE_KEY, target)
 
   // Create core proxied rhine-var object
   const object = rhineProxyItem<T>(target) as ProxiedRhineVar<T>
 
   // Create connector by string, number or direct
   if (typeof connector === 'string' || typeof connector === 'number') {
-    // Connector is String: Default for Websocket Connector
-    if (PROTOCOL_LIST.every(protocol => !(String(connector)).startsWith(protocol))) {
-      connector = DEFAULT_PUBLIC_URL + connector
-    }
-    connector = websocketRhineConnect(String(connector))
+    connector = createConnector(connector)
   }
-  connector = connector as WebsocketConnector
+  connector = connector as Connector
   object.connector = connector
 
   // Bind connector
