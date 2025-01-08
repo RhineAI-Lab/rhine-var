@@ -4,9 +4,9 @@ import {ConnectorStatus} from "@/core/connector/connector-status.enum";
 import {log} from "@/utils/logger";
 import {Native} from "@/core/native/native.type";
 import RhineVarConfig from "@/config/config";
-import SyncHandshakeCheck from "@/core/connector/sync-handshake-check.class";
+import SyncHandshakeCheck from "@/core/connector/websocket/sync-handshake-check.class";
 import {SyncedCallback} from "@/core/event/callback";
-import Connector from "@/core/connector/connector.class";
+import Connector from "@/core/connector/connector.abstract";
 
 export default class WebsocketConnector extends Connector{
   
@@ -28,7 +28,7 @@ export default class WebsocketConnector extends Connector{
       
       this.provider.on('status', (event: any) => {
         this.status = event.status
-        log('WebsocketRhineConnector.event status:', event.status)
+        log('WebsocketConnector.event status:', event.status)
       })
       
       this.provider.on('sync', async (synced: boolean) => {
@@ -37,7 +37,7 @@ export default class WebsocketConnector extends Connector{
             await SyncHandshakeCheck.wait(this.yBaseMap)
             log('Synced base map:', this.yBaseMap.toJSON())
           }
-          log('WebsocketRhineConnector.event sync:', synced)
+          log('WebsocketConnector.event sync:', synced)
           this.synced = true
           this.clientId = this.yDoc.clientID
           this.emitSynced(synced)
@@ -47,12 +47,12 @@ export default class WebsocketConnector extends Connector{
       
       this.provider.on('connection-close', (e: any) => {
         this.status = ConnectorStatus.DISCONNECTED
-        log('WebsocketRhineConnector.event connection-close:', e)
+        log('WebsocketConnector.event connection-close:', e)
       })
       
       this.provider.on('connection-error', (error: any) => {
         this.status = ConnectorStatus.DISCONNECTED
-        log('WebsocketRhineConnector.event connection-error:', error)
+        log('WebsocketConnector.event connection-error:', error)
       })
     })
     

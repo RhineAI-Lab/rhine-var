@@ -7,7 +7,7 @@ import {ChangeType} from "@/core/event/change-type.enum";
 import {Callback, DeepCallback, SyncedCallback} from "@/core/event/callback";
 import {StoredRhineVarItem} from "@/core/proxy/proxied-rhine-var.type";
 import RhineVar from "@/core/proxy/rhine-var.class";
-import Connector from "@/core/connector/connector.class";
+import Connector from "@/core/connector/connector.abstract";
 import {isNative} from "@/core/native/native.utils";
 import {keepItem} from "yjs/dist/src/structs/Item";
 

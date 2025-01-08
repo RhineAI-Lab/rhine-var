@@ -8,7 +8,7 @@ import {
   ProxiedRhineVar,
   RecursiveCrossRhineVar,
 } from "@/core/proxy/proxied-rhine-var.type";
-import Connector from "@/core/connector/connector.class";
+import Connector from "@/core/connector/connector.abstract";
 import useRhine from "@/react/hooks/use-rhine.hook"
 import useSynced from "@/react/hooks/use-synced.hook"
 import {Native, YPath} from "@/core/native/native.type";

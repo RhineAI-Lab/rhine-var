@@ -1,5 +1,5 @@
 import {Array as YArray, Map as YMap, Doc as YDoc} from "yjs";
-import Connector, {websocketRhineConnect} from "@/core/connector/connector.class";
+import Connector, {websocketRhineConnect} from "@/core/connector/connector.abstract";
 import RhineVarItem, {RHINE_VAR_PREDEFINED_PROPERTIES} from "@/core/proxy/rhine-var-item.class";
 import {ensureNative, ensureRhineVar} from "@/core/utils/data.utils";
 import {log} from "@/utils/logger";

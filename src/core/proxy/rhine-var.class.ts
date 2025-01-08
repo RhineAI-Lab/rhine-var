@@ -1,5 +1,5 @@
 import RhineVarItem from "@/core/proxy/rhine-var-item.class";
-import Connector from "@/core/connector/connector.class";
+import Connector from "@/core/connector/connector.abstract";
 
 export default class RhineVar<T> extends RhineVarItem<T> {
 

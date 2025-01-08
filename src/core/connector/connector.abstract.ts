@@ -4,7 +4,7 @@ import {ConnectorStatus} from "@/core/connector/connector-status.enum";
 import {Native} from "@/core/native/native.type";
 import {SyncedCallback} from "@/core/event/callback";
 
-export default class Connector {
+export default abstract class Connector {
   
   static STATE_KEY = 'state'
   
@@ -19,7 +19,7 @@ export default class Connector {
   status: ConnectorStatus = ConnectorStatus.DISCONNECTED
   
   
-  private syncedSubscribers: SyncedCallback[] = []
+  protected syncedSubscribers: SyncedCallback[] = []
   subscribeSynced(callback: SyncedCallback) {
     this.syncedSubscribers.push(callback)
     return () => this.unsubscribeSynced(callback)
@@ -30,7 +30,7 @@ export default class Connector {
   unsubscribeAllSynced() {
     this.syncedSubscribers = []
   }
-  emitSynced(synced: boolean) {
+  protected emitSynced(synced: boolean) {
     this.syncedSubscribers.forEach(subscriber => subscriber(synced))
   }
   
@@ -71,13 +71,9 @@ export default class Connector {
     this.yBaseMap.set(Connector.STATE_KEY, state)
   }
   
-  async connect(url: string): Promise<void> {
-    
-  }
+  abstract connect(url: string): Promise<void>
   
-  async disconnect() {
-
-  }
+  abstract disconnect(): Promise<void>
   
 }
 

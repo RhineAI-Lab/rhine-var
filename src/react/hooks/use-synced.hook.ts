@@ -1,4 +1,4 @@
-import Connector from "@/core/connector/connector.class";
+import Connector from "@/core/connector/connector.abstract";
 import {useEffect, useState} from "react";
 import {ProxiedRhineVar} from "@/core/proxy/proxied-rhine-var.type";
 import RhineVarItem from "@/core/proxy/rhine-var-item.class";
