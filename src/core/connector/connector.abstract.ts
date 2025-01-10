@@ -51,8 +51,7 @@ export default abstract class Connector {
     })
   }
   
-  constructor(text = '') {
-    text && this.connect(text)
+  constructor(text: string = '') {
   }
 
   hasState(): boolean {
