@@ -7,9 +7,9 @@ import {SyncedCallback} from "@/core/event/callback";
 export default abstract class Connector {
   
   static STATE_KEY = 'state'
-  
-  yDoc: YDoc
-  yBaseMap: YMap<any>
+
+  yDoc: YDoc | null = null
+  yBaseMap: YMap<any> | null = null
   
   clientId = -1
   synced = false
@@ -52,21 +52,19 @@ export default abstract class Connector {
   }
   
   constructor(text = '') {
-    this.yDoc = new YDoc()
-    this.yBaseMap = this.yDoc.getMap()
     text && this.connect(text)
   }
 
   hasState(): boolean {
-    return this.yBaseMap.has(Connector.STATE_KEY)
+    return this.yBaseMap?.has(Connector.STATE_KEY) ?? false
   }
 
   getState(): Native {
-    return this.yBaseMap.get(Connector.STATE_KEY)
+    return this.yBaseMap?.get(Connector.STATE_KEY)
   }
 
   setState(state: Native) {
-    this.yBaseMap.set(Connector.STATE_KEY, state)
+    this.yBaseMap?.set(Connector.STATE_KEY, state)
   }
   
   abstract connect(text: string): Promise<void>

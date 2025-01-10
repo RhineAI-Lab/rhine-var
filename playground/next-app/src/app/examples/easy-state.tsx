@@ -7,7 +7,6 @@ import {enableRhineVarLog, ProxiedRhineVarItem} from "rhine-var";
 console.log('\n\n=================== Rhine Var Playground ===================\n\n')
 
 enableRhineVarLog(true)
-enableRhineVarSyncHandshakeCheck(true)
 
 
 const defaultValue = {

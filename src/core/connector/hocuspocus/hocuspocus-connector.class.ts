@@ -25,11 +25,15 @@ export default class HocuspocusConnector extends Connector{
 
     this.name = text.substring(li + 1)
     this.url = text.substring(0, li)
+
+    this.yDoc = new YDoc()
+    this.yBaseMap = this.yDoc.getMap()
     
     return new Promise((resolve, reject) => {
       this.provider = new HocuspocusProvider({
         url: this.url,
         name: this.name,
+        document: this.yDoc!,
       })
       
       this.provider.on('status', (event: any) => {
@@ -38,13 +42,14 @@ export default class HocuspocusConnector extends Connector{
       })
       
       this.provider.on('sync', async (synced: boolean) => {
+        log('HocuspocusProvider.event sync:', synced)
         if (synced) {
           if (RhineVarConfig.ENABLE_SYNC_HANDSHAKE_CHECK) {
-            await SyncHandshakeCheck.wait(this.yBaseMap)
+            await SyncHandshakeCheck.wait(this.yBaseMap!)
           }
-          log('HocuspocusProvider.event sync:', this.yBaseMap.toJSON())
+          log('HocuspocusProvider.event base map:', this.yBaseMap!.toJSON())
           this.synced = true
-          this.clientId = this.yDoc.clientID
+          this.clientId = this.yDoc!.clientID
           this.emitSynced(synced)
           resolve()
         } else {

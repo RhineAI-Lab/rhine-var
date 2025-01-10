@@ -25,11 +25,14 @@ export default class WebsocketConnector extends Connector{
     this.name = text.substring(li + 1)
     this.url = text.substring(0, li)
 
+    this.yDoc = new YDoc()
+    this.yBaseMap = this.yDoc.getMap()
+
     return new Promise((resolve, reject) => {
       this.provider = new WebsocketProvider(
         this.url,
         this.name,
-        this.yDoc
+        this.yDoc!
       )
       this.provider.shouldConnect = true
       
@@ -41,11 +44,11 @@ export default class WebsocketConnector extends Connector{
       this.provider.on('sync', async (synced: boolean) => {
         if (synced) {
           if (RhineVarConfig.ENABLE_SYNC_HANDSHAKE_CHECK) {
-            await SyncHandshakeCheck.wait(this.yBaseMap)
+            await SyncHandshakeCheck.wait(this.yBaseMap!)
           }
-          log('WebsocketConnector.event sync:', this.yBaseMap.toJSON())
+          log('WebsocketConnector.event sync:', this.yBaseMap!.toJSON())
           this.synced = true
-          this.clientId = this.yDoc.clientID
+          this.clientId = this.yDoc!.clientID
           this.emitSynced(synced)
           resolve()
         } else {
