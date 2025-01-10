@@ -10,12 +10,10 @@ export default abstract class Connector {
   
   yDoc: YDoc
   yBaseMap: YMap<any>
-  url: string = ''
   
   clientId = -1
   synced = false
-  
-  provider: WebsocketProvider | null = null
+
   status: ConnectorStatus = ConnectorStatus.DISCONNECTED
   
   
@@ -53,10 +51,10 @@ export default abstract class Connector {
     })
   }
   
-  constructor(url = '') {
+  constructor(text = '') {
     this.yDoc = new YDoc()
     this.yBaseMap = this.yDoc.getMap()
-    url && this.connect(url)
+    text && this.connect(text)
   }
 
   hasState(): boolean {
@@ -71,7 +69,7 @@ export default abstract class Connector {
     this.yBaseMap.set(Connector.STATE_KEY, state)
   }
   
-  abstract connect(url: string): Promise<void>
+  abstract connect(text: string): Promise<void>
   
   abstract disconnect(): Promise<void>
   
