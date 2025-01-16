@@ -153,42 +153,50 @@ Note: The returned snapshot is read-only. Please do not perform any operations o
 
 <br/>
 
-## Server
 
 ## Server
 
-We provide a public server on the internet for testing and trying out RHINE-VAR. You can connect to it via `wss://rvp.rhineai.com/<room-id>`.
+We provide a `free public server` for `RHINE-VAR`, which can be used for trial and testing. You can connect to it via [wss://rvp.rhineai.com/<room-id>](wss://rvp.rhineai.com/<room-id>).
 
-Note that this server does not guarantee security or performance and will impose certain restrictions on users and IPs with large-scale usage.
-
-<br/>
-
-We also provide a basic server example that you can deploy yourself. For more details, see: https://github.com/RhineAI-Lab/rhine-var-server
-
-```
-git clone https://github.com/RhineAI-Lab/rhine-var-server.git
-yarn install
-yarn start
-```
-It will run on `Port 6600`, and you can connect to it via `ws://localhost:6600/<room-id>`. `<room-id>` can be any text, with each room ID corresponding to a `RhineVariable`.
+Note that this server cannot guarantee security and stability and will limit users and IPs in a large-scale manner.
 
 <br/>
 
-The server is currently fully compatible with all Yjs WebSocket servers.
+RHINE-VAR supports custom servers and connection agreements. The server currently fully supports all Yjs and WebSocket servers.
 
-In the future, more communication protocols will be supported. You can also develop your own `Connector` object to adapt to your custom communication protocol.
+We use Tiptap to set up [Hocuspocus](https://tiptap.dev/docs/hocuspocus/introduction) server.
 
-For more information on server development, refer to: [https://docs.yjs.dev/ecosystem/connection-provider/y-websocket](https://docs.yjs.dev/ecosystem/connection-provider/y-websocket)
+He has other servers, but it requires a high-quality Yjs WebSocket server. Based on the broadcasting and performance, you can support up to 1 million users' experience.
 
-When using your own server, disable RhineVar's default handshake verification unless your server supports it.
-
+```bash
+npm i @hocuspocus/server @hocuspocus/extension-logger @hocuspocus/extension-sqlite y-protocols yjs
+```
 ```typescript
-import {enableRhineVarSyncHandshakeCheck} from 'rhine-var'
+import { Hocuspocus } from '@hocuspocus/server'
+import { Logger } from '@hocuspocus/extension-logger'
+import { SQLite } from '@hocuspocus/extension-sqlite'
 
-enableRhineVarSyncHandshakeCheck(false)
+const server = new Hocuspocus({
+  name: 'rhine-var-server',
+  port: 11600,
+  extensions: [
+    new Logger(),
+    new SQLite({database: 'db.sqlite'}),
+  ],
+})
+server.listen()
 ```
 
+We also provide a more complete [Hocuspocus](https://tiptap.dev/docs/hocuspocus/introduction) server (link below), which supports pre-authorization for connections and the ability to store data in a database.
+
+Best Implementation: [https://github.com/RhineAI-Lab/rhine-var-hocuspocus-server](https://github.com/RhineAI-Lab/rhine-var-hocuspocus-server)
+
 <br/>
+
+Original server-side development reference: [https://docs.yjs.dev/ecosystem/connection-provider/y-websocket](https://docs.yjs.dev/ecosystem/connection-provider/y-websocket)
+
+And we also provide the original Yjs WebSocket server example: [https://github.com/RhineAI-Lab/rhine-var-server](https://github.com/RhineAI-Lab/rhine-var-server)
+
 
 ## Develop
 
@@ -209,7 +217,7 @@ yarn run watch
 # Start the temporary local server, default port is 6600
 yarn run server
 # Start the NextJs environment debugging project, default port is 6700
-yarn run next
+yarn run playground
 # The browser will navigate to http://localhost:6700
 ```
 
