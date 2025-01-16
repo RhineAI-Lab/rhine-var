@@ -246,7 +246,9 @@ Enable/disable RhineVar debug output logs. Disabled by default.
 enableRhineVarLog(false)
 ```
 
-### enableRhineVarSyncHandshakeCheck(value: Boolean): void
+### <s>enableRhineVarSyncHandshakeCheck(value: Boolean): void</s>
+
+Deprecated, will be removed in a future version.
 
 Enable/disable the RhineVar secondary handshake synchronization check. Enabled by default.
 

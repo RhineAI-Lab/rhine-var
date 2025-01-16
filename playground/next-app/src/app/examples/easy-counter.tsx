@@ -1,4 +1,4 @@
-import {rhineProxy, useRhine, enableRhineVarLog, enableRhineVarSyncHandshakeCheck} from 'rhine-var'
+import {rhineProxy, useRhine, enableRhineVarLog} from 'rhine-var'
 
 enableRhineVarLog(true)
 

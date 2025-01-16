@@ -1,4 +1,4 @@
-<div align="center">
+   <div align="center">
 
 # RHINE-VAR &nbsp; Document
 
@@ -240,9 +240,9 @@ Synced: 与服务端同步状态变化事件
 enableRhineVarLog(false)
 ```
 
-### enableRhineVarSyncHandshakeCheck(value: Boolean): void
+### <s>enableRhineVarSyncHandshakeCheck(value: Boolean): void</s>
 
-启用/关闭RhineVar二次握手检查协同成功，默认为开启。
+启用/关闭RhineVar二次握手检查协同成功，默认为开启。已弃用，将在后续版本移除。
 
 ```typescript
 enableRhineVarSyncHandshakeCheck(false)
