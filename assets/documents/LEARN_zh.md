@@ -330,17 +330,24 @@ state.getConnector()
 
 <br/>
 
+## 内置属性及函数
 
-## Server
-我们提供了一个简单的服务器例子，位于本项目中的 `/test/server` 处。 服务端完全兼容所有的 Yjs 的 Websocket 服务器，将来会支持更多。
-```
-git clone https://github.com/RhineAI-Lab/rhine-var.git
-cd test/server
-yarn install
-yarn start
-```
-默认运行在 `端口 6600`, 你可以通过连接 `ws://localhost:6600/<room-id>` 连接它，`<room-id>` 可以是任意文本，一个房间号对应一个 `RhineVar 对象`。
+### origin
 
-更多服务端开发信息请参考: [https://docs.yjs.dev/ecosystem/connection-provider/y-websocket](https://docs.yjs.dev/ecosystem/connection-provider/y-websocket)
+### connector
 
-<br/>
+### initialize()
+
+### emitSynced()
+
+### emit()
+
+### emitDeep()
+
+### observer
+
+### syncedObserver
+
+### observe()
+
+### unobserve()

@@ -334,17 +334,24 @@ state.getConnector()
 
 <br/>
 
+## Built-in Functions and Properties
 
-## Server
-We provide a simple server example located in the /test/server directory of this project. The server is fully compatible with all Yjs WebSocket servers and will support more in the future.
-```
-git clone https://github.com/RhineAI-Lab/rhine-var.git
-cd test/server
-yarn install
-yarn start
-```
-By default, it runs on port 6600, and you can connect to it via ws://localhost:6600/<room-id>, where <room-id> can be any string. A room ID corresponds to a RhineVar object.
+### origin
 
-For more information on server development, refer to: https://docs.yjs.dev/ecosystem/connection-provider/y-websocket
+### connector
 
-<br/>
+### initialize()
+
+### emitSynced()
+
+### emit()
+
+### emitDeep()
+
+### observer
+
+### syncedObserver
+
+### observe()
+
+### unobserve()
