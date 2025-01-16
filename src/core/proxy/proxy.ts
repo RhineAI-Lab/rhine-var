@@ -16,11 +16,6 @@ import {
 import RhineVar from "@/core/proxy/rhine-var.class";
 import {createConnector} from "@/core/connector/create-connector";
 
-
-export const PROTOCOL_LIST = ['ws://', "wss://"]
-export const DEFAULT_PUBLIC_URL = 'wss://rvp.rhineai.com/'
-
-
 export function rhineProxy<T extends object>(
   defaultValue: T | Native,
   connector: Connector | string | number,

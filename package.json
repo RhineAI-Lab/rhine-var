@@ -8,7 +8,6 @@
     "prepare": "ts-patch install -s",
     "install-next": "npm install --prefix playground/next-app",
     "link-next": "npm link && npm link rhine-var --prefix playground/next-app",
-    "server": "npm run start --prefix ./test/server",
     "dev": "tsc --watch",
     "playground": "npm run dev --prefix playground/next-app",
     "test": "echo \"Error: no test specified\" && exit 1",

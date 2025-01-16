@@ -1,11 +1,15 @@
-import {DEFAULT_PUBLIC_URL, PROTOCOL_LIST} from "@/core/proxy/proxy";
 import HocuspocusConnector from "@/core/connector/hocuspocus/hocuspocus-connector.class";
+
+
+export const PROTOCOL_LIST = ['ws://', "wss://"]
+export const DEFAULT_PUBLIC_URL = 'wss://rvp.rhineai.com/'
 
 export function createConnector(connectorText: string | number) {
   let text = String(connectorText)
 
-  // Connector is String: Default for Websocket Connector
+  // Connector is String but not start with protocol
   if (PROTOCOL_LIST.every(protocol => !text.startsWith(protocol))) {
+    // Default to use public url
     text = DEFAULT_PUBLIC_URL + text
   }
 

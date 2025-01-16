@@ -96,9 +96,12 @@ Email: [RhineAILab@gmail.com](rhineailab@gmail.com) & [RhineAI@163.com](RhineAI@
 
 ## Install
 ```bash
+npm i rhine-var
+```
+Or using Yarn:
+```bash
 yarn add rhine-var
 ```
-If you don't have `yarn`, you can install it via `npm i rhine-var`, or install `yarn` first using `npm i -g yarn` and then use the command above to install.
 
 <br/>
 
