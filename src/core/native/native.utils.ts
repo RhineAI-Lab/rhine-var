@@ -1,7 +1,7 @@
 import {Map as YMap, Array as YArray} from "yjs"
 import {Native} from "@/core/native/native.type";
 import {isArray, isObject} from "@/core/utils/data.utils";
-import RhineVarItem from "@/core/proxy/rhine-var-item.class";
+import RhineVarBaseItem from "@/core/var/rhine-var-base-item.class";
 
 
 export function isNative(value: any): boolean {
@@ -12,7 +12,7 @@ export function nativeSet(target: Native, key: string | symbol, value: any): boo
   if (typeof key !== 'string') {
     return false
   }
-  if (value instanceof RhineVarItem) {
+  if (value instanceof RhineVarBaseItem) {
     value = value.native
   }
   
@@ -29,6 +29,8 @@ export function nativeSet(target: Native, key: string | symbol, value: any): boo
         target.insert(index, [value])
         return true
       }
+    } else {
+      console.error('Unsupported nativeSet for:', target)
     }
   } catch (e) {
     console.error('RhineVar nativeSet.error:', e)
@@ -36,7 +38,7 @@ export function nativeSet(target: Native, key: string | symbol, value: any): boo
   return false
 }
 
-export function nativeHas(target: Native, key: string | symbol): boolean {
+export function nativeHas(target: Native, key: string | symbol | number): boolean {
   if (typeof key !== 'string') {
     return false
   }
@@ -45,7 +47,7 @@ export function nativeHas(target: Native, key: string | symbol): boolean {
     if (target instanceof YMap) {
       return target.has(key)
     } else if (target instanceof YArray) {
-      const index = parseInt(key)
+      const index = parseInt(key, 10)
       if (!isNaN(index)) {
         return index < target.length && index >= 0
       }

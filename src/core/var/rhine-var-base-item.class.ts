@@ -6,31 +6,18 @@ import {Native, YPath} from "@/core/native/native.type";
 import {ChangeType} from "@/core/event/change-type.enum";
 import {Callback, DeepCallback, SyncedCallback} from "@/core/event/callback";
 import {StoredRhineVarItem} from "@/core/proxy/proxied-rhine-var.type";
-import RhineVar from "@/core/proxy/rhine-var.class";
+import RhineVar from "@/core/var/rhine-var.class";
 import Connector from "@/core/connector/connector.abstract";
 import {isNative} from "@/core/native/native.utils";
-import {NativeType} from "@/core/proxy/interface/native-type.enum";
 
 
-export default class RhineVarItem<T> {
-
-  nativeType: NativeType
+export default abstract class RhineVarBaseItem<T = any> {
 
   constructor(
     public native: Native,
-    public parent: RhineVar<any> | RhineVarItem<any> | null = null,
+    public parent: RhineVar<any> | RhineVarBaseItem<any> | null = null,
     public origin: StoredRhineVarItem<T> = this as any
   ) {
-    if (native instanceof YMap) {
-      this.nativeType = NativeType.Map
-    } else if (native instanceof YArray) {
-      this.nativeType = NativeType.Array
-    } else if (native instanceof YText) {
-      this.nativeType = NativeType.Text
-    } else {
-      console.warn('Unsupported native type for:', native)
-      this.nativeType = NativeType.Map
-    }
   }
 
   isRoot(): boolean {
@@ -97,7 +84,7 @@ export default class RhineVarItem<T> {
           this.hasOwnProperty(key)
         ) {
           let value = origin[key]
-          if (value instanceof RhineVarItem) {
+          if (value instanceof RhineVarBaseItem) {
             value = value.frozenJson()
           }
           if (!isNaN(Number(key))) {
@@ -113,7 +100,7 @@ export default class RhineVarItem<T> {
       for (let i = 0;; i++) {
         if (i in origin) {
           let value = origin[i]
-          if (value instanceof RhineVarItem) {
+          if (value instanceof RhineVarBaseItem) {
             value = value.frozenJson()
           }
           result.push(value)
@@ -230,7 +217,7 @@ export default class RhineVarItem<T> {
         event.changes.keys.forEach(({action, oldValue}, key) => {
           if (isObjectOrArray(oldValue)) {
             oldValue = Reflect.get(this, key)
-            if (oldValue instanceof RhineVarItem) {
+            if (oldValue instanceof RhineVarBaseItem) {
               oldValue = oldValue.frozenJson()
             }
           }
@@ -264,7 +251,7 @@ export default class RhineVarItem<T> {
             for (let j = 0; j < deltaItem.delete; j++) {
               i++
               let oldValue = i in this ? Reflect.get(this, i) : target.get(i)
-              if (oldValue instanceof RhineVarItem) {
+              if (oldValue instanceof RhineVarBaseItem) {
                 oldValue = oldValue.frozenJson()
               }
 
@@ -325,6 +312,7 @@ export default class RhineVarItem<T> {
 export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'origin',
   'native',
+  'nativeType',
   'connector',
   'initialize',
   'json',

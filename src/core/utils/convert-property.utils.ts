@@ -1,5 +1,5 @@
 import {Array as YArray} from "yjs";
-import RhineVarItem from "@/core/proxy/rhine-var-item.class";
+import RhineVarBaseItem from "@/core/var/rhine-var-base-item.class";
 import {ensureNative} from "@/core/utils/data.utils";
 import {isNative} from "@/core/native/native.utils";
 import {Native} from "@/core/native/native.type";
@@ -20,7 +20,7 @@ import {Native} from "@/core/native/native.type";
  *
  */
 
-export function convertArrayProperty<T>(name: string, target: YArray<any>, object: RhineVarItem<T>) {
+export function convertArrayProperty<T>(name: string, target: YArray<any>, object: RhineVarBaseItem<T>) {
   
   const get = (i: number) => {
     if (i in object) {
@@ -33,7 +33,7 @@ export function convertArrayProperty<T>(name: string, target: YArray<any>, objec
   if (name === 'length') {
     return target.length
   } if (name === 'push') {
-    return (...items: (T[keyof T] | RhineVarItem<T[keyof T]>)[]): number => {
+    return (...items: (T[keyof T] | RhineVarBaseItem<T[keyof T]>)[]): number => {
       for (let i = 0; i < items.length; i++) {
         items[i] = ensureNative(items[i])
       }
@@ -52,7 +52,7 @@ export function convertArrayProperty<T>(name: string, target: YArray<any>, objec
       return item as T[keyof T]
     }
   } else if (name === 'unshift') {
-    return (...items: (T[keyof T] | RhineVarItem<T[keyof T]>)[]): number => {
+    return (...items: (T[keyof T] | RhineVarBaseItem<T[keyof T]>)[]): number => {
       for (let i = 0; i < items.length; i++) {
         items[i] = ensureNative(items[i])
       }
@@ -71,7 +71,7 @@ export function convertArrayProperty<T>(name: string, target: YArray<any>, objec
       return item as T[keyof T]
     }
   } else if (name === 'slice') {
-    return (start: number, end?: number): RhineVarItem<T[keyof T]>[] => {
+    return (start: number, end?: number): RhineVarBaseItem<T[keyof T]>[] => {
       if (end === undefined) end = target.length
       if (start < 0) start = target.length + start
       if (end < 0) end = target.length + end
@@ -84,7 +84,7 @@ export function convertArrayProperty<T>(name: string, target: YArray<any>, objec
       return result
     }
   } else if (name === 'splice') {
-    return (start: number, deleteCount: number, ...items: (T[keyof T] | RhineVarItem<T[keyof T]>)[]) => {
+    return (start: number, deleteCount: number, ...items: (T[keyof T] | RhineVarBaseItem<T[keyof T]>)[]) => {
       const removed = []
       for (let i = start; i < start + deleteCount; i++) {
         let item = target.get(i)
@@ -134,7 +134,7 @@ export function convertArrayProperty<T>(name: string, target: YArray<any>, objec
       return get(i)
     }
   } else if (name === 'with') {
-    return (i: number, value: T[keyof T]): RhineVarItem<T> => {
+    return (i: number, value: T[keyof T]): RhineVarBaseItem<T> => {
       if (i < 0) i = target.length + i
       if (i < 0 || i >= target.length) throw 'RangeError: Unexpect index ' + i + ' in RhineVarArray(' + target.length + ')'
       return object
