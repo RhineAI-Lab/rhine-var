@@ -1,4 +1,4 @@
-import {Array as YArray, Map as YMap, Transaction, Text as YText, YArrayEvent, YMapEvent} from "yjs";
+import {Array as YArray, Map as YMap, Text as YText, Transaction, YArrayEvent, YMapEvent} from "yjs";
 import {rhineProxyItem} from "@/core/proxy/proxy";
 import {log} from "@/utils/logger";
 import {isObjectOrArray} from "@/core/utils/data.utils";
@@ -9,14 +9,13 @@ import {StoredRhineVarItem} from "@/core/proxy/proxied-rhine-var.type";
 import RhineVar from "@/core/proxy/rhine-var.class";
 import Connector from "@/core/connector/connector.abstract";
 import {isNative} from "@/core/native/native.utils";
-import {keepItem} from "yjs/dist/src/structs/Item";
 import {NativeType} from "@/core/proxy/interface/native-type.enum";
 
 
 export default class RhineVarItem<T> {
 
   nativeType: NativeType
-  
+
   constructor(
     public native: Native,
     public parent: RhineVar<any> | RhineVarItem<any> | null = null,
@@ -29,18 +28,19 @@ export default class RhineVarItem<T> {
     } else if (native instanceof YText) {
       this.nativeType = NativeType.Text
     } else {
+      console.warn('Unsupported native type for:', native)
       this.nativeType = NativeType.Map
     }
   }
-  
+
   isRoot(): boolean {
     return false
   }
-  
+
   root(): RhineVar<any> {
     return this.parent!.root()
   }
-  
+
   getConnector(): Connector | null {
     return this.root().connector
   }
@@ -48,40 +48,44 @@ export default class RhineVarItem<T> {
   // Call after every synced
   initialize(native: Native) {
     log('Synced initialize:', this.json(), native.toJSON())
-    this.native.forEach((value: any, key: string | number) => {
-      Reflect.deleteProperty(this.origin, key)
-    })
+    if (this.native instanceof YMap || this.native instanceof YArray) {
+      this.native.forEach((value: any, key: string | number) => {
+        Reflect.deleteProperty(this.origin, key)
+      })
+    }
     this.unobserve()
     this.native = native
     this.observe()
-    native.forEach((value: any, key: string | number) => {
-      if (isNative(value)) {
-        Reflect.set(this.origin, key, rhineProxyItem(value, this))
-      } else {
-        Reflect.set(this.origin, key, value)
-      }
-    })
+    if (this.native instanceof YMap || this.native instanceof YArray) {
+      this.native.forEach((value: any, key: string | number) => {
+        if (isNative(value)) {
+          Reflect.set(this.origin, key, rhineProxyItem(value, this))
+        } else {
+          Reflect.set(this.origin, key, value)
+        }
+      })
+    }
   }
-  
-  
+
+
   afterSynced(callback: () => void) {
     const connector = this.root()?.connector
     if (connector) {
       connector.afterSynced(callback)
     }
   }
-  
+
   async waitSynced() {
     return new Promise((resolve: any) => {
       this.afterSynced(resolve)
     })
   }
-  
-  
+
+
   json(): T {
     return this.native.toJSON() as T
   }
-  
+
   frozenJson(): T {
     const origin = this.origin as any
     if (this.native instanceof YMap) {
@@ -121,11 +125,11 @@ export default class RhineVarItem<T> {
     }
     return {} as T
   }
-  
+
   string(indent = 2) {
     return JSON.stringify(this.json(), null, indent)
   }
-  
+
   private syncedSubscribers: SyncedCallback[] = []
   subscribeSynced(callback: SyncedCallback) {
     this.syncedSubscribers.push(callback)
@@ -137,12 +141,12 @@ export default class RhineVarItem<T> {
   unsubscribeAllSynced() {
     this.syncedSubscribers = []
   }
-  
+
   private emitSynced(synced: boolean) {
     this.syncedSubscribers.forEach(subscriber => subscriber(synced))
   }
-  
-  
+
+
   private subscribers: Callback<T>[] = []
   subscribe(callback: Callback<T>): () => void {
     this.subscribers.push(callback)
@@ -154,7 +158,7 @@ export default class RhineVarItem<T> {
   unsubscribeAll() {
     this.subscribers = []
   }
-  
+
   private keySubscribers: Map<keyof T, Callback<T>[]> = new Map()
   subscribeKey(key: keyof T, callback: Callback<T>): () => void {
     if (!this.keySubscribers.has(key)) {
@@ -171,15 +175,15 @@ export default class RhineVarItem<T> {
   unsubscribeAllKey() {
     this.keySubscribers = new Map()
   }
-  
+
   private emit(key: keyof T, value: T[keyof T], oldValue: T[keyof T], type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any>, nativeTransaction: Transaction) {
     this.subscribers.forEach(subscriber => subscriber(key, value, oldValue, type, nativeEvent, nativeTransaction))
     if (this.keySubscribers.has(key)) {
       this.keySubscribers.get(key)!.forEach(subscriber => subscriber(key, value, oldValue, type, nativeEvent, nativeTransaction))
     }
   }
-  
-  
+
+
   private deepSubscribers: DeepCallback<T>[] = []
   subscribeDeep(callback: DeepCallback<T>): () => void {
     this.deepSubscribers.push(callback)
@@ -191,7 +195,7 @@ export default class RhineVarItem<T> {
   unsubscribeAllDeep() {
     this.deepSubscribers = []
   }
-  
+
   emitDeep(path: YPath, value: any, oldValue: any, type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any>, nativeTransaction: Transaction) {
     this.deepSubscribers.forEach(subscriber => subscriber(path, value, oldValue, type, nativeEvent, nativeTransaction))
     // console.log('emitDeep', path, value)
@@ -230,7 +234,7 @@ export default class RhineVarItem<T> {
               oldValue = oldValue.frozenJson()
             }
           }
-          
+
           let value = undefined
           if (action === 'add' || action === 'update') {
             value = target.get(key)
@@ -242,7 +246,7 @@ export default class RhineVarItem<T> {
           } else if (action === 'delete') {
             Reflect.deleteProperty(this.origin, key)
           }
-          
+
           const newValue = key in this ? Reflect.get(this, key) : value
           log('Proxy.event: Map', action, key + ':', oldValue, '->', newValue)
           this.emit(key as keyof T, newValue, oldValue, action as ChangeType, event, transaction)
@@ -263,14 +267,14 @@ export default class RhineVarItem<T> {
               if (oldValue instanceof RhineVarItem) {
                 oldValue = oldValue.frozenJson()
               }
-              
+
               Reflect.deleteProperty(this.origin, i)
               for (let k = i + 1; k < target.length + deltaItem.delete; k++) {
                 const value = Reflect.get(this, k)
                 Reflect.set(this.origin, k - 1, value)
                 Reflect.deleteProperty(this.origin, k)
               }
-              
+
               log('Proxy.event: Array delete', i + ':', oldValue, '->', undefined)
               this.emit(i as keyof T, undefined as any, oldValue as any, ChangeType.Delete, event, transaction)
               this.emitDeep([i], undefined, oldValue, ChangeType.Delete, event, transaction)
@@ -279,7 +283,7 @@ export default class RhineVarItem<T> {
           if (deltaItem.insert !== undefined && Array.isArray(deltaItem.insert)) {
             deltaItem.insert.forEach((value) => {
               i++
-              
+
               for (let k = target.length - 1; k >= i; k--) {
                 const existingValue = Reflect.get(this, k)
                 Reflect.set(this.origin, k + 1, existingValue)
@@ -289,7 +293,7 @@ export default class RhineVarItem<T> {
               } else {
                 Reflect.set(this.origin, i, value)
               }
-              
+
               const newValue = i in this ? Reflect.get(this, i) : target.get(i)
               log('Proxy.event: Array add', i, ':', undefined, '->', newValue)
               this.emit(i as keyof T, newValue as any, undefined as any, ChangeType.Add, event, transaction)
@@ -299,15 +303,17 @@ export default class RhineVarItem<T> {
         })
       }
     }
-    
+
     if (this.observer) {
-      target.observe(this.observer)
+      // TODO: Support YText observer
+      target.observe(this.observer as any)
     }
   }
-  
+
   unobserve() {
     if (this.observer) {
-      this.native.unobserve(this.observer)
+      // TODO: Support YText observer
+      this.native.unobserve(this.observer as any)
     }
     if (this.syncedObserver) {
       this.getConnector()?.unsubscribeSynced(this.syncedObserver)
@@ -327,34 +333,34 @@ export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'isRoot',
   'root',
   'getConnector',
-  
+
   'afterSynced',
   'waitSynced',
-  
+
   'syncedSubscribers',
   'subscribeSynced',
   'unsubscribeSynced',
   'unsubscribeAllSynced',
-  
+
   'subscribers',
   'subscribe',
   'unsubscribe',
   'unsubscribeAll',
-  
+
   'keySubscribers',
   'subscribeKey',
   'unsubscribeKey',
   'unsubscribeAllKey',
-  
+
   'deepSubscribers',
   'subscribeDeep',
   'unsubscribeDeep',
   'unsubscribeAllDeep',
-  
+
   'emitSynced',
   'emit',
   'emitDeep',
-  
+
   'observer',
   'syncedObserver',
   'observe',
