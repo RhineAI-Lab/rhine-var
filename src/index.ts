@@ -11,12 +11,12 @@ import {Native, YPath} from "@/core/native/native.type";
 import { getRhineVarConfig, enableRhineVarLog, enableRhineVarSyncHandshakeCheck } from "./config/config";
 import { RhineVar } from "@/core/var/rhine-var.type";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
-import RhineVarMap from "@/core/var/itmes/rhine-var-map.class";
-import RhineVarArray from "@/core/var/itmes/rhine-var-array.class";
-import RhineVarText from "@/core/var/itmes/rhine-var-text.class";
-import RhineVarXmlText from "@/core/var/itmes/rhine-var-xml-text.class";
-import RhineVarXmlElement from "@/core/var/itmes/rhine-var-xml-element.class";
-import RhineVarXmlFragment from "@/core/var/itmes/rhine-var-xml-fragment.class";
+import RhineVarMap from "@/core/var/items/rhine-var-map.class";
+import RhineVarArray from "@/core/var/items/rhine-var-array.class";
+import RhineVarText from "@/core/var/items/rhine-var-text.class";
+import RhineVarXmlText from "@/core/var/items/rhine-var-xml-text.class";
+import RhineVarXmlElement from "@/core/var/items/rhine-var-xml-element.class";
+import RhineVarXmlFragment from "@/core/var/items/rhine-var-xml-fragment.class";
 import SupportManager from "@/core/var/support/support-manager";
 
 export {
