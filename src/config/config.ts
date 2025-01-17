@@ -2,6 +2,7 @@
 export default class RhineVarConfig {
 
   static ENABLE_LOG = false
+  static ENABLE_ERROR = true
   static ENABLE_SYNC_HANDSHAKE_CHECK = false
 
 }

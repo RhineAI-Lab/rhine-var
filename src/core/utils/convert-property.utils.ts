@@ -1,8 +1,9 @@
 import {Array as YArray} from "yjs";
-import {ensureNative} from "@/core/utils/data.utils";
 import {isNative} from "@/core/native/native.utils";
 import {Native} from "@/core/native/native.type";
-import {RhineVar} from "@/core/var/rhine-var.type";
+import RhineVarBase from "@/core/var/rhine-var-base.class";
+import {ensureNative} from "@/core/utils/var.utils";
+import {error} from "@/utils/logger";
 
 /**
  * 提供类似于JS原生Array的函数 通过函数名 返回同时用于操作YArray和RhineVar的模拟函数
@@ -20,7 +21,7 @@ import {RhineVar} from "@/core/var/rhine-var.type";
  *
  */
 
-export function convertArrayProperty<T>(name: string, target: YArray<any>, object: RhineVar<T>) {
+export function convertArrayProperty<T>(name: string, target: YArray<any>, object: RhineVarBase<T>) {
   
   const get = (i: number) => {
     if (i in object) {
@@ -33,7 +34,7 @@ export function convertArrayProperty<T>(name: string, target: YArray<any>, objec
   if (name === 'length') {
     return target.length
   } if (name === 'push') {
-    return (...items: (T[keyof T] | RhineVar<T[keyof T]>)[]): number => {
+    return (...items: (T[keyof T] | RhineVarBase<T[keyof T]>)[]): number => {
       for (let i = 0; i < items.length; i++) {
         items[i] = ensureNative(items[i])
       }
@@ -52,7 +53,7 @@ export function convertArrayProperty<T>(name: string, target: YArray<any>, objec
       return item as T[keyof T]
     }
   } else if (name === 'unshift') {
-    return (...items: (T[keyof T] | RhineVar<T[keyof T]>)[]): number => {
+    return (...items: (T[keyof T] | RhineVarBase<T[keyof T]>)[]): number => {
       for (let i = 0; i < items.length; i++) {
         items[i] = ensureNative(items[i])
       }
@@ -71,7 +72,7 @@ export function convertArrayProperty<T>(name: string, target: YArray<any>, objec
       return item as T[keyof T]
     }
   } else if (name === 'slice') {
-    return (start: number, end?: number): RhineVar<T[keyof T]>[] => {
+    return (start: number, end?: number): RhineVarBase<T[keyof T]>[] => {
       if (end === undefined) end = target.length
       if (start < 0) start = target.length + start
       if (end < 0) end = target.length + end
@@ -84,7 +85,7 @@ export function convertArrayProperty<T>(name: string, target: YArray<any>, objec
       return result
     }
   } else if (name === 'splice') {
-    return (start: number, deleteCount: number, ...items: (T[keyof T] | RhineVar<T[keyof T]>)[]) => {
+    return (start: number, deleteCount: number, ...items: (T[keyof T] | RhineVarBase<T[keyof T]>)[]) => {
       const removed = []
       for (let i = start; i < start + deleteCount; i++) {
         let item = target.get(i)
@@ -134,7 +135,7 @@ export function convertArrayProperty<T>(name: string, target: YArray<any>, objec
       return get(i)
     }
   } else if (name === 'with') {
-    return (i: number, value: T[keyof T]): RhineVar<T> => {
+    return (i: number, value: T[keyof T]): RhineVarBase<T> => {
       if (i < 0) i = target.length + i
       if (i < 0 || i >= target.length) throw 'RangeError: Unexpect index ' + i + ' in RhineVarArray(' + target.length + ')'
       return object
@@ -256,7 +257,7 @@ export function convertArrayProperty<T>(name: string, target: YArray<any>, objec
     }
   } else if (RHINE_VAR_ARRAY_UNSUPPORTED_PROPERTIES.has(name)) {
     return () => {
-      console.error('Unsupported method "' + name + '" in RhineVarArray. Please call json() to convert to a native JS Array object before proceeding.')
+      error('Unsupported method "' + name + '" in RhineVarArray. Please call json() to convert to a native JS Array object before proceeding.')
     }
   }
 }

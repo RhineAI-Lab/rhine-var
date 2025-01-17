@@ -8,9 +8,7 @@ console.log('\n\n=================== Rhine Var Playground ===================\n\
 enableRhineVarLog(true)
 
 
-const defaultValue = {
-  state: 0,
-}
+const defaultValue = {state: 0}
 const url = 'ws://localhost:11600/room-1'
 const state = rhineProxy(defaultValue, url, true)
 console.log(state.json())

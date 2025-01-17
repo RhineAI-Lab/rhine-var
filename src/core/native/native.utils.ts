@@ -2,6 +2,7 @@ import {Map as YMap, Array as YArray} from "yjs"
 import {Native} from "@/core/native/native.type";
 import {isArray, isObject} from "@/core/utils/data.utils";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
+import {error} from "@/utils/logger";
 
 
 export function isNative(value: any): boolean {
@@ -30,10 +31,10 @@ export function nativeSet(target: Native, key: string | symbol, value: any): boo
         return true
       }
     } else {
-      console.error('Unsupported nativeSet for:', target)
+      error('Unsupported nativeSet for:', target)
     }
   } catch (e) {
-    console.error('RhineVar nativeSet.error:', e)
+    error('RhineVar nativeSet.error:', e)
   }
   return false
 }
@@ -53,7 +54,7 @@ export function nativeHas(target: Native, key: string | symbol | number): boolea
       }
     }
   } catch (e) {
-    console.error('RhineVar nativeHas.error:', e)
+    error('RhineVar nativeHas.error:', e)
   }
   return false
 }
@@ -93,7 +94,7 @@ export function nativeDelete(target: Native, key: string | symbol): boolean {
       }
     }
   } catch (e) {
-    console.error('RhineVar nativeDelete.error:', e)
+    error('RhineVar nativeDelete.error:', e)
   }
   return false
 }
@@ -111,7 +112,7 @@ export function nativeGet(target: Native, key: string | symbol): any | undefined
       if (!isNaN(pn)) return target.get(pn)
     }
   } catch (e) {
-    console.error('RhineVar nativeGet.error:', e)
+    error('nativeGet.error:', e)
   }
   return undefined
 }

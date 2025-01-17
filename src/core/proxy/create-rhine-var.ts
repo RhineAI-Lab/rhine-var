@@ -7,8 +7,9 @@ import RhineVarText from "@/core/var/itmes/rhine-var-text.class";
 import RhineVarXmlFragment from "@/core/var/itmes/rhine-var-xml-fragment.class";
 import RhineVarXmlElement from "@/core/var/itmes/rhine-var-xml-element.class";
 import RhineVarXmlText from "@/core/var/itmes/rhine-var-xml-text.class";
+import RhineVarBase from "@/core/var/rhine-var-base.class";
 
-export function createRhineVar<T = any>(target: Native, parent: RhineVar | null): RhineVar<T> {
+export function createRhineVar<T = any>(target: Native, parent: RhineVarBase | null): RhineVar<T> {
   if (target instanceof YMap) {
     return new RhineVarMap<T>(target, parent)
   } else if (target instanceof YArray) {

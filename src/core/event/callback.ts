@@ -1,6 +1,6 @@
 import {ChangeType} from "@/core/event/change-type.enum";
 import {Transaction, YArrayEvent, YMapEvent} from "yjs";
-import {Native, YPath} from "@/core/native/native.type";
+import {YPath} from "@/core/native/native.type";
 import {ProxiedRhineVar} from "@/core/proxy/proxied-rhine-var.type";
 
 // The property name only indicates its meaning in the context of a list.

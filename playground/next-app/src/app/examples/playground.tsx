@@ -1,8 +1,7 @@
 "use client"
 
 import React from "react";
-import {rhineProxy} from "rhine-var";
-import {enableRhineVarLog, ProxiedRhineVarItem} from "rhine-var";
+import {rhineProxy, ProxiedRhineVar, enableRhineVarLog} from "rhine-var";
 
 console.log('\n\n=================== Rhine Var Playground ===================\n\n')
 
@@ -56,7 +55,7 @@ group.afterSynced(() => {
 
 
   // 和 Js 中一样 任意读取或操作他
-  console.log('第一个任的名字:', group.people[0].name)
+  console.log('第一人的名字:', group.people[0].name)
   
   console.log('修改 group 的 id 为 group-2')
   group.id = 'group-2'
@@ -77,7 +76,7 @@ group.afterSynced(() => {
 
 
   // 在 TypeScript 中通过 “ = ” 赋值一个对象时，可能出现类型校验不通过情况，可通过 as 修改类型
-  group.people[1] = {name: 'Jessica', age: 19} as ProxiedRhineVarItem<Person>  // 当然你也可以直接使用 “ as any ”
+  group.people[1] = {name: 'Jessica', age: 19} as ProxiedRhineVar<Person>  // 当然你也可以直接使用 “ as any ”
   
   
 })

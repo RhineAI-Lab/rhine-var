@@ -1,7 +1,7 @@
 import {Doc as YDoc, Map as YMap} from "yjs";
 import {WebsocketProvider} from "y-websocket";
 import {ConnectorStatus} from "@/core/connector/connector-status.enum";
-import {log} from "@/utils/logger";
+import {error, log} from "@/utils/logger";
 import {Native} from "@/core/native/native.type";
 import RhineVarConfig from "@/config/config";
 import SyncHandshakeCheck from "@/core/connector/websocket/sync-handshake-check.class";
@@ -19,7 +19,7 @@ export default class HocuspocusConnector extends Connector{
   async connect(text: string): Promise<void> {
     let li = text.lastIndexOf('/')
     if (li == -1 || li == text.length -1 || !text.startsWith('ws')) {
-      console.error('HocuspocusConnector: UnSupport URL to connect room')
+      error('HocuspocusConnector: UnSupport URL to connect room')
       return
     }
 

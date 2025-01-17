@@ -1,8 +1,7 @@
 import {Array as YArray, Map as YMap, Doc as YDoc, XmlFragment as YXmlFragment, XmlElement as YXmlElement, Text as YText, XmlText as YXmlText} from "yjs";
 import Connector from "@/core/connector/connector.abstract";
 import RhineVarBase, {RHINE_VAR_PREDEFINED_PROPERTIES} from "@/core/var/rhine-var-base.class";
-import {ensureNative, ensureRhineVar} from "@/core/utils/data.utils";
-import {log} from "@/utils/logger";
+import {error, log} from "@/utils/logger";
 import {convertArrayProperty} from "@/core/utils/convert-property.utils";
 import {ProxiedRhineVar} from "@/core/proxy/proxied-rhine-var.type";
 import {Native} from "@/core/native/native.type";
@@ -14,9 +13,8 @@ import {
   nativeSet
 } from "@/core/native/native.utils";
 import {createConnector} from "@/core/connector/create-connector";
-import {RhineVar} from "@/core/var/rhine-var.type";
-import RhineVarMap from "@/core/var/itmes/rhine-var-map.class";
 import {createRhineVar} from "@/core/proxy/create-rhine-var";
+import {ensureNative, ensureRhineVar} from "@/core/utils/var.utils";
 
 // For create root RhineVar object
 export function rhineProxy<T extends object>(
@@ -56,11 +54,11 @@ export function rhineProxy<T extends object>(
 
 export function rhineProxyGeneral<T extends object>(
   data: T | Native,
-  parent: RhineVar | null = null
+  parent: RhineVarBase | null = null
 ): ProxiedRhineVar<T> {
   let target = ensureNative<T>(data)
 
-  const object: RhineVar = createRhineVar(target, parent)
+  const object: RhineVarBase = createRhineVar(target, parent)
 
   if (object.native instanceof YMap || object.native instanceof YArray) {
     object.native.forEach((value, keyString) => {
@@ -73,7 +71,7 @@ export function rhineProxyGeneral<T extends object>(
     })
   }
   
-  const proxyGetOwnPropertyDescriptor = (proxy: RhineVar<T>, p: string | symbol) => {
+  const proxyGetOwnPropertyDescriptor = (proxy: RhineVarBase<T>, p: string | symbol) => {
     log('Proxy.handler.getOwnPropertyDescriptor:', p, '  ', object)
     if (p === Symbol.iterator) {
       return {
@@ -95,7 +93,7 @@ export function rhineProxyGeneral<T extends object>(
     return Reflect.getOwnPropertyDescriptor(object, p)
   }
   
-  const handler: ProxyHandler<RhineVar<T>> = {
+  const handler: ProxyHandler<RhineVarBase<T>> = {
     get(proxy, p, receiver) {
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return Reflect.get(object, p, receiver)
       log('Proxy.handler.get:', p, '  ', object, receiver)
@@ -121,25 +119,25 @@ export function rhineProxyGeneral<T extends object>(
       value = ensureRhineVar(value, object)
       
       let result = nativeSet(object.native, p, value)
-      if (!result) console.error('Failed to set value')
+      if (!result) error('Failed to set value')
       return result
     },
     
-    deleteProperty(proxy: RhineVar<T>, p: string | symbol): boolean {
+    deleteProperty(proxy: RhineVarBase<T>, p: string | symbol): boolean {
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return false
       log('Proxy.handler.deleteProperty:', p)
       
       let result = nativeDelete(object.native, p)
-      if (!result) console.error('Failed to delete value')
+      if (!result) error('Failed to delete value')
       return result
     },
     
-    has(proxy: RhineVar<T>, p: string | symbol): boolean {
+    has(proxy: RhineVarBase<T>, p: string | symbol): boolean {
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return false
       return nativeHas(object.native, p)
     },
     
-    ownKeys(proxy: RhineVar<T>): string[] {
+    ownKeys(proxy: RhineVarBase<T>): string[] {
       return nativeOwnKeys(object.native)
     },
     

@@ -8,14 +8,13 @@ import {Callback, DeepCallback, SyncedCallback} from "@/core/event/callback";
 import {StoredRhineVar} from "@/core/proxy/proxied-rhine-var.type";
 import Connector from "@/core/connector/connector.abstract";
 import {isNative} from "@/core/native/native.utils";
-import {RhineVar} from "@/core/var/rhine-var.type";
 
 
 export default abstract class RhineVarBase<T = any> {
 
   constructor(
     public native: Native,
-    public parent: RhineVar | null = null,
+    public parent: RhineVarBase | null = null,
     public origin: StoredRhineVar<T> = this as any
   ) {
   }
@@ -26,7 +25,7 @@ export default abstract class RhineVarBase<T = any> {
     return Boolean(!this.parent)
   }
 
-  root(): RhineVar {
+  root(): RhineVarBase {
     if (this.isRoot()) {
       return this as any
     } else {

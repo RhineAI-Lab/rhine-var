@@ -1,7 +1,7 @@
 import {Doc as YDoc, Map as YMap} from "yjs";
 import {WebsocketProvider} from "y-websocket";
 import {ConnectorStatus} from "@/core/connector/connector-status.enum";
-import {log} from "@/utils/logger";
+import {error, log} from "@/utils/logger";
 import RhineVarConfig from "@/config/config";
 import SyncHandshakeCheck from "@/core/connector/websocket/sync-handshake-check.class";
 import Connector from "@/core/connector/connector.abstract";
@@ -16,7 +16,7 @@ export default class WebsocketConnector extends Connector{
   async connect(text: string): Promise<void> {
     let li = this.url.lastIndexOf('/')
     if (li == -1 || li == this.url.length -1 || !this.url.startsWith('ws')) {
-      console.error('WebsocketConnector: UnSupport URL to connect room')
+      error('WebsocketConnector: UnSupport URL to connect room')
       return
     }
 
