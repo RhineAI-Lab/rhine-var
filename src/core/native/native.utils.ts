@@ -1,7 +1,7 @@
 import {Map as YMap, Array as YArray} from "yjs"
 import {Native} from "@/core/native/native.type";
 import {isArray, isObject} from "@/core/utils/data.utils";
-import RhineVarBaseItem from "@/core/var/rhine-var-base-item.class";
+import RhineVarBase from "@/core/var/rhine-var-base.class";
 
 
 export function isNative(value: any): boolean {
@@ -12,7 +12,7 @@ export function nativeSet(target: Native, key: string | symbol, value: any): boo
   if (typeof key !== 'string') {
     return false
   }
-  if (value instanceof RhineVarBaseItem) {
+  if (value instanceof RhineVarBase) {
     value = value.native
   }
   

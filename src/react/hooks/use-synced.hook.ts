@@ -1,7 +1,7 @@
 import Connector from "@/core/connector/connector.abstract";
 import {useEffect, useState} from "react";
 import {ProxiedRhineVar} from "@/core/proxy/proxied-rhine-var.type";
-import RhineVarBaseItem from "@/core/var/rhine-var-base-item.class";
+import RhineVarBase from "@/core/var/rhine-var-base.class";
 
 export default function useSynced(target?: Connector | ProxiedRhineVar<any>) {
   
@@ -9,7 +9,7 @@ export default function useSynced(target?: Connector | ProxiedRhineVar<any>) {
     let connector: Connector | null = null
     if (target instanceof Connector) {
       connector = target
-    } else if (target instanceof RhineVarBaseItem) {
+    } else if (target instanceof RhineVarBase) {
       connector = target.getConnector()
     }
     return connector?.synced ?? false
@@ -21,7 +21,7 @@ export default function useSynced(target?: Connector | ProxiedRhineVar<any>) {
     if (target instanceof Connector) {
       return target.subscribeSynced((value: boolean) => setSynced(value))
     }
-    if (target instanceof RhineVarBaseItem) {
+    if (target instanceof RhineVarBase) {
       return target.subscribeSynced((value: boolean) => setSynced(value))
     }
   }, [target])

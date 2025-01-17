@@ -7,7 +7,7 @@ import {
   XmlText as YXmlText
 } from "yjs";
 
-export type Native = YMap<any> | YArray<any> | YText | YXmlFragment | YXmlElement<any> | YXmlText
+export type Native = YMap<any> | YArray<any> | YText | YXmlText | YXmlElement<any> | YXmlFragment
 
 export type YKey = string | number
 

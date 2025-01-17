@@ -1,19 +1,9 @@
-import RhineVarBaseItem from "@/core/var/rhine-var-base-item.class";
-import RhineVar from "@/core/var/rhine-var.class";
+import {RhineVar} from "@/core/var/rhine-var.type";
 
-export type RecursiveCrossRhineVarItem<T> = {
-  [K in keyof T]: T[K] extends object ? RecursiveCrossRhineVarItem<T[K]> & RhineVarBaseItem<T[K]> : T[K]
+export type RecursiveCrossRhineVar<T = any> = {
+  [K in keyof T]: T[K] extends object ? RecursiveCrossRhineVar<T[K]> & RhineVar<T[K]> : T[K]
 }
 
-export type StoredRhineVarItem<T> = T & RecursiveCrossRhineVarItem<T> & RhineVarBaseItem<T>
+export type StoredRhineVar<T = any> = T & RecursiveCrossRhineVar<T> & RhineVar<T>
 
-export type ProxiedRhineVarItem<T> = StoredRhineVarItem<T>
-
-
-export type RecursiveCrossRhineVar<T> = {
-  [K in keyof T]: T[K] extends object ? RecursiveCrossRhineVarItem<T[K]> & RhineVarBaseItem<T[K]> : T[K]
-}
-
-export type StoredRhineVar<T> = T & RecursiveCrossRhineVar<T> & RhineVar<T>
-
-export type ProxiedRhineVar<T> = StoredRhineVar<T>
+export type ProxiedRhineVar<T = any> = StoredRhineVar<T>

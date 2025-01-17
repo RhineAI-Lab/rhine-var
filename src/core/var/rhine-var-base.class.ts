@@ -1,39 +1,45 @@
 import {Array as YArray, Map as YMap, Text as YText, Transaction, YArrayEvent, YMapEvent} from "yjs";
-import {rhineProxyItem} from "@/core/proxy/proxy";
+import {rhineProxyGeneral} from "@/core/proxy/proxy";
 import {log} from "@/utils/logger";
 import {isObjectOrArray} from "@/core/utils/data.utils";
 import {Native, YPath} from "@/core/native/native.type";
 import {ChangeType} from "@/core/event/change-type.enum";
 import {Callback, DeepCallback, SyncedCallback} from "@/core/event/callback";
-import {StoredRhineVarItem} from "@/core/proxy/proxied-rhine-var.type";
-import RhineVar from "@/core/var/rhine-var.class";
+import {StoredRhineVar} from "@/core/proxy/proxied-rhine-var.type";
 import Connector from "@/core/connector/connector.abstract";
 import {isNative} from "@/core/native/native.utils";
+import {RhineVar} from "@/core/var/rhine-var.type";
 
 
-export default abstract class RhineVarBaseItem<T = any> {
+export default abstract class RhineVarBase<T = any> {
 
   constructor(
     public native: Native,
-    public parent: RhineVar<any> | RhineVarBaseItem<any> | null = null,
-    public origin: StoredRhineVarItem<T> = this as any
+    public parent: RhineVar | null = null,
+    public origin: StoredRhineVar<T> = this as any
   ) {
   }
 
+  connector: Connector | null = null
+
   isRoot(): boolean {
-    return false
+    return Boolean(!this.parent)
   }
 
-  root(): RhineVar<any> {
-    return this.parent!.root()
+  root(): RhineVar {
+    if (this.isRoot()) {
+      return this as any
+    } else {
+      return this.parent!.root()
+    }
   }
 
   getConnector(): Connector | null {
     return this.root().connector
   }
 
-  // Call after every synced
   initialize(native: Native) {
+    // initialize function will call after every synced
     log('Synced initialize:', this.json(), native.toJSON())
     if (this.native instanceof YMap || this.native instanceof YArray) {
       this.native.forEach((value: any, key: string | number) => {
@@ -46,7 +52,7 @@ export default abstract class RhineVarBaseItem<T = any> {
     if (this.native instanceof YMap || this.native instanceof YArray) {
       this.native.forEach((value: any, key: string | number) => {
         if (isNative(value)) {
-          Reflect.set(this.origin, key, rhineProxyItem(value, this))
+          Reflect.set(this.origin, key, rhineProxyGeneral(value, this as any))
         } else {
           Reflect.set(this.origin, key, value)
         }
@@ -84,7 +90,7 @@ export default abstract class RhineVarBaseItem<T = any> {
           this.hasOwnProperty(key)
         ) {
           let value = origin[key]
-          if (value instanceof RhineVarBaseItem) {
+          if (value instanceof RhineVarBase) {
             value = value.frozenJson()
           }
           if (!isNaN(Number(key))) {
@@ -100,7 +106,7 @@ export default abstract class RhineVarBaseItem<T = any> {
       for (let i = 0;; i++) {
         if (i in origin) {
           let value = origin[i]
-          if (value instanceof RhineVarBaseItem) {
+          if (value instanceof RhineVarBase) {
             value = value.frozenJson()
           }
           result.push(value)
@@ -217,7 +223,7 @@ export default abstract class RhineVarBaseItem<T = any> {
         event.changes.keys.forEach(({action, oldValue}, key) => {
           if (isObjectOrArray(oldValue)) {
             oldValue = Reflect.get(this, key)
-            if (oldValue instanceof RhineVarBaseItem) {
+            if (oldValue instanceof RhineVarBase) {
               oldValue = oldValue.frozenJson()
             }
           }
@@ -226,7 +232,7 @@ export default abstract class RhineVarBaseItem<T = any> {
           if (action === 'add' || action === 'update') {
             value = target.get(key)
             if (isObjectOrArray(value)) {
-              Reflect.set(this.origin, key, rhineProxyItem(value, this))
+              Reflect.set(this.origin, key, rhineProxyGeneral(value, this as any))
             } else {
               Reflect.set(this.origin, key, value)
             }
@@ -251,7 +257,7 @@ export default abstract class RhineVarBaseItem<T = any> {
             for (let j = 0; j < deltaItem.delete; j++) {
               i++
               let oldValue = i in this ? Reflect.get(this, i) : target.get(i)
-              if (oldValue instanceof RhineVarBaseItem) {
+              if (oldValue instanceof RhineVarBase) {
                 oldValue = oldValue.frozenJson()
               }
 
@@ -276,7 +282,7 @@ export default abstract class RhineVarBaseItem<T = any> {
                 Reflect.set(this.origin, k + 1, existingValue)
               }
               if (isObjectOrArray(value)) {
-                Reflect.set(this.origin, i, rhineProxyItem(value, this))
+                Reflect.set(this.origin, i, rhineProxyGeneral(value, this as any))
               } else {
                 Reflect.set(this.origin, i, value)
               }
