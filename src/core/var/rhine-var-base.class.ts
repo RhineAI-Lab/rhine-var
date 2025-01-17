@@ -1,13 +1,13 @@
 import {Array as YArray, Map as YMap, Text as YText, Transaction, YArrayEvent, YMapEvent} from "yjs";
-import {rhineProxyGeneral} from "@/core/proxy/proxy";
+import {rhineProxyGeneral} from "@/core/proxy/rhine-proxy";
 import {log} from "@/utils/logger";
 import {isObjectOrArray} from "@/core/utils/data.utils";
 import {Native, YPath} from "@/core/native/native.type";
 import {ChangeType} from "@/core/event/change-type.enum";
 import {Callback, DeepCallback, SyncedCallback} from "@/core/event/callback";
-import {StoredRhineVar} from "@/core/proxy/proxied-rhine-var.type";
 import Connector from "@/core/connector/connector.abstract";
 import {isNative} from "@/core/native/native.utils";
+import {StoredRhineVar} from "@/core/var/rhine-var.type";
 
 
 export default abstract class RhineVarBase<T = any> {
@@ -17,6 +17,7 @@ export default abstract class RhineVarBase<T = any> {
     public parent: RhineVarBase | null = null,
     public origin: StoredRhineVar<T> = this as any
   ) {
+    this.observe()
   }
 
   connector: Connector | null = null

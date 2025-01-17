@@ -8,9 +8,9 @@ import EasyState from "@/app/examples/easy-state";
 export default function page() {
   
   return <main>
-    <EasyCounter/>
+    {/*<EasyCounter/>*/}
     {/*<Playground/>*/}
-    {/*<EasyState/>*/}
+    <EasyState/>
   </main>
 }
 

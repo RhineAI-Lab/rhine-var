@@ -3,7 +3,7 @@ import Connector from "@/core/connector/connector.abstract";
 import RhineVarBase, {RHINE_VAR_PREDEFINED_PROPERTIES} from "@/core/var/rhine-var-base.class";
 import {error, log} from "@/utils/logger";
 import {convertArrayProperty} from "@/core/utils/convert-property.utils";
-import {ProxiedRhineVar} from "@/core/proxy/proxied-rhine-var.type";
+import {ProxiedRhineVar} from "@/core/var/rhine-var.type";
 import {Native} from "@/core/native/native.type";
 import {
   isNative,
@@ -15,20 +15,25 @@ import {
 import {createConnector} from "@/core/connector/create-connector";
 import {createRhineVar} from "@/core/proxy/create-rhine-var";
 import {ensureNative, ensureRhineVar} from "@/core/utils/var.utils";
+import RhineVarText from "@/core/var/items/rhine-var-text.class";
 
 // For create root RhineVar object
 export function rhineProxy<T extends object>(
   defaultValue: T | Native,
-  connector: Connector | string | number,
+  connector?: Connector | string | number,
   overwrite: boolean | number = false
 ): ProxiedRhineVar<T> {
+  if (!connector) {
+    return rhineProxyGeneral<T>(defaultValue)
+  }
+
   // Create local temp YDoc and YMap
   let target: Native = ensureNative<T>(defaultValue)
   const tempMap = new YDoc().getMap()
   tempMap.set(Connector.STATE_KEY, target)
 
   // Create core proxied rhine-var object
-  const object = rhineProxyGeneral<T>(target) as ProxiedRhineVar<T>
+  const object = rhineProxyGeneral<T>(target)
 
   // Create connector by string, number or direct
   if (typeof connector === 'string' || typeof connector === 'number') {
@@ -59,6 +64,10 @@ export function rhineProxyGeneral<T extends object>(
   let target = ensureNative<T>(data)
 
   const object: RhineVarBase = createRhineVar(target, parent)
+
+  if (object instanceof RhineVarText) {
+    return object
+  }
 
   if (object.native instanceof YMap || object.native instanceof YArray) {
     object.native.forEach((value, keyString) => {
@@ -143,8 +152,6 @@ export function rhineProxyGeneral<T extends object>(
     
     getOwnPropertyDescriptor: proxyGetOwnPropertyDescriptor,
   }
-  
-  Reflect.get(object, 'observe').call(object)
   
   return new Proxy(object, handler) as ProxiedRhineVar<T>
 }

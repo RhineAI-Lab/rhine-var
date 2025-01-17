@@ -1,4 +1,11 @@
-import {Map as YMap, Array as YArray} from "yjs"
+import {
+  Array as YArray,
+  Map as YMap,
+  Text as YText,
+  XmlFragment as YXmlFragment,
+  XmlElement as YXmlElement,
+  XmlText as YXmlText
+} from "yjs";
 import {Native} from "@/core/native/native.type";
 import {isArray, isObject} from "@/core/utils/data.utils";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
@@ -6,7 +13,12 @@ import {error} from "@/utils/logger";
 
 
 export function isNative(value: any): boolean {
-  return (value instanceof YMap) || (value instanceof YArray)
+  return value instanceof YMap
+    || value instanceof YArray
+    || value instanceof YText
+    || value instanceof YXmlFragment
+    || value instanceof YXmlElement
+    || value instanceof YXmlText
 }
 
 export function nativeSet(target: Native, key: string | symbol, value: any): boolean {

@@ -6,3 +6,11 @@ import RhineVarMap from "@/core/var/items/rhine-var-map.class";
 import RhineVarArray from "@/core/var/items/rhine-var-array.class";
 
 export type RhineVar<T = any> = RhineVarMap<T> | RhineVarArray<T> | RhineVarText | RhineVarXmlText | RhineVarXmlElement<T> | RhineVarXmlFragment
+
+export type RecursiveCrossRhineVar<T = any> = {
+  [K in keyof T]: T[K] extends object ? RecursiveCrossRhineVar<T[K]> & RhineVar<T[K]> : T[K]
+}
+
+export type StoredRhineVar<T = any> = T & RecursiveCrossRhineVar<T> & RhineVar<T>
+
+export type ProxiedRhineVar<T = any> = StoredRhineVar<T>

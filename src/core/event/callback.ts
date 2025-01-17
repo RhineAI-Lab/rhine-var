@@ -1,7 +1,7 @@
 import {ChangeType} from "@/core/event/change-type.enum";
 import {Transaction, YArrayEvent, YMapEvent} from "yjs";
 import {YPath} from "@/core/native/native.type";
-import {ProxiedRhineVar} from "@/core/proxy/proxied-rhine-var.type";
+import {ProxiedRhineVar} from "@/core/var/rhine-var.type";
 
 // The property name only indicates its meaning in the context of a list.
 export type Callback<T> = (

@@ -1,6 +1,6 @@
 import Connector from "@/core/connector/connector.abstract";
 import {useEffect, useState} from "react";
-import {ProxiedRhineVar} from "@/core/proxy/proxied-rhine-var.type";
+import {ProxiedRhineVar} from "@/core/var/rhine-var.type";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
 
 export default function useSynced(target?: Connector | ProxiedRhineVar<any>) {
