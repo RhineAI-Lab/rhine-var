@@ -119,7 +119,7 @@ export default abstract class RhineVarBase<T = any> {
     return {} as T
   }
 
-  string(indent = 2) {
+  string(indent = 2): string {
     return JSON.stringify(this.json(), null, indent)
   }
 
@@ -254,8 +254,7 @@ export default abstract class RhineVarBase<T = any> {
           }
           if (deltaItem.delete !== undefined) {
             for (let j = 0; j < deltaItem.delete; j++) {
-              // TODO: 获取删除的内容
-              let oldValue = i in this ? Reflect.get(this, i) : 'unknown'
+              let oldValue = i in this ? Reflect.get(this, i) : target.get(i)
               if (oldValue instanceof RhineVarBase) {
                 oldValue = oldValue.frozenJson()
               }
