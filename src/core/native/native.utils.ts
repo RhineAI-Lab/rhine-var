@@ -129,7 +129,10 @@ export function nativeGet(target: Native, key: string | symbol): any | undefined
   return undefined
 }
 
-export function jsonToNative(data: any): Native | any {
+export function jsonToNative(data: any): Native {
+  if (isNative(data)) {
+    return data
+  }
   if (isObject(data)) {
     let map = new YMap<any>()
     Object.entries(data).forEach(([key, value]) => {

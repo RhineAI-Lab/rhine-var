@@ -1,18 +1,30 @@
 "use client"
 
 import React from "react";
-import {enableRhineVarLog, rhineProxy, rhineText} from "rhine-var";
+import {enableRhineVarLog, rhineProxy, rhineText, useRhine} from "rhine-var";
+import {Text as YText} from "yjs";
 
 console.log('\n\n=================== Rhine Var Playground ===================\n\n')
 
 enableRhineVarLog(true)
 
+const defaultValue = {text: rhineText('aaaaa')}
+const url = 'room-11'
+const state = rhineProxy(defaultValue, url)
 
-const defaultValue = {text: rhineText('aaa')}
-const url = 'room-4'
-const state = rhineProxy(defaultValue, url, true)
-console.log(state.json())
+state.afterSynced(() => {
+})
+
 
 export default function EasyState() {
-  return <div className='page'/>
+
+  const snap = useRhine(state)
+
+  return <div className='page'>
+    <span onClick={() => {
+      console.log(' = =', state.text);
+      (state.text.native as YText).delete(3, 3)
+      console.log(' = =', state.text.json());
+    }}>{snap.text as unknown as string}</span>
+  </div>
 }

@@ -45,10 +45,10 @@ export function rhineProxy<T extends object>(
   // Bind connector
   connector.subscribeSynced((synced: boolean) => {
     if (overwrite) {
-      connector.setState(ensureNative(object.json()))
+      connector.setState(object.native.clone())
     }
     if (!connector.hasState()) {
-      connector.setState(ensureNative(object.json()))
+      connector.setState(object.native.clone())
     }
     object.initialize(connector.getState())
   })

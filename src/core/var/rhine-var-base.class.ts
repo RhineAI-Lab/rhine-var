@@ -1,4 +1,4 @@
-import {Array as YArray, Map as YMap, Text as YText, Transaction, YArrayEvent, YMapEvent} from "yjs";
+import {Array as YArray, Map as YMap, Text as YText, Transaction, YArrayEvent, YMapEvent, YTextEvent} from "yjs";
 import {rhineProxyGeneral} from "@/core/proxy/rhine-proxy";
 import {log} from "@/utils/logger";
 import {isObjectOrArray} from "@/core/utils/data.utils";
@@ -169,7 +169,7 @@ export default abstract class RhineVarBase<T = any> {
     this.keySubscribers = new Map()
   }
 
-  private emit(key: keyof T, value: T[keyof T], oldValue: T[keyof T], type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any>, nativeTransaction: Transaction) {
+  private emit(key: keyof T, value: T[keyof T], oldValue: T[keyof T], type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any> | YTextEvent, nativeTransaction: Transaction) {
     this.subscribers.forEach(subscriber => subscriber(key, value, oldValue, type, nativeEvent, nativeTransaction))
     if (this.keySubscribers.has(key)) {
       this.keySubscribers.get(key)!.forEach(subscriber => subscriber(key, value, oldValue, type, nativeEvent, nativeTransaction))
@@ -189,9 +189,8 @@ export default abstract class RhineVarBase<T = any> {
     this.deepSubscribers = []
   }
 
-  emitDeep(path: YPath, value: any, oldValue: any, type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any>, nativeTransaction: Transaction) {
+  emitDeep(path: YPath, value: any, oldValue: any, type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any> | YTextEvent, nativeTransaction: Transaction) {
     this.deepSubscribers.forEach(subscriber => subscriber(path, value, oldValue, type, nativeEvent, nativeTransaction))
-    // console.log('emitDeep', path, value)
     if (!parent) return undefined
     for (let key in this.parent) {
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(key)) continue;
@@ -204,7 +203,7 @@ export default abstract class RhineVarBase<T = any> {
     }
   }
 
-  private observer = (event: YMapEvent<any> | YArrayEvent<any>, transaction: Transaction) => {}
+  private observer = (event: YMapEvent<any> | YArrayEvent<any> | YTextEvent, transaction: Transaction) => {}
   private syncedObserver: SyncedCallback = (synced: boolean) => {}
 
   observe() {
@@ -231,7 +230,7 @@ export default abstract class RhineVarBase<T = any> {
           let value = undefined
           if (action === 'add' || action === 'update') {
             value = target.get(key)
-            if (isObjectOrArray(value)) {
+            if (isNative(value)) {
               Reflect.set(this.origin, key, rhineProxyGeneral(value, this as any))
             } else {
               Reflect.set(this.origin, key, value)
@@ -248,15 +247,15 @@ export default abstract class RhineVarBase<T = any> {
       }
     } else if (target instanceof YArray){
       this.observer = (event, transaction) => {
-        let i = -1
+        let i = 0
         event.delta.forEach(deltaItem => {
           if (deltaItem.retain !== undefined) {
             i += deltaItem.retain
           }
           if (deltaItem.delete !== undefined) {
             for (let j = 0; j < deltaItem.delete; j++) {
-              i++
-              let oldValue = i in this ? Reflect.get(this, i) : target.get(i)
+              // TODO: 获取删除的内容
+              let oldValue = i in this ? Reflect.get(this, i) : 'unknown'
               if (oldValue instanceof RhineVarBase) {
                 oldValue = oldValue.frozenJson()
               }
@@ -271,12 +270,11 @@ export default abstract class RhineVarBase<T = any> {
               log('Proxy.event: Array delete', i + ':', oldValue, '->', undefined)
               this.emit(i as keyof T, undefined as any, oldValue as any, ChangeType.Delete, event, transaction)
               this.emitDeep([i], undefined, oldValue, ChangeType.Delete, event, transaction)
+              i++
             }
           }
           if (deltaItem.insert !== undefined && Array.isArray(deltaItem.insert)) {
             deltaItem.insert.forEach((value) => {
-              i++
-
               for (let k = target.length - 1; k >= i; k--) {
                 const existingValue = Reflect.get(this, k)
                 Reflect.set(this.origin, k + 1, existingValue)
@@ -291,21 +289,49 @@ export default abstract class RhineVarBase<T = any> {
               log('Proxy.event: Array add', i, ':', undefined, '->', newValue)
               this.emit(i as keyof T, newValue as any, undefined as any, ChangeType.Add, event, transaction)
               this.emitDeep([i], newValue, undefined, ChangeType.Add, event, transaction)
+              i++
             })
           }
         })
       }
+    } else if (target instanceof YText) {
+      this.observer = (event, transaction) => {
+        let i = 0
+        event.delta.forEach(deltaItem => {
+          if (deltaItem.retain !== undefined) {
+            i += deltaItem.retain
+          }
+          if (deltaItem.delete !== undefined) {
+            // let oldValue = target.toJSON().substring(i, i + deltaItem.delete)
+            let oldValue = 'unknown'  // TODO: 获取删除的文本
+            log('Proxy.event: Text delete', i + ':', oldValue, '->', undefined)
+            this.emit(i as keyof T, undefined as any, oldValue as any, ChangeType.Delete, event, transaction)
+            this.emitDeep([i], undefined, oldValue, ChangeType.Delete, event, transaction)
+            i += deltaItem.delete
+          }
+          if (deltaItem.insert !== undefined) {
+            let newValue = deltaItem.insert as string
+            log('Proxy.event: Text add', i, ':', undefined, '->', newValue)
+            this.emit(i as keyof T, newValue as any, undefined as any, ChangeType.Add, event, transaction)
+            this.emitDeep([i], newValue, undefined, ChangeType.Add, event, transaction)
+            i += newValue.length
+          }
+        })
+      }
+    } else {
+      this.observer = (event, transaction) => {
+        this.emit(undefined as any, undefined as any, undefined as any, ChangeType.Update, event, transaction)
+        this.emitDeep(undefined as any, undefined, undefined, ChangeType.Update, event, transaction)
+      }
     }
 
     if (this.observer) {
-      // TODO: Support YText observer
       target.observe(this.observer as any)
     }
   }
 
   unobserve() {
     if (this.observer) {
-      // TODO: Support YText observer
       this.native.unobserve(this.observer as any)
     }
     if (this.syncedObserver) {
