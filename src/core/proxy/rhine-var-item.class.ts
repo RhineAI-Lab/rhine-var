@@ -1,4 +1,4 @@
-import {Array as YArray, Map as YMap, Transaction, YArrayEvent, YMapEvent} from "yjs";
+import {Array as YArray, Map as YMap, Transaction, Text as YText, YArrayEvent, YMapEvent} from "yjs";
 import {rhineProxyItem} from "@/core/proxy/proxy";
 import {log} from "@/utils/logger";
 import {isObjectOrArray} from "@/core/utils/data.utils";
@@ -10,15 +10,28 @@ import RhineVar from "@/core/proxy/rhine-var.class";
 import Connector from "@/core/connector/connector.abstract";
 import {isNative} from "@/core/native/native.utils";
 import {keepItem} from "yjs/dist/src/structs/Item";
+import {NativeType} from "@/core/proxy/interface/native-type.enum";
 
 
 export default class RhineVarItem<T> {
+
+  nativeType: NativeType
   
   constructor(
     public native: Native,
     public parent: RhineVar<any> | RhineVarItem<any> | null = null,
     public origin: StoredRhineVarItem<T> = this as any
-  ) {}
+  ) {
+    if (native instanceof YMap) {
+      this.nativeType = NativeType.Map
+    } else if (native instanceof YArray) {
+      this.nativeType = NativeType.Array
+    } else if (native instanceof YText) {
+      this.nativeType = NativeType.Text
+    } else {
+      this.nativeType = NativeType.Map
+    }
+  }
   
   isRoot(): boolean {
     return false
