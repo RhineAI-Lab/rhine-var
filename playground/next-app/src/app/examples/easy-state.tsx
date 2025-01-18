@@ -19,12 +19,11 @@ state.afterSynced(() => {
 export default function EasyState() {
 
   const snap = useRhine(state)
+  console.log('render')
 
   return <div className='page'>
     <span onClick={() => {
-      console.log(' = =', state.text);
-      (state.text.native as YText).delete(3, 3)
-      console.log(' = =', state.text.json());
+      (state.text.native as YText).insert(3, 'eee')
     }}>{snap.text as unknown as string}</span>
   </div>
 }

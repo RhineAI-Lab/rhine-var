@@ -251,8 +251,7 @@ export default abstract class RhineVarBase<T = any> {
         event.delta.forEach(deltaItem => {
           if (deltaItem.retain !== undefined) {
             i += deltaItem.retain
-          }
-          if (deltaItem.delete !== undefined) {
+          } else if (deltaItem.delete !== undefined) {
             for (let j = 0; j < deltaItem.delete; j++) {
               let oldValue = i in this ? Reflect.get(this, i) : target.get(i)
               if (oldValue instanceof RhineVarBase) {
@@ -271,8 +270,7 @@ export default abstract class RhineVarBase<T = any> {
               this.emitDeep([i], undefined, oldValue, ChangeType.Delete, event, transaction)
               i++
             }
-          }
-          if (deltaItem.insert !== undefined && Array.isArray(deltaItem.insert)) {
+          } else if (deltaItem.insert !== undefined && Array.isArray(deltaItem.insert)) {
             deltaItem.insert.forEach((value) => {
               for (let k = target.length - 1; k >= i; k--) {
                 const existingValue = Reflect.get(this, k)
@@ -295,27 +293,29 @@ export default abstract class RhineVarBase<T = any> {
       }
     } else if (target instanceof YText) {
       this.observer = (event, transaction) => {
+        console.log('xxx', Reflect.get(this, 'text'))
         let i = 0
         event.delta.forEach(deltaItem => {
           if (deltaItem.retain !== undefined) {
             i += deltaItem.retain
+            return
           }
+          let oldValue = Reflect.get(this, 'text')
+          let newValue = this.native.toString()
+          Reflect.set(this.origin, 'text', newValue)
           if (deltaItem.delete !== undefined) {
-            // let oldValue = target.toJSON().substring(i, i + deltaItem.delete)
-            let oldValue = 'unknown'  // TODO: 获取删除的文本
-            log('Proxy.event: Text delete', i + ':', oldValue, '->', undefined)
-            this.emit(i as keyof T, undefined as any, oldValue as any, ChangeType.Delete, event, transaction)
-            this.emitDeep([i], undefined, oldValue, ChangeType.Delete, event, transaction)
+            log('Proxy.event: Text delete', i, ':', oldValue, '->', newValue)
+            this.emit(i as keyof T, newValue as any, oldValue as any, ChangeType.Delete, event, transaction)
+            this.emitDeep([i], newValue, oldValue, ChangeType.Delete, event, transaction)
             i += deltaItem.delete
-          }
-          if (deltaItem.insert !== undefined) {
-            let newValue = deltaItem.insert as string
-            log('Proxy.event: Text add', i, ':', undefined, '->', newValue)
-            this.emit(i as keyof T, newValue as any, undefined as any, ChangeType.Add, event, transaction)
-            this.emitDeep([i], newValue, undefined, ChangeType.Add, event, transaction)
+          } else if (deltaItem.insert !== undefined) {
+            log('Proxy.event: Text add', i, ':', oldValue, '->', newValue)
+            this.emit(i as keyof T, newValue as any, oldValue as any, ChangeType.Add, event, transaction)
+            this.emitDeep([i], newValue, oldValue, ChangeType.Add, event, transaction)
             i += newValue.length
           }
         })
+        console.log('xxx', Reflect.get(this, 'text'))
       }
     } else {
       this.observer = (event, transaction) => {

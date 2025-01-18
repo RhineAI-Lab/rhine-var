@@ -65,11 +65,10 @@ export function rhineProxyGeneral<T extends object>(
 
   const object: RhineVarBase = createRhineVar(target, parent)
 
-  if (object instanceof RhineVarText) {
-    return object
-  }
-
-  if (object.native instanceof YMap || object.native instanceof YArray) {
+  if (object.native instanceof YText) {
+    Reflect.set(object, 'text', object.native.toString())
+    return object as RhineVarText
+  } else if (object.native instanceof YMap || object.native instanceof YArray) {
     object.native.forEach((value, keyString) => {
       let key = keyString as keyof T
       if (isNative(value)) {
