@@ -5,4 +5,8 @@ export default class RhineVarMap<T> extends RhineVarBase<T> {
 
   type: NativeType.Map = NativeType.Map
 
+  aaa() {
+
+  }
+
 }

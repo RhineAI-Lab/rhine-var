@@ -5,4 +5,8 @@ export default class RhineVarArray<T> extends RhineVarBase<T> {
 
   type: NativeType.Array = NativeType.Array
 
+  bbb() {
+
+  }
+
 }

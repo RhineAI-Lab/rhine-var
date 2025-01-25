@@ -8,13 +8,16 @@ console.log('\n\n=================== Rhine Var Playground ===================\n\
 
 enableRhineVarLog(true)
 
-const defaultValue = {text: rhineText('aaaaa')}
+const defaultValue = {
+  arr: [
+    {
+      text: 'Hello',
+      rhineText: rhineText('World'),
+    },
+  ],
+}
 const url = 'room-11'
 const state = rhineProxy(defaultValue, url)
-
-state.afterSynced(() => {
-})
-
 
 export default function EasyState() {
 
@@ -22,8 +25,5 @@ export default function EasyState() {
   console.log('render')
 
   return <div className='page'>
-    <span onClick={() => {
-      (state.text.native as YText).insert(3, 'eee')
-    }}>{snap.text as unknown as string}</span>
   </div>
 }

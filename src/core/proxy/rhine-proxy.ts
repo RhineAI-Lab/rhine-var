@@ -67,7 +67,7 @@ export function rhineProxyGeneral<T extends object>(
 
   if (object.native instanceof YText) {
     Reflect.set(object, 'text', object.native.toString())
-    return object as RhineVarText
+    return object as RhineVarText as ProxiedRhineVar<T>
   } else if (object.native instanceof YMap || object.native instanceof YArray) {
     object.native.forEach((value, keyString) => {
       let key = keyString as keyof T

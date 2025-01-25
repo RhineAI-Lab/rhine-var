@@ -20,8 +20,6 @@ span {
 }
 
 button {
-  width: 90px;
-  height: 60px;
   font-size: 28px;
   font-weight: 100;
   border: none;
@@ -30,5 +28,6 @@ button {
   background: #ffffff;
   color: #000000;
   cursor: pointer;
+  padding: 10px 30px;
   box-shadow: 0 0 10px #ffffff16;
 }
