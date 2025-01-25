@@ -50,7 +50,7 @@ export function ensureNative<T extends object = any>(value: T | RhineVarBase<T> 
 
 export type Basic = string | number | boolean | null | undefined
 
-export function ensureNativeOrBasic<T extends object = any>(value: T | RhineVarBase<T> | Native | Basic): Native | Basic {
+export function ensureNativeOrBasic<T = any>(value: T): Native | Basic {
   if (isBasic(value)) {
     return value
   }

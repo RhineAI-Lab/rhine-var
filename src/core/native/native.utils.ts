@@ -3,6 +3,7 @@ import {Native} from "@/core/native/native.type";
 import {isArray, isObject} from "@/core/utils/data.utils";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
 import {error} from "@/utils/logger";
+import YObject from "@/core/native/y-object";
 
 
 export function isNative(value: any): boolean {
@@ -127,7 +128,7 @@ export function jsonToNative(data: any): Native {
     return data
   }
   if (isObject(data)) {
-    let map = new YMap<any>()
+    let map = new YObject<any>()
     Object.entries(data).forEach(([key, value]) => {
       map.set(key, jsonToNative(value))
     })

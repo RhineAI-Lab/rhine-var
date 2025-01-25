@@ -5,8 +5,8 @@ import RhineVarXmlFragment from "@/core/var/items/rhine-var-xml-fragment.class";
 import RhineVarMap from "@/core/var/items/rhine-var-map.class";
 import RhineVarArray from "@/core/var/items/rhine-var-array.class";
 import RhineVarObject from "@/core/var/items/rhine-var-object.class";
-import { YMap, YArray, YText, YXmlText, YXmlElement, YXmlFragment } from "@/index"
 import YObject from "@/core/native/y-object";
+import { YMap, YArray, YText, YXmlText, YXmlElement, YXmlFragment } from "@/index"
 
 export type RhineVarAny<T extends object = any> = RhineVarObject<T> | RhineVarMap<T> | RhineVarArray<T> | RhineVarText | RhineVarXmlText | RhineVarXmlElement<T> | RhineVarXmlFragment
 
@@ -21,7 +21,17 @@ export type RhineVar<T extends object = any> =
           ? RhineVarText
           : T extends YArray<infer U> | RhineVarArray<infer U> | (infer U)[]
             ? RhineVarArray<U>
-            : RhineVarMap<T>
+            : T extends YObject<any> | RhineVarObject<any>
+              ? RhineVarObject<T>
+              : T extends YMap<infer U> | RhineVarMap<infer U>
+                ? RhineVarMap<U>
+                : RhineVarObject<T>
+
+export type RecursiveObject<T extends object> = {
+  [K in keyof T]: T[K] extends object
+    ? RecursiveCrossRhineVar<T[K]>
+    : T[K]
+} & RhineVarObject<T>
 
 export type RecursiveCrossRhineVar<T extends object> =
   T extends YXmlText | YText | YXmlFragment
@@ -31,14 +41,17 @@ export type RecursiveCrossRhineVar<T extends object> =
         ? U extends object
           ? RhineVarArray<RecursiveCrossRhineVar<U>> & Array<RecursiveCrossRhineVar<U>>
           : RhineVarArray<U> & Array<U>
-        : {
-          [K in keyof T]: T[K] extends object
-            ? RecursiveCrossRhineVar<T[K]>
-            : T[K]
-        } & RhineVarMap<T>
+        : T extends YObject<any> | RhineVarObject<any>
+          ? RecursiveObject<T>
+          : T extends YMap<infer U> | RhineVarMap<infer U>
+            ? U extends object
+              ? RhineVarMap<RecursiveCrossRhineVar<U>> & Map<string, RecursiveCrossRhineVar<U>>
+              : RhineVarMap<U> & Map<string, U>
+            : RecursiveObject<T>
     )
 
 export type StoredRhineVar<T extends object = any> = RecursiveCrossRhineVar<T>
 
 export type ProxiedRhineVar<T extends object = any> = StoredRhineVar<T>
+
 
