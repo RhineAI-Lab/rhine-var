@@ -78,7 +78,7 @@ export function rhineProxyGeneral<T extends object>(
       }
     })
   }
-  
+
   const proxyGetOwnPropertyDescriptor = (proxy: RhineVarBase<T>, p: string | symbol) => {
     log('Proxy.handler.getOwnPropertyDescriptor:', p, '  ', object)
     if (p === Symbol.iterator) {
@@ -100,17 +100,17 @@ export function rhineProxyGeneral<T extends object>(
     }
     return Reflect.getOwnPropertyDescriptor(object, p)
   }
-  
+
   const handler: ProxyHandler<RhineVarBase<T>> = {
     get(proxy, p, receiver) {
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return Reflect.get(object, p, receiver)
       log('Proxy.handler.get:', p, '  ', object, receiver)
-      
+
       if (p in object) return Reflect.get(object, p, receiver)
-      
+
       const descriptor = proxyGetOwnPropertyDescriptor(proxy, p)
       if (descriptor !== undefined) return descriptor.value
-      
+
       if (object.native instanceof YArray) {
         if (typeof p === 'string') {
           const f = convertArrayProperty<T>(p, object.native, object)
@@ -119,39 +119,39 @@ export function rhineProxyGeneral<T extends object>(
       }
       return undefined
     },
-    
+
     set(proxy, p, value, receiver): boolean {
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return Reflect.set(object, p, value, receiver)
       log('Proxy.handler.set:', p, 'to', value, '  ', object, receiver)
-      
+
       value = ensureRhineVar(value, object)
-      
+
       let result = nativeSet(object.native, p, value)
       if (!result) error('Failed to set value')
       return result
     },
-    
+
     deleteProperty(proxy: RhineVarBase<T>, p: string | symbol): boolean {
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return false
       log('Proxy.handler.deleteProperty:', p)
-      
+
       let result = nativeDelete(object.native, p)
       if (!result) error('Failed to delete value')
       return result
     },
-    
+
     has(proxy: RhineVarBase<T>, p: string | symbol): boolean {
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return false
       return nativeHas(object.native, p)
     },
-    
+
     ownKeys(proxy: RhineVarBase<T>): string[] {
       return nativeOwnKeys(object.native)
     },
-    
+
     getOwnPropertyDescriptor: proxyGetOwnPropertyDescriptor,
   }
-  
+
   return new Proxy(object, handler) as ProxiedRhineVar<T>
 }
 

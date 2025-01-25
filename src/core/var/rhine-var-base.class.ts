@@ -10,7 +10,7 @@ import {isNative} from "@/core/native/native.utils";
 import {StoredRhineVar} from "@/core/var/rhine-var.type";
 
 
-export default abstract class RhineVarBase<T = any> {
+export default abstract class RhineVarBase<T extends object = any> {
 
   constructor(
     public native: Native,

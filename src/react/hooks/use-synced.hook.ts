@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import {ProxiedRhineVar} from "@/core/var/rhine-var.type";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
 
-export default function useSynced(target?: Connector | ProxiedRhineVar<any>) {
+export default function useSynced(target?: Connector | ProxiedRhineVar) {
   
   const checkSynced = (): boolean => {
     let connector: Connector | null = null
@@ -22,6 +22,7 @@ export default function useSynced(target?: Connector | ProxiedRhineVar<any>) {
       return target.subscribeSynced((value: boolean) => setSynced(value))
     }
     if (target instanceof RhineVarBase) {
+      // @ts-ignore
       return target.subscribeSynced((value: boolean) => setSynced(value))
     }
   }, [target])

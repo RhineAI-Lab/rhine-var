@@ -1,12 +1,12 @@
 import RhineVarBase from "@/core/var/rhine-var-base.class";
 import {NativeType} from "@/core/native/native-type.enum";
 
-export default class RhineVarArray<T> extends RhineVarBase<T> {
+export default class RhineVarArray<T extends object = any> extends RhineVarBase<T> implements Iterable<T> {
 
-  type: NativeType.Array = NativeType.Array
+  type: NativeType.Array = NativeType.Array;
 
-  bbb() {
-
+  [Symbol.iterator](): Iterator<T> {
+    return {} as Iterator<T>
   }
 
 }

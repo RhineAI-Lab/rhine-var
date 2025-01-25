@@ -12,7 +12,7 @@ import RhineVarBase from "@/core/var/rhine-var-base.class";
 export function createRhineVar<T = any>(target: YMap<any>, parent: RhineVarBase | null): RhineVarMap<T>
 export function createRhineVar<T = any>(target: YArray<any>, parent: RhineVarBase | null): RhineVarArray<T>
 export function createRhineVar<T = any>(target: YXmlText, parent: RhineVarBase | null): RhineVarXmlText
-export function createRhineVar<T = any>(target: YXmlElement<any>, parent: RhineVarBase | null): RhineVarXmlElement<T>
+export function createRhineVar<T = any>(target: YXmlElement<any>, parent: RhineVarBase | null): RhineVarXmlElement<any>
 export function createRhineVar<T = any>(target: YXmlFragment, parent: RhineVarBase | null): RhineVarXmlFragment
 export function createRhineVar<T = any>(target: YText, parent: RhineVarBase | null): RhineVarText
 export function createRhineVar<T = any>(target: Native<T>, parent: RhineVarBase | null): RhineVarAny<T> {
