@@ -9,13 +9,13 @@ import RhineVarXmlElement from "@/core/var/items/rhine-var-xml-element.class";
 import RhineVarXmlText from "@/core/var/items/rhine-var-xml-text.class";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
 
-export function createRhineVar<T = any>(target: YMap<any>, parent: RhineVarBase | null): RhineVarMap<T>
-export function createRhineVar<T = any>(target: YArray<any>, parent: RhineVarBase | null): RhineVarArray<T>
-export function createRhineVar<T = any>(target: YXmlText, parent: RhineVarBase | null): RhineVarXmlText
-export function createRhineVar<T = any>(target: YXmlElement<any>, parent: RhineVarBase | null): RhineVarXmlElement<any>
-export function createRhineVar<T = any>(target: YXmlFragment, parent: RhineVarBase | null): RhineVarXmlFragment
-export function createRhineVar<T = any>(target: YText, parent: RhineVarBase | null): RhineVarText
-export function createRhineVar<T = any>(target: Native<T>, parent: RhineVarBase | null): RhineVarAny<T> {
+export function createRhineVar<T extends object = any>(target: YMap<any>, parent: RhineVarBase | null): RhineVarMap<T>
+export function createRhineVar<T extends object = any>(target: YArray<any>, parent: RhineVarBase | null): RhineVarArray<T>
+export function createRhineVar<T extends object = any>(target: YXmlText, parent: RhineVarBase | null): RhineVarXmlText
+export function createRhineVar<T extends object = any>(target: YXmlElement<any>, parent: RhineVarBase | null): RhineVarXmlElement<T>
+export function createRhineVar<T extends object = any>(target: YXmlFragment, parent: RhineVarBase | null): RhineVarXmlFragment
+export function createRhineVar<T extends object = any>(target: YText, parent: RhineVarBase | null): RhineVarText
+export function createRhineVar<T extends object = any>(target: Native<T>, parent: RhineVarBase | null): RhineVarAny<T> {
   if (target instanceof YMap) {
     return new RhineVarMap<T>(target, parent)
   } else if (target instanceof YArray) {
@@ -23,7 +23,7 @@ export function createRhineVar<T = any>(target: Native<T>, parent: RhineVarBase 
   } else if (target instanceof YXmlText) {
     return new RhineVarXmlText(target, parent)
   } else if (target instanceof YXmlElement) {
-    return new RhineVarXmlElement(target, parent)
+    return new RhineVarXmlElement<T>(target, parent)
   } else if (target instanceof YXmlFragment) {
     return new RhineVarXmlFragment(target, parent)
   } else if (target instanceof YText) {
