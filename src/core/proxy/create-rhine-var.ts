@@ -11,6 +11,7 @@ import RhineVarXmlText from "@/core/var/items/rhine-var-xml-text.class";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
 import RhineVarObject from "@/core/var/items/rhine-var-object.class";
 
+export function createRhineVar<T extends object = any>(target: Native, parent: RhineVarBase | null): RhineVarAny<T>
 export function createRhineVar<T extends object = any>(target: YObject<any>, parent: RhineVarBase | null): RhineVarObject<T>
 export function createRhineVar<T extends object = any>(target: YMap<any>, parent: RhineVarBase | null): RhineVarMap<T>
 export function createRhineVar<T extends object = any>(target: YArray<any>, parent: RhineVarBase | null): RhineVarArray<T>
@@ -18,7 +19,7 @@ export function createRhineVar<T extends object = any>(target: YXmlText, parent:
 export function createRhineVar<T extends object = any>(target: YXmlElement<any>, parent: RhineVarBase | null): RhineVarXmlElement<T>
 export function createRhineVar<T extends object = any>(target: YXmlFragment, parent: RhineVarBase | null): RhineVarXmlFragment
 export function createRhineVar<T extends object = any>(target: YText, parent: RhineVarBase | null): RhineVarText
-export function createRhineVar<T extends object = any>(target: Native<T>, parent: RhineVarBase | null): RhineVarAny<T> {
+export function createRhineVar<T extends object = any>(target: Native, parent: RhineVarBase | null): RhineVarAny<T> {
   if (target instanceof YObject) {
     return new RhineVarObject<T>(target, parent)
   } else if (target instanceof YMap) {

@@ -10,10 +10,12 @@ import {rhineProxyGeneral} from "@/core/proxy/rhine-proxy";
 import {isNative, jsonToNative} from "@/core/native/native.utils";
 import {isObjectOrArray} from "@/core/utils/data.utils";
 import {Native} from "@/core/native/native.type";
+import RhineVarObject from "@/core/var/items/rhine-var-object.class";
 
 
 export function isRhineVar(value: any) {
-  return value instanceof RhineVarMap
+  return value instanceof RhineVarObject
+    || value instanceof RhineVarMap
     || value instanceof RhineVarArray
     || value instanceof RhineVarText
     || value instanceof RhineVarXmlFragment
@@ -21,7 +23,7 @@ export function isRhineVar(value: any) {
     || value instanceof RhineVarXmlText
 }
 
-export function ensureRhineVar<T>(value: T | Native, parent: RhineVarBase<any>): StoredRhineVar<T> | any {
+export function ensureRhineVar<T extends object = any>(value: T | Native, parent: RhineVarBase<any>): StoredRhineVar<T> | any {
   if (isNative(value)) {
     return rhineProxyGeneral(value as Native, parent)
   }
@@ -33,9 +35,9 @@ export function ensureRhineVar<T>(value: T | Native, parent: RhineVarBase<any>):
   return value
 }
 
-export function ensureNative<T>(value: T | RhineVarBase<T> | Native): Native | any {
+export function ensureNative<T extends object = any>(value: T | RhineVarBase<T> | Native): Native {
   if (isNative(value)) {
-    return value
+    return value as Native
   }
   if (isRhineVar(value)) {
     return (value as RhineVarBase).native
@@ -43,5 +45,27 @@ export function ensureNative<T>(value: T | RhineVarBase<T> | Native): Native | a
   if (isObjectOrArray(value)) {
     return jsonToNative(value)
   }
-  return value
+  return value as Native
+}
+
+export type Basic = string | number | boolean | null | undefined
+
+export function ensureNativeOrBasic<T extends object = any>(value: T | RhineVarBase<T> | Native | Basic): Native | Basic {
+  if (isBasic(value)) {
+    return value
+  }
+  if (isNative(value)) {
+    return value as Native
+  }
+  if (isRhineVar(value)) {
+    return (value as RhineVarBase).native
+  }
+  if (isObjectOrArray(value)) {
+    return jsonToNative(value)
+  }
+  return null
+}
+
+export function isBasic(value: any): value is Basic {
+  return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' || value === null || value === undefined
 }

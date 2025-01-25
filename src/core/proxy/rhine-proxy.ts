@@ -63,7 +63,7 @@ export function rhineProxyGeneral<T extends object>(
 ): ProxiedRhineVar<T> {
   let target = ensureNative<T>(data)
 
-  const object: RhineVarBase = createRhineVar(target, parent)
+  const object: RhineVarBase = createRhineVar(target, parent) as any
 
   if (object.native instanceof YText) {
     Reflect.set(object, 'text', object.native.toString())
