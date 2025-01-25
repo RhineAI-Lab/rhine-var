@@ -2,7 +2,6 @@
 
 import React from "react";
 import {enableRhineVarLog, rhineProxy, rhineText, useRhine} from "rhine-var";
-import {Text as YText} from "yjs";
 
 console.log('\n\n=================== Rhine Var Playground ===================\n\n')
 
@@ -11,8 +10,10 @@ enableRhineVarLog(true)
 const defaultValue = {
   arr: [
     {
-      text: 'Hello',
-      rhineText: rhineText('World'),
+      person: {
+        name: 'Hello',
+        info: rhineText('World'),
+      }
     },
   ],
 }

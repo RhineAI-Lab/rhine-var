@@ -23,23 +23,23 @@ export type RhineVar<T> = T extends YXmlText | RhineVarXmlText
       ? RhineVarXmlFragment
       : T extends YText | RhineVarText
         ? RhineVarText
-        : T extends (infer U)[]
-          ? RhineVarArray<U>
+        : T extends any[]
+          ? RhineVarArray<T>
           : RhineVarMap<T>
 
 export type RecursiveCrossRhineVar<T> =
-  T extends YXmlText | RhineVarXmlText | YText | RhineVarText | YXmlFragment | RhineVarXmlFragment
+  T extends YXmlText | YText | YXmlFragment | RhineVarMap<T> | RhineVarText | RhineVarXmlText | RhineVarXmlElement<T> | RhineVarXmlFragment
     ? RhineVar<T>
-    : (T extends (infer U)[]
-      ? RecursiveCrossRhineVar<U>[]
-      : T extends YArray<infer U> | RhineVarArray<infer U>
+    : (T extends any[]
+      ? RecursiveCrossRhineVar<T[number]>[]
+      : T extends YArray<infer U>
         ? RecursiveCrossRhineVar<U>[]
         : {
           [K in keyof T]: RecursiveCrossRhineVar<T[K]>
         }
     ) & RhineVar<T>
 
-
 export type StoredRhineVar<T = any> = RecursiveCrossRhineVar<T>
 
 export type ProxiedRhineVar<T = any> = StoredRhineVar<T>
+
