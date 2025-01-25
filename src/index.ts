@@ -15,6 +15,15 @@ import RhineVarXmlFragment from "@/core/var/items/rhine-var-xml-fragment.class";
 import SupportManager from "@/core/var/support/support-manager";
 import { rhineText } from "@/core/proxy/items/rhine-text";
 import { rhineMap } from "./core/proxy/items/rhine-map";
+import {
+  Doc as YDoc,
+  Array as YArray,
+  Map as YMap,
+  Text as YText,
+  XmlFragment as YXmlFragment,
+  XmlElement as YXmlElement,
+  XmlText as YXmlText
+} from "yjs";
 
 export {
   Connector,
@@ -42,4 +51,11 @@ export {
   getRhineVarConfig,
   useRhine,
   useSynced,
+  YDoc,
+  YMap,
+  YArray,
+  YText,
+  YXmlFragment,
+  YXmlElement,
+  YXmlText,
 }

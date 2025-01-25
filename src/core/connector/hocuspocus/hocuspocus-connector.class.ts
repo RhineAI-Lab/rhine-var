@@ -1,4 +1,4 @@
-import {Doc as YDoc, Map as YMap} from "yjs";
+import { YDoc } from "@/index"
 import {WebsocketProvider} from "y-websocket";
 import {ConnectorStatus} from "@/core/connector/connector-status.enum";
 import {error, log} from "@/utils/logger";

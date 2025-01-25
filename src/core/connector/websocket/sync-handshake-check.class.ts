@@ -1,4 +1,4 @@
-import {Map as YMap} from "yjs";
+import { YMap } from "@/index"
 import {log} from "@/utils/logger";
 
 export default class SyncHandshakeCheck {

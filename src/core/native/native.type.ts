@@ -1,13 +1,8 @@
-import {
-  Array as YArray,
-  Map as YMap,
-  Text as YText,
-  XmlFragment as YXmlFragment,
-  XmlElement as YXmlElement,
-  XmlText as YXmlText
-} from "yjs";
+import { YMap, YArray, YText, YXmlText, YXmlElement, YXmlFragment } from "@/index"
+import YObject from "@/core/native/y-object";
 
-export type Native<T = any> = YMap<T> | YArray<T> | YText | YXmlText | YXmlElement<any> | YXmlFragment
+
+export type Native<T = any> = YObject<T> | YMap<T> | YArray<T> | YText | YXmlText | YXmlElement<any> | YXmlFragment
 
 export type YKey = string | number
 

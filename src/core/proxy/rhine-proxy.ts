@@ -1,4 +1,4 @@
-import {Array as YArray, Map as YMap, Doc as YDoc, XmlFragment as YXmlFragment, XmlElement as YXmlElement, Text as YText, XmlText as YXmlText} from "yjs";
+import { YDoc, YMap, YArray, YText, YXmlText, YXmlElement, YXmlFragment } from "@/index"
 import Connector from "@/core/connector/connector.abstract";
 import RhineVarBase, {RHINE_VAR_PREDEFINED_PROPERTIES} from "@/core/var/rhine-var-base.class";
 import {error, log} from "@/utils/logger";

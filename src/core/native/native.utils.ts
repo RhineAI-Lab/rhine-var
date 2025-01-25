@@ -1,11 +1,4 @@
-import {
-  Array as YArray,
-  Map as YMap,
-  Text as YText,
-  XmlFragment as YXmlFragment,
-  XmlElement as YXmlElement,
-  XmlText as YXmlText
-} from "yjs";
+import { YMap, YArray, YText, YXmlText, YXmlElement, YXmlFragment } from "@/index"
 import {Native} from "@/core/native/native.type";
 import {isArray, isObject} from "@/core/utils/data.utils";
 import RhineVarBase from "@/core/var/rhine-var-base.class";

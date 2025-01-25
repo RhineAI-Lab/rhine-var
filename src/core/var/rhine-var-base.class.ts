@@ -1,4 +1,6 @@
-import {Array as YArray, Map as YMap, Text as YText, Transaction, YArrayEvent, YMapEvent, YTextEvent} from "yjs";
+import {Transaction, YArrayEvent, YMapEvent, YTextEvent} from "yjs";
+import { YMap, YArray, YText, YXmlText, YXmlElement, YXmlFragment } from "@/index"
+import YObject from "@/core/native/y-object";
 import {rhineProxyGeneral} from "@/core/proxy/rhine-proxy";
 import {log} from "@/utils/logger";
 import {isObjectOrArray} from "@/core/utils/data.utils";

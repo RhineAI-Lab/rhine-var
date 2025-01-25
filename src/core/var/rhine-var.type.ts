@@ -5,14 +5,8 @@ import RhineVarXmlFragment from "@/core/var/items/rhine-var-xml-fragment.class";
 import RhineVarMap from "@/core/var/items/rhine-var-map.class";
 import RhineVarArray from "@/core/var/items/rhine-var-array.class";
 import RhineVarObject from "@/core/var/items/rhine-var-object.class";
-import {
-  Map as YMap,
-  Array as YArray,
-  Text as YText,
-  XmlFragment as YXmlFragment,
-  XmlElement as YXmlElement,
-  XmlText as YXmlText
-} from "yjs";
+import { YMap, YArray, YText, YXmlText, YXmlElement, YXmlFragment } from "@/index"
+import YObject from "@/core/native/y-object";
 
 export type RhineVarAny<T extends object = any> = RhineVarObject<T> | RhineVarMap<T> | RhineVarArray<T> | RhineVarText | RhineVarXmlText | RhineVarXmlElement<T> | RhineVarXmlFragment
 
