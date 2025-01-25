@@ -10,11 +10,24 @@ export default class RhineVarMap<T = any> extends RhineVarBase<{[K in keyof T]: 
   }
 
   set(key: string, value: T): void {
-
   }
 
   get(key: string): T | undefined {
     return {} as T | undefined;
+  }
+
+  has(key: string): boolean {
+    return false;
+  }
+
+  forEach(callback: (value: T, key: string, map: RhineVarMap<T>) => void, thisArg?: any): void {
+  }
+
+  delete(key: string): boolean {
+    return false
+  }
+
+  clear(): void {
   }
 
   // Enable this if we need to use dynamic keys later

@@ -18,8 +18,6 @@ const defaultValue = {
 const url = 'room-11'
 const state = rhineProxy(defaultValue, url, true)
 
-console.log(state.map["aa"]?.name)
-
 export default function EasyState() {
 
   return <div className='page'>

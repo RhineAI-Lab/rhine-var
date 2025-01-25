@@ -39,14 +39,14 @@ export type RecursiveCrossRhineVar<T extends object> =
     : (
       T extends (infer U)[] | YArray<infer U> | RhineVarArray<infer U>
         ? U extends object
-          ? RhineVarArray<RecursiveCrossRhineVar<U>> & Array<RecursiveCrossRhineVar<U>>
-          : RhineVarArray<U> & Array<U>
+          ? RhineVarArray<RecursiveCrossRhineVar<U>>
+          : RhineVarArray<U>
         : T extends YObject<any> | RhineVarObject<any>
           ? RecursiveObject<T>
           : T extends YMap<infer U> | RhineVarMap<infer U>
             ? U extends object
-              ? RhineVarMap<RecursiveCrossRhineVar<U>> & Map<string, RecursiveCrossRhineVar<U>>
-              : RhineVarMap<U> & Map<string, U>
+              ? RhineVarMap<RecursiveCrossRhineVar<U>>
+              : RhineVarMap<U>
             : RecursiveObject<T>
     )
 
