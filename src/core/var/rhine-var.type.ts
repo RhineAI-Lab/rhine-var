@@ -4,16 +4,17 @@ import RhineVarXmlElement from "@/core/var/items/rhine-var-xml-element.class";
 import RhineVarXmlFragment from "@/core/var/items/rhine-var-xml-fragment.class";
 import RhineVarMap from "@/core/var/items/rhine-var-map.class";
 import RhineVarArray from "@/core/var/items/rhine-var-array.class";
+import RhineVarObject from "@/core/var/items/rhine-var-object.class";
 import {
-  Array as YArray,
   Map as YMap,
+  Array as YArray,
   Text as YText,
   XmlFragment as YXmlFragment,
   XmlElement as YXmlElement,
   XmlText as YXmlText
 } from "yjs";
 
-export type RhineVarAny<T extends object = any> = RhineVarMap<T> | RhineVarArray<T> | RhineVarText | RhineVarXmlText | RhineVarXmlElement<T> | RhineVarXmlFragment
+export type RhineVarAny<T extends object = any> = RhineVarObject<T> | RhineVarMap<T> | RhineVarArray<T> | RhineVarText | RhineVarXmlText | RhineVarXmlElement<T> | RhineVarXmlFragment
 
 export type RhineVar<T extends object = any> =
   T extends YXmlText | RhineVarXmlText

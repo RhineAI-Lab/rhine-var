@@ -1,5 +1,6 @@
 
 export enum NativeType {
+  Object = 'object',
   Map = 'map',
   Array = 'array',
   Text = 'text',

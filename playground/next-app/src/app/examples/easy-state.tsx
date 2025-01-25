@@ -1,32 +1,27 @@
 "use client"
 
 import React from "react";
-import {enableRhineVarLog, rhineProxy, rhineText, useRhine} from "rhine-var";
-import {Array as YArray} from "yjs";
+import {enableRhineVarLog, rhineProxy, rhineText, rhineMap, useRhine} from "rhine-var";
 
 console.log('\n\n=================== Rhine Var Playground ===================\n\n')
 
 enableRhineVarLog(true)
 
-interface P {
-  text: string
-}
-const arr = new YArray<P>()
-
 const defaultValue = {
-  arr: arr,
+  arr: [
+    {
+      text: rhineText('aaa')
+    }
+  ],
+  map: rhineMap([['aa', {name: rhineText('hhh')}]])
 }
 const url = 'room-11'
-const state = rhineProxy<{
-  arr: YArray<P>
-}>(defaultValue, url)
+const state = rhineProxy(defaultValue, url)
 
-state.arr[0].text
 
 export default function EasyState() {
 
   const snap = useRhine(state)
-  console.log('render')
 
   return <div className='page'>
   </div>

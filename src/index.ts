@@ -13,13 +13,15 @@ import RhineVarXmlText from "@/core/var/items/rhine-var-xml-text.class";
 import RhineVarXmlElement from "@/core/var/items/rhine-var-xml-element.class";
 import RhineVarXmlFragment from "@/core/var/items/rhine-var-xml-fragment.class";
 import SupportManager from "@/core/var/support/support-manager";
-import { rhineText } from "@/core/proxy/rhine-text";
+import { rhineText } from "@/core/proxy/items/rhine-text";
+import { rhineMap } from "./core/proxy/items/rhine-map";
 
 export {
   Connector,
   rhineProxy,
   rhineProxyGeneral,
   rhineText,
+  rhineMap,
   RhineVarBase,
   RhineVarAny,
   RhineVar,
