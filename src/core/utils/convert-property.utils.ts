@@ -2,7 +2,7 @@ import {Array as YArray} from "yjs";
 import {isNative} from "@/core/native/native.utils";
 import {Native} from "@/core/native/native.type";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
-import {ensureNative, ensureNativeOrBasic} from "@/core/utils/var.utils";
+import {ensureNativeOrBasic} from "@/core/utils/var.utils";
 import {error} from "@/utils/logger";
 
 /**

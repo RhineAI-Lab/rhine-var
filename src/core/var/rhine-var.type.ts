@@ -6,7 +6,8 @@ import RhineVarMap from "@/core/var/items/rhine-var-map.class";
 import RhineVarArray from "@/core/var/items/rhine-var-array.class";
 import RhineVarObject from "@/core/var/items/rhine-var-object.class";
 import YObject from "@/core/native/y-object";
-import { YMap, YArray, YText, YXmlText, YXmlElement, YXmlFragment } from "@/index"
+import {YMap, YArray, YText, YXmlText, YXmlElement, YXmlFragment} from "@/index"
+import {Native} from "@/core/native/native.type";
 
 export type RhineVarAny<T extends object = any> = RhineVarObject<T> | RhineVarMap<T> | RhineVarArray<T> | RhineVarText | RhineVarXmlText | RhineVarXmlElement<T> | RhineVarXmlFragment
 
@@ -39,14 +40,14 @@ export type RecursiveCrossRhineVar<T extends object> =
     : (
       T extends (infer U)[] | YArray<infer U> | RhineVarArray<infer U>
         ? U extends object
-          ? RhineVarArray<RecursiveCrossRhineVar<U>>
-          : RhineVarArray<U>
+          ? Array<RecursiveCrossRhineVar<U>> & RhineVarArray<RecursiveCrossRhineVar<U>>
+          : Array<U> & RhineVarArray<U>
         : T extends YObject<any> | RhineVarObject<any>
           ? RecursiveObject<T>
           : T extends YMap<infer U> | RhineVarMap<infer U>
             ? U extends object
-              ? RhineVarMap<RecursiveCrossRhineVar<U>>
-              : RhineVarMap<U>
+              ? Map<string, RecursiveCrossRhineVar<U>> & RhineVarMap<RecursiveCrossRhineVar<U>>
+              : Map<string, U> & RhineVarMap<U>
             : RecursiveObject<T>
     )
 
@@ -54,4 +55,7 @@ export type StoredRhineVar<T extends object = any> = RecursiveCrossRhineVar<T>
 
 export type ProxiedRhineVar<T extends object = any> = StoredRhineVar<T>
 
+export type InputItem<T> = T extends object
+  ? T | Native | StoredRhineVar<T>
+  : T
 

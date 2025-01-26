@@ -21,7 +21,7 @@ export interface Person {
 }
 
 
-  
+
 const defaultValue: Group = {
   id: 'group-1',
   people: [
@@ -56,19 +56,19 @@ group.afterSynced(() => {
 
   // 和 Js 中一样 任意读取或操作他
   console.log('第一人的名字:', group.people[0].name)
-  
+
   console.log('修改 group 的 id 为 group-2')
   group.id = 'group-2'
-  
+
   console.log('删除第一个的 description 属性')
   delete group.people[0].description
 
 
   // 像操作 Array 一样操作 RhineVar
   console.log('当前 group 中的人数为:', group.people.length)
-  
+
   console.log('添加一个新成员 Jessica')
-  group.people.push( {name: 'Jessica', age: 19} )
+  group.people.push({name: 'Jessica', age: 19} as any)
 
 
   // 通过 .json() 更清晰的打印无代理信息的数据

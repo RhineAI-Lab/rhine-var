@@ -1,8 +1,7 @@
-import { YDoc, YMap, YArray, YText, YXmlText, YXmlElement, YXmlFragment } from "@/index"
+import {YDoc, YMap, YArray, YText, RhineVarAny} from "@/index"
 import Connector from "@/core/connector/connector.abstract";
 import RhineVarBase, {RHINE_VAR_PREDEFINED_PROPERTIES} from "@/core/var/rhine-var-base.class";
 import {error, log} from "@/utils/logger";
-import {convertArrayProperty} from "@/core/utils/convert-property.utils";
 import {ProxiedRhineVar} from "@/core/var/rhine-var.type";
 import {Native} from "@/core/native/native.type";
 import {
@@ -16,6 +15,8 @@ import {createConnector} from "@/core/connector/create-connector";
 import {createRhineVar} from "@/core/proxy/create-rhine-var";
 import {ensureNative, ensureRhineVar} from "@/core/utils/var.utils";
 import RhineVarText from "@/core/var/items/rhine-var-text.class";
+import RhineVarArray from "@/core/var/items/rhine-var-array.class";
+import SupportManager from "@/core/var/support/support-manager";
 
 // For create root RhineVar object
 export function rhineProxy<T extends object>(
@@ -39,8 +40,8 @@ export function rhineProxy<T extends object>(
   if (typeof connector === 'string' || typeof connector === 'number') {
     connector = createConnector(connector)
   }
-  connector = connector as Connector
-  object.connector = connector
+  connector = connector as Connector;
+  (object as RhineVarAny).connector = connector
 
   // Bind connector
   connector.subscribeSynced((synced: boolean) => {
@@ -104,6 +105,10 @@ export function rhineProxyGeneral<T extends object>(
   const handler: ProxyHandler<RhineVarBase<T>> = {
     get(proxy, p, receiver) {
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return Reflect.get(object, p, receiver)
+
+      const supportProperty = SupportManager.convertProperty<T>(p, object as RhineVarAny)
+      if (supportProperty) return supportProperty
+
       log('Proxy.handler.get:', p, '  ', object, receiver)
 
       if (p in object) return Reflect.get(object, p, receiver)
@@ -111,12 +116,6 @@ export function rhineProxyGeneral<T extends object>(
       const descriptor = proxyGetOwnPropertyDescriptor(proxy, p)
       if (descriptor !== undefined) return descriptor.value
 
-      if (object.native instanceof YArray) {
-        if (typeof p === 'string') {
-          const f = convertArrayProperty<T>(p, object.native, object)
-          if (f) return f
-        }
-      }
       return undefined
     },
 
