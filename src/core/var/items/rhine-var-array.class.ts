@@ -27,6 +27,14 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
     return 0
   }
 
+  slice(start?: number, end?: number): RhineVarArray<T> {
+    return {} as RhineVarArray<T>
+  }
+
+  splice(start: number, deleteCount?: number, ...items: T[]): T[] {
+    return []
+  }
+
   forEach(callback: (value: T, index: number, array: RhineVarArray<T>) => void, thisArg?: any): void {
   }
 
@@ -36,14 +44,6 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
 
   filter(callback: (value: T, index: number, array: RhineVarArray<T>) => boolean, thisArg?: any): RhineVarArray<T> {
     return {} as RhineVarArray<T>
-  }
-
-  slice(start?: number, end?: number): RhineVarArray<T> {
-    return {} as RhineVarArray<T>
-  }
-
-  splice(start: number, deleteCount?: number, ...items: T[]): T[] {
-    return []
   }
 
   indexOf(searchElement: T, fromIndex?: number): number {
