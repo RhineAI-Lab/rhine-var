@@ -5,9 +5,11 @@ import {Native} from "@/core/native/native.type";
 import {InputItem, RhineVarAny} from "@/core/var/rhine-var.type";
 
 
-export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements Iterable<T> {
+export default class RhineVarArray<T = any, N = any> extends RhineVarBase<T[]> implements Iterable<T> {
 
   type: NativeType.Array = NativeType.Array;
+
+  [key: number]: T;
 
   [Symbol.iterator](): Iterator<T> {
     return {} as Iterator<T>
@@ -36,7 +38,7 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
 
   length: number = 0
 
-  push(...items: InputItem<T>[]): number {
+  push(...items: InputItem<N>[]): number {
     return -1
   }
 
@@ -48,7 +50,7 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
     return {} as T | undefined
   }
 
-  unshift(...items: InputItem<T>[]): number {
+  unshift(...items: InputItem<N>[]): number {
     return -1
   }
 
@@ -56,7 +58,7 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
     return [] as any as RhineVarArray<T>
   }
 
-  splice(start: number, deleteCount?: number, ...items: InputItem<T>[]): T[] {
+  splice(start: number, deleteCount?: number, ...items: InputItem<N>[]): T[] {
     return []
   }
 
@@ -71,15 +73,15 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
     return [] as T[]
   }
 
-  indexOf(searchElement: InputItem<T>, fromIndex?: number): number {
+  indexOf(searchElement: InputItem<N>, fromIndex?: number): number {
     return -1
   }
 
-  lastIndexOf(searchElement: InputItem<T>, fromIndex?: number): number {
+  lastIndexOf(searchElement: InputItem<N>, fromIndex?: number): number {
     return -1
   }
 
-  includes(searchElement: InputItem<T>, fromIndex?: number): boolean {
+  includes(searchElement: InputItem<N>, fromIndex?: number): boolean {
     return false
   }
 
@@ -135,7 +137,7 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
     return ''
   }
 
-  concat(...items: InputItem<T>[]): T[] {
+  concat(...items: InputItem<N>[]): T[] {
     return []
   }
 
@@ -159,7 +161,7 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
     return {} as T | undefined
   }
 
-  with(index: number, value: InputItem<T>): RhineVarArray<T> {
+  with(index: number, value: InputItem<N>): RhineVarArray<T> {
     return this
   }
 
@@ -183,7 +185,7 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
     return []
   }
 
-  toSpliced(start: number, deleteCount?: number, ...items: InputItem<T>[]): T[] {
+  toSpliced(start: number, deleteCount?: number, ...items: InputItem<N>[]): T[] {
     return []
   }
 }

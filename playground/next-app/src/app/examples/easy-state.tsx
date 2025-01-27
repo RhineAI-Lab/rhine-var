@@ -8,19 +8,14 @@ console.log('\n\n=================== Rhine Var Playground ===================\n\
 enableRhineVarLog(true)
 
 const defaultValue = {
-  map: rhineMap({
-    'a': {name: 'aaa'},
-    'b': {name: 'bbb'},
-  })
+  arr: [{name: 'a'}, {name: 'b'}],
 }
 const url = 'room-11'
 const state = rhineProxy(defaultValue, url, true)
 
 state.afterSynced(() => {
-  const pa = state.map.get('a')
-  if (pa) {
-    pa.clear()
-  }
+  console.log(state.json())
+  state.arr.push({name: 'c'})
   console.log(state.json())
 })
 

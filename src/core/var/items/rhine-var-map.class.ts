@@ -2,7 +2,7 @@ import RhineVarBase from "@/core/var/rhine-var-base.class";
 import {NativeType} from "@/core/native/native-type.enum";
 import {InputItem, OutputItem} from "@/core/var/rhine-var.type";
 
-export default class RhineVarMap<T = any> extends RhineVarBase<{[key: string]: T}> implements Iterable<[string, OutputItem<T>]> {
+export default class RhineVarMap<T = any, N = any> extends RhineVarBase<{[key: string]: T}> implements Iterable<[string, OutputItem<T>]> {
 
   type: NativeType.Map = NativeType.Map;
 
@@ -12,7 +12,7 @@ export default class RhineVarMap<T = any> extends RhineVarBase<{[key: string]: T
 
   size: number = 0
 
-  set(key: string, value: InputItem<T>): void {
+  set(key: string, value: InputItem<N>): void {
   }
 
   get(key: string): T | undefined {
