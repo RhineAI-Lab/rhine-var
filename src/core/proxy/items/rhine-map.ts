@@ -1,10 +1,12 @@
 import {YMap} from "@/index";
 import {ensureNativeOrBasic} from "@/core/utils/var.utils";
 
-export function rhineMap<T>(defaultValue: [string, T][]): YMap<T> {
+export function rhineMap<T>(defaultValue: {
+  [key: string]: T
+}): YMap<T> {
   const map = new YMap<T>()
-  defaultValue.forEach(item => {
-    map.set(item[0], ensureNativeOrBasic(item[1]) as T)
-  })
+  for (const key in defaultValue) {
+    map.set(key, ensureNativeOrBasic(defaultValue[key]) as T)
+  }
   return map
 }

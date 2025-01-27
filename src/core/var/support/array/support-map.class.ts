@@ -6,9 +6,9 @@ import {isNative} from "@/core/native/native.utils";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
 
 
-export default class SupportArray extends SupportBase {
+export default class SupportMap extends SupportBase {
 
-  static TARGET_TAG = 'RhineVarArray'
+  static TARGET_TAG = 'RhineVarMap'
 
   static convertProperty<T>(key: string | symbol, object: RhineVarAny): any {
     if (!(object.native instanceof YArray) || !(object instanceof RhineVarArray)) {

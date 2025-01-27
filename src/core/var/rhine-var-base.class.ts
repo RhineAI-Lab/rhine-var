@@ -9,7 +9,6 @@ import {ChangeType} from "@/core/event/change-type.enum";
 import {Callback, DeepCallback, SyncedCallback} from "@/core/event/callback";
 import Connector from "@/core/connector/connector.abstract";
 import {isNative} from "@/core/native/native.utils";
-import {StoredRhineVar} from "@/core/var/rhine-var.type";
 
 
 export default abstract class RhineVarBase<T extends object = any> {
@@ -17,7 +16,7 @@ export default abstract class RhineVarBase<T extends object = any> {
   constructor(
     public native: Native,
     public parent: RhineVarBase | null = null,
-    public origin: StoredRhineVar<T> = this as any
+    public origin: RhineVarBase<T> = this as any
   ) {
     this.observe()
   }
