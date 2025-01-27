@@ -8,14 +8,12 @@ console.log('\n\n=================== Rhine Var Playground ===================\n\
 enableRhineVarLog(true)
 
 const defaultValue = {
-  arr: [1, 2, 3, 4, 5],
+  arr: [1, 2, 3, 1],
 }
 const url = 'room-11'
 const state = rhineProxy(defaultValue, url, true)
 
 state.afterSynced(() => {
-  console.log(state.arr.json())
-  console.log(state.arr.copyWithin(0, 3, 4).json())
 })
 
 export default function EasyState() {

@@ -341,7 +341,7 @@ export default class SupportArray extends SupportBase {
           return array
         }
       case 'concat':
-        return (...items: T[][]): T[] => {
+        return (...items: T[]): T[] => {
           let result = array.json() as T[]
           return result.concat(...items)
         }
