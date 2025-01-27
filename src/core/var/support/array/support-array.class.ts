@@ -49,22 +49,16 @@ export default class SupportArray extends SupportBase {
       return (): T | undefined => {
         if (native.length === 0) return undefined
         let key = native.length - 1
-        let item = native.get(key)
+        let item = getJson(key)
         native.delete(key)
-        if (isNative(item)) {
-          return (item as Native).toJSON() as T
-        }
         return item as T
       }
     } else if (key === 'shift') {
       return (): T | undefined => {
         if (native.length === 0) return undefined
         let key = 0
-        let item = native.get(key)
+        let item = getJson(key)
         native.delete(key)
-        if (isNative(item)) {
-          return (item as Native).toJSON() as T
-        }
         return item as T
       }
     } else if (key === 'unshift') {
@@ -84,37 +78,38 @@ export default class SupportArray extends SupportBase {
         if (end > native.length) end = native.length
         let result = []
         for (let i = start; i < end; i++) {
-          result.push(get(i))
+          result.push(getJson(i))
         }
         return result
       }
     } else if (key === 'splice') {
-      return (start: number, deleteCount: number, ...items: any[]) => {
+      return (start: number, deleteCount: number, ...items: T[]): T[] => {
         const removed = []
         for (let i = start; i < start + deleteCount; i++) {
-          let item = native.get(i)
-          removed.push(isNative(item) ? (item as Native).toJSON() : item)
+          let item = getJson(i)
+          removed.push(item)
         }
         native.delete(start, deleteCount)
         if (items.length > 0) {
+          let nativeItems: any[] = []
           for (let i = 0; i < items.length; i++) {
-            items[i] = ensureNativeOrBasic(items[i])
+            nativeItems.push(ensureNativeOrBasic(items[i]))
           }
-          native.insert(start, items)
+          native.insert(start, nativeItems)
         }
         return removed
       }
     } else if (key === 'forEach') {
       return (callback: (value: T, index: number, arr: YArray<any>) => void) => {
         return native.forEach((yValue, yIndex, yArray) => {
-          callback(get(yIndex), yIndex, yArray)
+          callback(getJson(yIndex), yIndex, yArray)
         })
       }
     } else if (key === 'map') {
       return <R>(callback: (value: T, index: number, arr: YArray<any>) => R) => {
         const result: R[] = []
         native.forEach((yValue, yIndex, yArray) => {
-          result.push(callback(get(yIndex), yIndex, yArray))
+          result.push(callback(getJson(yIndex), yIndex, yArray))
         })
         return result
       }
@@ -122,7 +117,7 @@ export default class SupportArray extends SupportBase {
       return (callback: (item: T) => boolean): T[] => {
         let result: T[] = []
         for (let i = 0; i < native.length; i++) {
-          let item = get(i)
+          let item = getJson(i)
           if (callback(item)) result.push(item)
         }
         return result
@@ -130,13 +125,13 @@ export default class SupportArray extends SupportBase {
     } else if (key === 'indexOf') {
       return (item: T) => {
         for (let i = 0; i < native.length; i++) {
-          if (get(i) === item) return i
+          if (getJson(i) === item) return i
         }
         return -1
       }
     } else if (key === 'lastIndexOf') {
       return (item: T) => {
-        for (let i = 0; i < native.length; i++) {
+        for (let i = native.length - 1; i >= 0; i--) {
           if (getJson(i) === item) return i
         }
         return -1
@@ -167,33 +162,29 @@ export default class SupportArray extends SupportBase {
         let result = ''
         for (let i = 0; i < native.length; i++) {
           if (i > 0) result += str
-          let item = native.get(i)
-          if (isNative(item)) {
-            result += (item as Native).toJSON()
-          } else {
-            result += item
-          }
+          let item = getJson(i)
+          result += item
         }
         return result
       }
     } else if (key === 'some') {
       return (callback: (item: T) => boolean): boolean => {
         for (let i = 0; i < native.length; i++) {
-          if (callback(get(i))) return true
+          if (callback(getJson(i))) return true
         }
         return false
       }
     } else if (key === 'every') {
       return (callback: (item: T) => boolean): boolean => {
         for (let i = 0; i < native.length; i++) {
-          if (!callback(get(i))) return false
+          if (!callback(getJson(i))) return false
         }
         return true
       }
     } else if (key === 'find') {
       return (callback: (item: T) => boolean): T | undefined => {
         for (let i = 0; i < native.length; i++) {
-          let item = get(i)
+          let item = getJson(i)
           if (callback(item)) return item
         }
         return undefined
@@ -201,14 +192,14 @@ export default class SupportArray extends SupportBase {
     } else if (key === 'findIndex') {
       return (callback: (item: T) => boolean): number => {
         for (let i = 0; i < native.length; i++) {
-          if (callback(get(i))) return i
+          if (callback(getJson(i))) return i
         }
         return -1
       }
     } else if (key === 'findLast') {
       return (callback: (item: T) => boolean): T | undefined => {
         for (let i = native.length - 1; i >= 0; i--) {
-          let item = get(i)
+          let item = getJson(i)
           if (callback(item)) return item
         }
         return undefined
@@ -216,7 +207,7 @@ export default class SupportArray extends SupportBase {
     } else if (key === 'findLastIndex') {
       return (callback: (item: T) => boolean): number => {
         for (let i = native.length - 1; i >= 0; i--) {
-          if (callback(get(i))) return i
+          if (callback(getJson(i))) return i
         }
         return -1
       }
@@ -226,7 +217,7 @@ export default class SupportArray extends SupportBase {
         return {
           next() {
             if (i < native.length) {
-              return {value: [i, get(i++)], done: false}
+              return {value: [i, getJson(i++)], done: false}
             } else {
               return {value: undefined, done: true}
             }
@@ -258,7 +249,7 @@ export default class SupportArray extends SupportBase {
         return {
           next() {
             if (i < native.length) {
-              return {value: get(i++), done: false}
+              return {value: getJson(i++), done: false}
             } else {
               return {value: undefined, done: true}
             }
@@ -268,8 +259,71 @@ export default class SupportArray extends SupportBase {
           },
         }
       }
+    } else if (key === Symbol.iterator) {
+      return (): IterableIterator<T> => {
+        let i = 0
+        return {
+          next() {
+            if (i < native.length) {
+              return {value: getJson(i++), done: false}
+            } else {
+              return {value: undefined, done: true}
+            }
+          },
+          [Symbol.iterator]() {
+            return this
+          },
+        }
+      }
+    } else if (key === 'fill') {
+      return (value: T, start: number = 0, end: number = native.length): void => {
+        if (start < 0) start = native.length + start
+        if (end < 0) end = native.length + end
+        if (start < 0) start = 0
+        if (end > native.length) end = native.length
+        if (start >= end) return
+        native.delete(start, end - start)
+        let items: any[] = []
+        for (let i = start; i < end; i++) {
+          items.push(ensureNativeOrBasic(value))
+        }
+        native.insert(start, items)
+      }
+    } else if (key === 'concat') {
+      return (...items: T[][]): T[] => {
+        let result = object.json() as T[]
+        return result.concat(...items)
+      }
+    } else if (key === 'toString') {
+      return (): string => {
+        return object.toString()
+      }
+    } else if (key === 'toLocaleString') {
+      return (): string => {
+        return object.toLocaleString()
+      }
+    } else if (key === Symbol.unscopables) {
+      return {
+        copyWithin: true,
+        entries: true,
+        fill: true,
+        find: true,
+        findIndex: true,
+        flat: true,
+        flatMap: true,
+        includes: true,
+        keys: true,
+        values: true,
+        join: true,
+        map: true,
+        reverse: true,
+        slice: true,
+        some: true,
+        splice: true,
+        toLocaleString: true,
+        toString: true,
+      }
     }
-
 
     return null
   }
@@ -301,6 +355,8 @@ export default class SupportArray extends SupportBase {
     'entries',
     'keys',
     'values',
+    'toString',
+    'toLocaleString',
   ])
 
   static UNSUPPORTED_PROPERTIES = new Set<string | symbol>([
@@ -314,8 +370,6 @@ export default class SupportArray extends SupportBase {
     'reduceRight',
     'reverse',
     'sort',
-    'toLocaleString',
-    'toString',
     'toReversed',
     'toSorted',
     'toSpliced',
