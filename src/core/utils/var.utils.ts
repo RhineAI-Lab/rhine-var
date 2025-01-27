@@ -5,7 +5,7 @@ import RhineVarXmlFragment from "@/core/var/items/rhine-var-xml-fragment.class";
 import RhineVarXmlElement from "@/core/var/items/rhine-var-xml-element.class";
 import RhineVarXmlText from "@/core/var/items/rhine-var-xml-text.class";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
-import {StoredRhineVar} from "@/core/var/rhine-var.type";
+import {RhineVarAny, StoredRhineVar} from "@/core/var/rhine-var.type";
 import {rhineProxyGeneral} from "@/core/proxy/rhine-proxy";
 import {isNative, jsonToNative} from "@/core/native/native.utils";
 import {isObjectOrArray} from "@/core/utils/data.utils";
@@ -68,4 +68,17 @@ export function ensureNativeOrBasic<T = any>(value: T): Native | Basic {
 
 export function isBasic(value: any): value is Basic {
   return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' || value === null || value === undefined
+}
+
+export function ensureJsonOrBasic<T = any>(value: T | Native | RhineVarAny): Basic | object {
+  if (isBasic(value)) {
+    return value
+  }
+  if (isNative(value)) {
+    return (value as Native).toJSON()
+  }
+  if (isRhineVar(value)) {
+    return (value as RhineVarBase).json()
+  }
+  return value as Basic | object
 }

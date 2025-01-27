@@ -1,9 +1,10 @@
 import {Native, RhineVarAny, YArray} from "@/index";
 import SupportBase from "@/core/var/support/support-base";
-import {ensureNativeOrBasic, isRhineVar} from "@/core/utils/var.utils";
+import {ensureJsonOrBasic, ensureNativeOrBasic, isRhineVar} from "@/core/utils/var.utils";
 import RhineVarArray from "@/core/var/items/rhine-var-array.class";
 import {isNative} from "@/core/native/native.utils";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
+
 
 export default class SupportArray extends SupportBase {
 
@@ -103,46 +104,77 @@ export default class SupportArray extends SupportBase {
           return removed
         }
       case 'forEach':
-        return (callback: (value: T, index: number, arr: YArray<any>) => void) => {
+        return (callback: (value: T, index: number, arr: RhineVarArray<T>) => void) => {
           return native.forEach((yValue, yIndex, yArray) => {
-            callback(getJson(yIndex), yIndex, yArray)
+            callback(getJson(yIndex), yIndex, array)
           })
         }
       case 'map':
-        return <R>(callback: (value: T, index: number, arr: YArray<any>) => R) => {
+        return <R>(callback: (value: T, index: number, arr: RhineVarArray<T>) => R) => {
           const result: R[] = []
-          native.forEach((yValue, yIndex, yArray) => {
-            result.push(callback(getJson(yIndex), yIndex, yArray))
-          })
+          for (let i = 0; i < native.length; i++) {
+            result.push(callback(getJson(i), i, array))
+          }
           return result
         }
       case 'filter':
-        return (callback: (item: T) => boolean): T[] => {
+        return (callback: (value: T, index: number, arr: RhineVarArray<T>) => boolean): T[] => {
           let result: T[] = []
           for (let i = 0; i < native.length; i++) {
             let item = getJson(i)
-            if (callback(item)) result.push(item)
+            if (callback(item, i, array)) result.push(item)
           }
           return result
         }
       case 'indexOf':
-        return (item: T) => {
-          for (let i = 0; i < native.length; i++) {
-            if (getJson(i) === item) return i
+        return (searchElement: T, fromIndex: number = 0) => {
+          // fromIndex Optional
+          // Zero-based index at which to start searching, converted to an integer.
+          //
+          // Negative index counts back from the end of the array — if -array.length <= fromIndex < 0, fromIndex + array.length is used. Note, the array is still searched from front to back in this case.
+          // If fromIndex < -array.length or fromIndex is omitted, 0 is used, causing the entire array to be searched.
+          // If fromIndex >= array.length, the array is not searched and -1 is returned.
+          if (fromIndex < 0) fromIndex = native.length + fromIndex
+          if (fromIndex < 0) fromIndex = 0
+          if (fromIndex >= native.length || native.length === 0) return -1
+          const element = ensureJsonOrBasic(searchElement)
+          for (let i = fromIndex; i < native.length; i++) {
+            if (getJson(i) === element) return i
           }
           return -1
         }
       case 'lastIndexOf':
-        return (item: T) => {
-          for (let i = native.length - 1; i >= 0; i--) {
-            if (getJson(i) === item) return i
+        return (searchElement: T, fromIndex: number = native.length - 1) => {
+          // fromIndex Optional
+          // Zero-based index at which to start searching backwards, converted to an integer.
+          //
+          // Negative index counts back from the end of the array — if -array.length <= fromIndex < 0, fromIndex + array.length is used.
+          // If fromIndex < -array.length, the array is not searched and -1 is returned. You can think of it conceptually as starting at a nonexistent position before the beginning of the array and going backwards from there. There are no array elements on the way, so searchElement is never found.
+          // If fromIndex >= array.length or fromIndex is omitted, array.length - 1 is used, causing the entire array to be searched. You can think of it conceptually as starting at a nonexistent position beyond the end of the array and going backwards from there. It eventually reaches the real end position of the array, at which point it starts searching backwards through the actual array elements.
+          if (fromIndex < 0) fromIndex = native.length + fromIndex
+          if (fromIndex < 0) return -1
+          if (fromIndex >= native.length) fromIndex = native.length - 1
+          const element = ensureJsonOrBasic(searchElement)
+          for (let i = fromIndex; i >= 0; i--) {
+            if (getJson(i) === element) return i
           }
           return -1
         }
       case 'includes':
-        return (item: T) => {
-          for (let i = 0; i < native.length; i++) {
-            if (get(i) === item) return true
+        return (searchElement: T, fromIndex?: number) => {
+          // fromIndex Optional
+          // Zero-based index at which to start searching, converted to an integer.
+          //
+          // Negative index counts back from the end of the array — if -array.length <= fromIndex < 0, fromIndex + array.length is used. However, the array is still searched from front to back in this case.
+          // If fromIndex < -array.length or fromIndex is omitted, 0 is used, causing the entire array to be searched.
+          // If fromIndex >= array.length, the array is not searched and false is returned.
+          if (fromIndex === undefined) fromIndex = 0
+          if (fromIndex < 0) fromIndex = native.length + fromIndex
+          if (fromIndex < 0) fromIndex = 0
+          if (fromIndex >= native.length) return false
+          const element = ensureJsonOrBasic(searchElement)
+          for (let i = fromIndex; i < native.length; i++) {
+            if (getJson(i) === element) return true
           }
           return false
         }
@@ -171,46 +203,46 @@ export default class SupportArray extends SupportBase {
           return result
         }
       case 'some':
-        return (callback: (item: T) => boolean): boolean => {
+        return (callback: (value: T, index: number, arr: RhineVarArray<T>) => boolean, thisArg?: any): boolean => {
           for (let i = 0; i < native.length; i++) {
-            if (callback(getJson(i))) return true
+            if (callback(getJson(i), i, array)) return true
           }
           return false
         }
       case 'every':
-        return (callback: (item: T) => boolean): boolean => {
+        return (callback: (value: T, index: number, arr: RhineVarArray<T>) => boolean, thisArg?: any): boolean => {
           for (let i = 0; i < native.length; i++) {
-            if (!callback(getJson(i))) return false
+            if (!callback(getJson(i), i, array)) return false
           }
           return true
         }
       case 'find':
-        return (callback: (item: T) => boolean): T | undefined => {
+        return (callback: (value: T, index: number, arr: RhineVarArray<T>) => boolean, thisArg?: any): T | undefined => {
           for (let i = 0; i < native.length; i++) {
             let item = getJson(i)
-            if (callback(item)) return item
+            if (callback(item, i, array)) return item
           }
           return undefined
         }
       case 'findIndex':
-        return (callback: (item: T) => boolean): number => {
+        return (callback: (value: T, index: number, arr: RhineVarArray<T>) => boolean, thisArg?: any): number => {
           for (let i = 0; i < native.length; i++) {
-            if (callback(getJson(i))) return i
+            if (callback(getJson(i), i, array)) return i
           }
           return -1
         }
       case 'findLast':
-        return (callback: (item: T) => boolean): T | undefined => {
+        return (callback: (value: T, index: number, arr: RhineVarArray<T>) => boolean, thisArg?: any): T | undefined => {
           for (let i = native.length - 1; i >= 0; i--) {
             let item = getJson(i)
-            if (callback(item)) return item
+            if (callback(item, i, array)) return item
           }
           return undefined
         }
       case 'findLastIndex':
-        return (callback: (item: T) => boolean): number => {
+        return (callback: (value: T, index: number, arr: RhineVarArray<T>) => boolean, thisArg?: any): number => {
           for (let i = native.length - 1; i >= 0; i--) {
-            if (callback(getJson(i))) return i
+            if (callback(getJson(i), i, array)) return i
           }
           return -1
         }
@@ -378,12 +410,20 @@ export default class SupportArray extends SupportBase {
           return array.json().flat(depth) as U[]
         }
       case 'flatMap':
-        return <U>(callback: (item: T, index: number, array: T[]) => U, thisArg?: any) => {
+        return <U>(callback: (item: T, index: number, arr: T[]) => U, thisArg?: any) => {
           return array.json().flatMap(callback, thisArg)
         }
+      case 'reduce':
+        return <U>(callback: (previousValue: U, currentValue: T, currentIndex: number, arr: T[]) => U, initialValue: U) => {
+          return array.json().reduce(callback, initialValue)
+        }
+      case 'reduceRight':
+        return <U>(callback: (previousValue: U, currentValue: T, currentIndex: number, arr: T[]) => U, initialValue: U) => {
+          return array.json().reduceRight(callback, initialValue)
+        }
+      default:
+        return null
     }
-
-    return null
   }
 
   static SUPPORTED_PROPERTIES = new Set<string | symbol>([
@@ -424,12 +464,12 @@ export default class SupportArray extends SupportBase {
     'toReversed',
     'toSorted',
     'toSpliced',
-  ])
-
-  static UNSUPPORTED_PROPERTIES = new Set<string | symbol>([
     'flat',
     'flatMap',
     'reduce',
     'reduceRight',
+  ])
+
+  static UNSUPPORTED_PROPERTIES = new Set<string | symbol>([
   ])
 }

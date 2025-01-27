@@ -1,5 +1,10 @@
 import RhineVarBase from "@/core/var/rhine-var-base.class";
 import {NativeType} from "@/core/native/native-type.enum";
+import {YArray} from "yjs/dist/src/types/YArray";
+import {Native} from "@/core/native/native.type";
+import {RhineVarAny} from "@/core/var/rhine-var.type";
+
+export type InputTypeItem<T> = T extends object ? T | Native | RhineVarAny : T
 
 export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements Iterable<T> {
 
@@ -32,8 +37,8 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
 
   length: number = 0
 
-  push(...items: T[]): number {
-    return 0
+  push(...items: InputTypeItem<T>[]): number {
+    return -1
   }
 
   pop(): T | undefined {
@@ -44,55 +49,55 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
     return {} as T | undefined
   }
 
-  unshift(...items: T[]): number {
-    return 0
+  unshift(...items: InputTypeItem<T>[]): number {
+    return -1
   }
 
   slice(start?: number, end?: number): RhineVarArray<T> {
     return [] as any as RhineVarArray<T>
   }
 
-  splice(start: number, deleteCount?: number, ...items: T[]): T[] {
+  splice(start: number, deleteCount?: number, ...items: InputTypeItem<T>[]): T[] {
     return []
   }
 
   forEach(callback: (value: T, index: number, array: RhineVarArray<T>) => void, thisArg?: any): void {
   }
 
-  map<U>(callback: (value: T, index: number, array: RhineVarArray<T>) => U, thisArg?: any): RhineVarArray<U> {
-    return {} as RhineVarArray<U>
+  map<U>(callback: (value: T, index: number, array: RhineVarArray<T>) => U, thisArg?: any): U[] {
+    return [] as U[]
   }
 
-  filter(callback: (value: T, index: number, array: RhineVarArray<T>) => boolean, thisArg?: any): RhineVarArray<T> {
-    return [] as any as RhineVarArray<T>
+  filter(callback: (value: T, index: number, array: RhineVarArray<T>) => boolean, thisArg?: any): T[] {
+    return [] as T[]
   }
 
-  indexOf(searchElement: T, fromIndex?: number): number {
-    return 0
+  indexOf(searchElement: InputTypeItem<T>, fromIndex?: number): number {
+    return -1
   }
 
-  lastIndexOf(searchElement: T, fromIndex?: number): number {
-    return 0
+  lastIndexOf(searchElement: InputTypeItem<T>, fromIndex?: number): number {
+    return -1
   }
 
-  includes(searchElement: T, fromIndex?: number): boolean {
+  includes(searchElement: InputTypeItem<T>, fromIndex?: number): boolean {
     return false
   }
 
-  find(predicate: (value: T, index: number, obj: RhineVarArray<T>) => boolean, thisArg?: any): T | undefined {
+  find(callback: (value: T, index: number, obj: RhineVarArray<T>) => boolean, thisArg?: any): T | undefined {
     return {} as T | undefined
   }
 
-  findIndex(predicate: (value: T, index: number, obj: RhineVarArray<T>) => boolean, thisArg?: any): number {
-    return 0
+  findIndex(callback: (value: T, index: number, obj: RhineVarArray<T>) => boolean, thisArg?: any): number {
+    return -1
   }
 
-  findLast(predicate: (value: T, index: number, obj: RhineVarArray<T>) => boolean, thisArg?: any): T | undefined {
+  findLast(callback: (value: T, index: number, obj: RhineVarArray<T>) => boolean, thisArg?: any): T | undefined {
     return {} as T | undefined
   }
 
-  findLastIndex(predicate: (value: T, index: number, obj: RhineVarArray<T>) => boolean, thisArg?: any): number {
-    return 0
+  findLastIndex(callback: (value: T, index: number, obj: RhineVarArray<T>) => boolean, thisArg?: any): number {
+    return -1
   }
 
   every(callback: (value: T, index: number, array: RhineVarArray<T>) => boolean, thisArg?: any): boolean {
@@ -103,11 +108,11 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
     return false
   }
 
-  reduce<U>(callback: (previousValue: U, currentValue: T, currentIndex: number, array: RhineVarArray<T>) => U, initialValue: U): U {
+  reduce<U>(callback: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U {
     return {} as U
   }
 
-  reduceRight<U>(callback: (previousValue: U, currentValue: T, currentIndex: number, array: RhineVarArray<T>) => U, initialValue: U): U {
+  reduceRight<U>(callback: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U {
     return {} as U
   }
 
@@ -131,16 +136,16 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
     return ''
   }
 
-  concat(...items: ConcatArray<T>[]): RhineVarArray<T> {
-    return [] as any as RhineVarArray<T>
+  concat(...items: InputTypeItem<T>[]): T[] {
+    return []
   }
 
   flat<U>(depth?: number): U[] {
-    return [] as U[]
+    return []
   }
 
   flatMap<U>(callback: (value: T, index: number, array: T[]) => U, thisArg?: any): U[] {
-    return [] as U[]
+    return []
   }
 
   copyWithin(target: number, start: number, end?: number): this {
@@ -155,7 +160,7 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
     return {} as T | undefined
   }
 
-  with(index: number, value: T): RhineVarArray<T> {
+  with(index: number, value: InputTypeItem<T>): RhineVarArray<T> {
     return this
   }
 
@@ -172,14 +177,14 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
   }
   
   toReversed(): T[] {
-    return [] as T[]
+    return []
   }
   
   toSorted(compareFn?: (a: T, b: T) => number): T[] {
-    return [] as T[]
+    return []
   }
 
-  toSpliced(start: number, deleteCount?: number, ...items: T[]): RhineVarArray<T> {
-    return [] as any as RhineVarArray<T>
+  toSpliced(start: number, deleteCount?: number, ...items: InputTypeItem<T>[]): T[] {
+    return []
   }
 }
