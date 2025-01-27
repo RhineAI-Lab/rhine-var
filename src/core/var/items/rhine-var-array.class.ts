@@ -9,6 +9,27 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
     return {} as Iterator<T>
   }
 
+  [Symbol.unscopables] = {
+    copyWithin: true,
+    entries: true,
+    fill: true,
+    find: true,
+    findIndex: true,
+    flat: true,
+    flatMap: true,
+    includes: true,
+    keys: true,
+    values: true,
+    join: true,
+    map: true,
+    reverse: true,
+    slice: true,
+    some: true,
+    splice: true,
+    toLocaleString: true,
+    toString: true,
+  }
+
   length: number = 0
 
   push(...items: T[]): number {
@@ -28,7 +49,7 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
   }
 
   slice(start?: number, end?: number): RhineVarArray<T> {
-    return {} as RhineVarArray<T>
+    return [] as any as RhineVarArray<T>
   }
 
   splice(start: number, deleteCount?: number, ...items: T[]): T[] {
@@ -43,7 +64,7 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
   }
 
   filter(callback: (value: T, index: number, array: RhineVarArray<T>) => boolean, thisArg?: any): RhineVarArray<T> {
-    return {} as RhineVarArray<T>
+    return [] as any as RhineVarArray<T>
   }
 
   indexOf(searchElement: T, fromIndex?: number): number {
@@ -111,15 +132,15 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
   }
 
   concat(...items: ConcatArray<T>[]): RhineVarArray<T> {
-    return {} as RhineVarArray<T>
+    return [] as any as RhineVarArray<T>
   }
 
-  flat<U>(depth?: number): RhineVarArray<U> {
-    return {} as RhineVarArray<U>
+  flat<U>(depth?: number): U[] {
+    return [] as U[]
   }
 
-  flatMap<U>(callback: (value: T, index: number, array: RhineVarArray<T>) => U | readonly U[], thisArg?: any): RhineVarArray<U> {
-    return {} as RhineVarArray<U>
+  flatMap<U>(callback: (value: T, index: number, array: T[]) => U, thisArg?: any): U[] {
+    return [] as U[]
   }
 
   copyWithin(target: number, start: number, end?: number): this {
@@ -149,5 +170,16 @@ export default class RhineVarArray<T = any> extends RhineVarBase<T[]> implements
   values(): IterableIterator<T> {
     return {} as IterableIterator<T>
   }
+  
+  toReversed(): T[] {
+    return [] as T[]
+  }
+  
+  toSorted(compareFn?: (a: T, b: T) => number): T[] {
+    return [] as T[]
+  }
 
+  toSpliced(start: number, deleteCount?: number, ...items: T[]): RhineVarArray<T> {
+    return [] as any as RhineVarArray<T>
+  }
 }
