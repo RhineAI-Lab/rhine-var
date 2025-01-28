@@ -3,7 +3,7 @@ import SupportBase from "@/core/var/support/support-base";
 import {ensureJsonOrBasic, ensureNativeOrBasic, isRhineVar} from "@/core/utils/var.utils";
 import RhineVarArray from "@/core/var/items/rhine-var-array.class";
 import {isNative} from "@/core/native/native.utils";
-import {InputItem, OutputItem, RecursiveArray} from "@/core/var/rhine-var.type";
+import {RecursiveArray} from "@/core/var/rhine-var.type";
 
 
 export default class SupportArray extends SupportBase {
@@ -16,13 +16,13 @@ export default class SupportArray extends SupportBase {
       return
     }
     const array = object
-    const native = object.native as any as YArray<T>
+    const native = object.native as YArray<any>
 
-    const get = (i: number): OutputItem<T> => {
+    const get = (i: number): T => {
       if (i in array) {
-        return Reflect.get(array, i) as OutputItem<T>
+        return Reflect.get(array, i) as T
       } else {
-        return native.get(i) as OutputItem<T>
+        return native.get(i) as T
       }
     }
 
@@ -42,13 +42,17 @@ export default class SupportArray extends SupportBase {
       case 'length':
         return native.length
       case 'push':
-        return (...items: InputItem<T>[]): number => {
-          const pushItems: any[] = items.map(ensureNativeOrBasic)
-          native.push(pushItems)
+        return (...items: any[]): number => {
+          native.push(items.map(ensureNativeOrBasic))
+          return native.length
+        }
+      case 'unshift':
+        return (...items: any[]): number => {
+          native.unshift(items.map(ensureNativeOrBasic))
           return native.length
         }
       case 'pop':
-        return (): OutputItem<T> | undefined => {
+        return (): T | undefined => {
           if (native.length === 0) return undefined
           let key = native.length - 1
           let item = get(key)
@@ -56,21 +60,15 @@ export default class SupportArray extends SupportBase {
           return item
         }
       case 'shift':
-        return (): OutputItem<T> | undefined => {
+        return (): T | undefined => {
           if (native.length === 0) return undefined
           let key = 0
           let item = get(key)
           native.delete(key)
           return item
         }
-      case 'unshift':
-        return (...items: InputItem<T>[]): number => {
-          const unshiftItems: any[] = items.map(ensureNativeOrBasic)
-          native.unshift(unshiftItems)
-          return native.length
-        }
       case 'slice':
-        return (start: number, end?: number): OutputItem<T>[] => {
+        return (start: number, end?: number): T[] => {
           if (end === undefined) end = native.length
           if (start < 0) start = native.length + start
           if (end < 0) end = native.length + end
@@ -83,7 +81,7 @@ export default class SupportArray extends SupportBase {
           return result
         }
       case 'splice':
-        return (start: number, deleteCount: number, ...items: InputItem<T>[]): T[] => {
+        return (start: number, deleteCount: number, ...items: any[]): T[] => {
           const removed = []
           for (let i = start; i < start + deleteCount; i++) {
             let item = getJson(i)
@@ -100,13 +98,13 @@ export default class SupportArray extends SupportBase {
           return removed
         }
       case 'forEach':
-        return (callback: (value: OutputItem<T>, index: number, arr: RecursiveArray<T>) => void) => {
+        return (callback: (value: T, index: number, arr: RecursiveArray<T>) => void) => {
           return native.forEach((yValue, yIndex, yArray) => {
             callback(get(yIndex), yIndex, array)
           })
         }
       case 'map':
-        return <R>(callback: (value: OutputItem<T>, index: number, arr: RecursiveArray<T>) => R) => {
+        return <R>(callback: (value: T, index: number, arr: RecursiveArray<T>) => R) => {
           const result: R[] = []
           for (let i = 0; i < native.length; i++) {
             result.push(callback(get(i), i, array))
@@ -114,8 +112,8 @@ export default class SupportArray extends SupportBase {
           return result
         }
       case 'filter':
-        return (callback: (value: OutputItem<T>, index: number, arr: RecursiveArray<T>) => boolean): OutputItem<T>[] => {
-          let result: OutputItem<T>[] = []
+        return (callback: (value: T, index: number, arr: RecursiveArray<T>) => boolean): T[] => {
+          let result: T[] = []
           for (let i = 0; i < native.length; i++) {
             let item = get(i)
             if (callback(item, i, array)) result.push(item)
@@ -123,7 +121,7 @@ export default class SupportArray extends SupportBase {
           return result
         }
       case 'indexOf':
-          return (searchElement: InputItem<T>, fromIndex: number = 0) => {
+          return (searchElement: any, fromIndex: number = 0) => {
           // fromIndex Optional
           // Zero-based index at which to start searching, converted to an integer.
           //
@@ -140,7 +138,7 @@ export default class SupportArray extends SupportBase {
           return -1
         }
       case 'lastIndexOf':
-        return (searchElement: InputItem<T>, fromIndex: number = native.length - 1) => {
+        return (searchElement: any, fromIndex: number = native.length - 1) => {
           // fromIndex Optional
           // Zero-based index at which to start searching backwards, converted to an integer.
           //
@@ -157,7 +155,7 @@ export default class SupportArray extends SupportBase {
           return -1
         }
       case 'includes':
-        return (searchElement: InputItem<T>, fromIndex?: number) => {
+        return (searchElement: any, fromIndex?: number) => {
           // fromIndex Optional
           // Zero-based index at which to start searching, converted to an integer.
           //
@@ -175,13 +173,13 @@ export default class SupportArray extends SupportBase {
           return false
         }
       case 'at':
-        return (i: number): OutputItem<T> => {
+        return (i: number): T | undefined => {
           if (i < 0) i = native.length + i
-          if (i < 0 || i >= native.length) return undefined as any
+          if (i < 0 || i >= native.length) return undefined
           return get(i)
         }
       case 'with':
-        return (i: number, value: InputItem<T>): T[] => {
+        return (i: number, value: any): T[] => {
           if (i < 0) i = native.length + i
           if (i < 0 || i >= native.length) throw 'RangeError: Unexpect index ' + i + ' in RhineVarArray(' + native.length + ')'
           const arr = array.json() as T[]
@@ -199,51 +197,51 @@ export default class SupportArray extends SupportBase {
           return result
         }
       case 'some':
-        return (callback: (value: OutputItem<T>, index: number, arr: RecursiveArray<T>) => boolean, thisArg?: any): boolean => {
+        return (callback: (value: T, index: number, arr: RecursiveArray<T>) => boolean, thisArg?: any): boolean => {
           for (let i = 0; i < native.length; i++) {
             if (callback(get(i), i, array)) return true
           }
           return false
         }
       case 'every':
-        return (callback: (value: OutputItem<T>, index: number, arr: RecursiveArray<T>) => boolean, thisArg?: any): boolean => {
+        return (callback: (value: T, index: number, arr: RecursiveArray<T>) => boolean, thisArg?: any): boolean => {
           for (let i = 0; i < native.length; i++) {
             if (!callback(get(i), i, array)) return false
           }
           return true
         }
       case 'find':
-        return (callback: (value: OutputItem<T>, index: number, arr: RecursiveArray<T>) => boolean, thisArg?: any): OutputItem<T> | undefined => {
+        return (callback: (value: T, index: number, arr: RecursiveArray<T>) => boolean, thisArg?: any): T | undefined => {
           for (let i = 0; i < native.length; i++) {
+            let item = get(i)
+            if (callback(item, i, array)) return item
+          }
+          return undefined
+        }
+      case 'findLast':
+        return (callback: (value: T, index: number, arr: RecursiveArray<T>) => boolean, thisArg?: any): T | undefined => {
+          for (let i = native.length - 1; i >= 0; i--) {
             let item = get(i)
             if (callback(item, i, array)) return item
           }
           return undefined
         }
       case 'findIndex':
-        return (callback: (value: OutputItem<T>, index: number, arr: RecursiveArray<T>) => boolean, thisArg?: any): number => {
+        return (callback: (value: T, index: number, arr: RecursiveArray<T>) => boolean, thisArg?: any): number => {
           for (let i = 0; i < native.length; i++) {
             if (callback(get(i), i, array)) return i
           }
           return -1
         }
-      case 'findLast':
-        return (callback: (value: OutputItem<T>, index: number, arr: RecursiveArray<T>) => boolean, thisArg?: any): OutputItem<T> | undefined => {
-          for (let i = native.length - 1; i >= 0; i--) {
-            let item = get(i)
-            if (callback(item, i, array)) return item
-          }
-          return undefined
-        }
       case 'findLastIndex':
-        return (callback: (value: OutputItem<T>, index: number, arr: RecursiveArray<T>) => boolean, thisArg?: any): number => {
+        return (callback: (value: T, index: number, arr: RecursiveArray<T>) => boolean, thisArg?: any): number => {
           for (let i = native.length - 1; i >= 0; i--) {
             if (callback(get(i), i, array)) return i
           }
           return -1
         }
       case 'entries':
-        return (): IterableIterator<[number, OutputItem<T>]> => {
+        return (): IterableIterator<[number, T]> => {
           let i = 0;
           return {
             next() {
@@ -275,7 +273,7 @@ export default class SupportArray extends SupportBase {
           }
         }
       case 'values':
-        return (): IterableIterator<OutputItem<T>> => {
+        return (): IterableIterator<T> => {
           let i = 0
           return {
             next() {
@@ -306,7 +304,7 @@ export default class SupportArray extends SupportBase {
           return array
         }
       case 'fill':
-        return (value: InputItem<T>, start: number = 0, end: number = native.length): RecursiveArray<T> => {
+        return (value: any, start: number = 0, end: number = native.length): RecursiveArray<T> => {
           if (start < 0) start = native.length + start
           if (end < 0) end = native.length + end
           if (start < 0) start = 0
@@ -321,9 +319,9 @@ export default class SupportArray extends SupportBase {
           return array
         }
       case 'concat':
-        return (...items: T[]): T[] => {
-          let result = array.json() as T[]
-          return result.concat(...items)
+        return (...items: any[]): T[] => {
+          let result = array.json() as any[]
+          return result.concat(...items.map(ensureNativeOrBasic))
         }
       case 'toReversed':
         return (): T[] => {
@@ -358,11 +356,11 @@ export default class SupportArray extends SupportBase {
         }
       case 'toString':
         return (): string => {
-          return array.toString()
+          return array.json().toString()
         }
       case 'toLocaleString':
         return (): string => {
-          return array.toLocaleString()
+          return array.json().toLocaleString()
         }
       case 'flat':
         return <U = any>(depth: number = 1): U[] => {
@@ -381,7 +379,7 @@ export default class SupportArray extends SupportBase {
           return array.json().reduceRight(callback, initialValue)
         }
       case Symbol.iterator:
-        return (): IterableIterator<OutputItem<T>> => {
+        return (): IterableIterator<T> => {
           let i = 0
           return {
             next() {

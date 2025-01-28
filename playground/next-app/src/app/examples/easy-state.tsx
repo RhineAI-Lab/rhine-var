@@ -15,6 +15,7 @@ const state = rhineProxy(defaultValue, url, true)
 
 state.afterSynced(() => {
   console.log(state.json())
+  console.log(state.arr.toString())
   console.log(state.json())
 })
 

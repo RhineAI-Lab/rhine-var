@@ -15,34 +15,34 @@ export default class RhineVarArray<T = any, N = any> extends RhineVarBase<T[]> i
     return -1
   }
 
-  pop(): T | undefined {
-    return undefined
-  }
-
-  shift(): T | undefined {
-    return undefined
-  }
-
   unshift(...items: InputItem<N>[]): number {
     return -1
+  }
+
+  pop(): N | undefined {
+    return undefined
+  }
+
+  shift(): N | undefined {
+    return undefined
   }
 
   slice(start?: number, end?: number): T[] {
     return []
   }
 
-  splice(start: number, deleteCount?: number, ...items: InputItem<N>[]): T[] {
+  splice(start: number, deleteCount?: number, ...items: InputItem<N>[]): N[] {
     return []
   }
 
-  forEach(callback: (value: T, index: number, array: RecursiveArray<N>) => void, thisArg?: any): void {
+  forEach(callback: (value: T, index: number, array: this) => void, thisArg?: any): void {
   }
 
-  map<U>(callback: (value: T, index: number, array: RecursiveArray<N>) => U, thisArg?: any): U[] {
+  map<U>(callback: (value: T, index: number, array: this) => U, thisArg?: any): U[] {
     return [] as U[]
   }
 
-  filter(callback: (value: T, index: number, array: RecursiveArray<N>) => boolean, thisArg?: any): T[] {
+  filter(callback: (value: T, index: number, array: this) => boolean, thisArg?: any): T[] {
     return [] as T[]
   }
 
@@ -62,7 +62,7 @@ export default class RhineVarArray<T = any, N = any> extends RhineVarBase<T[]> i
     return undefined
   }
 
-  with(index: number, value: InputItem<N>): T[] {
+  with(index: number, value: InputItem<N>): N[] {
     return []
   }
 
@@ -70,27 +70,27 @@ export default class RhineVarArray<T = any, N = any> extends RhineVarBase<T[]> i
     return ''
   }
 
-  some(callback: (value: T, index: number, array: RecursiveArray<T>) => boolean, thisArg?: any): boolean {
+  some(callback: (value: T, index: number, array: this) => boolean, thisArg?: any): boolean {
     return false
   }
 
-  every(callback: (value: T, index: number, array: RecursiveArray<T>) => boolean, thisArg?: any): boolean {
+  every(callback: (value: T, index: number, array: this) => boolean, thisArg?: any): boolean {
     return false
   }
 
-  find(callback: (value: T, index: number, obj: RhineVarArray<T>) => boolean, thisArg?: any): T | undefined {
+  find(callback: (value: T, index: number, obj: this) => boolean, thisArg?: any): T | undefined {
     return {} as T | undefined
   }
 
-  findIndex(callback: (value: T, index: number, obj: RhineVarArray<T>) => boolean, thisArg?: any): number {
+  findLast(callback: (value: T, index: number, obj: this) => boolean, thisArg?: any): T | undefined {
+    return {} as T | undefined
+  }
+
+  findIndex(callback: (value: T, index: number, obj: this) => boolean, thisArg?: any): number {
     return -1
   }
 
-  findLast(callback: (value: T, index: number, obj: RhineVarArray<T>) => boolean, thisArg?: any): T | undefined {
-    return {} as T | undefined
-  }
-
-  findLastIndex(callback: (value: T, index: number, obj: RhineVarArray<T>) => boolean, thisArg?: any): number {
+  findLastIndex(callback: (value: T, index: number, obj: this) => boolean, thisArg?: any): number {
     return -1
   }
 
@@ -114,23 +114,23 @@ export default class RhineVarArray<T = any, N = any> extends RhineVarBase<T[]> i
     return this
   }
 
-  fill(value: T, start?: number, end?: number): this {
+  fill(value: InputItem<N>, start?: number, end?: number): this {
     return this
   }
 
-  concat(...items: InputItem<N>[]): T[] {
+  concat(...items: InputItem<N>[]): N[] {
     return []
   }
 
-  toReversed(): T[] {
+  toReversed(): N[] {
     return []
   }
 
-  toSorted(compareFn?: (a: T, b: T) => number): T[] {
+  toSorted(compareFn?: (a: T, b: T) => number): N[] {
     return []
   }
 
-  toSpliced(start: number, deleteCount?: number, ...items: InputItem<N>[]): T[] {
+  toSpliced(start: number, deleteCount?: number, ...items: InputItem<N>[]): N[] {
     return []
   }
 
@@ -150,15 +150,15 @@ export default class RhineVarArray<T = any, N = any> extends RhineVarBase<T[]> i
     return []
   }
 
-  flatMap<U>(callback: (value: T, index: number, array: T[]) => U, thisArg?: any): U[] {
+  flatMap<U>(callback: (value: T, index: number, array: this) => U, thisArg?: any): U[] {
     return []
   }
 
-  reduce<U>(callback: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U {
+  reduce<U>(callback: (previousValue: U, currentValue: T, currentIndex: number, array: this) => U, initialValue: U): U {
     return {} as U
   }
 
-  reduceRight<U>(callback: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U {
+  reduceRight<U>(callback: (previousValue: U, currentValue: T, currentIndex: number, array: this) => U, initialValue: U): U {
     return {} as U
   }
 

@@ -16,7 +16,7 @@ export default class SupportText extends SupportBase {
       return
     }
     const array = object as any as RhineVarArray<T>
-    const native = object.native as any as YArray<T>
+    const native = object.native as any as YArray<any>
 
     const get = (i: number) => {
       if (i in array) {
@@ -43,10 +43,12 @@ export default class SupportText extends SupportBase {
         return native.length
       case 'push':
         return (...items: any[]): number => {
-          for (let i = 0; i < items.length; i++) {
-            items[i] = ensureNativeOrBasic(items[i])
-          }
-          native.push(items)
+          native.push(items.map(ensureNativeOrBasic))
+          return native.length
+        }
+      case 'unshift':
+        return (...items: any[]): number => {
+          native.unshift(items.map(ensureNativeOrBasic))
           return native.length
         }
       case 'pop':
@@ -64,14 +66,6 @@ export default class SupportText extends SupportBase {
           let item = getJson(key)
           native.delete(key)
           return item as T
-        }
-      case 'unshift':
-        return (...items: any[]): number => {
-          for (let i = 0; i < items.length; i++) {
-            items[i] = ensureNativeOrBasic(items[i])
-          }
-          native.unshift(items)
-          return native.length
         }
       case 'slice':
         return (start: number, end?: number): RhineVarBase<any>[] => {
