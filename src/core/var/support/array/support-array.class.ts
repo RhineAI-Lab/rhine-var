@@ -3,7 +3,7 @@ import SupportBase from "@/core/var/support/support-base";
 import {ensureJsonOrBasic, ensureNativeOrBasic, isRhineVar} from "@/core/utils/var.utils";
 import RhineVarArray from "@/core/var/items/rhine-var-array.class";
 import {isNative} from "@/core/native/native.utils";
-import RhineVarBase from "@/core/var/rhine-var-base.class";
+import {InputItem, OutputItem, RecursiveArray} from "@/core/var/rhine-var.type";
 
 
 export default class SupportArray extends SupportBase {
@@ -15,14 +15,14 @@ export default class SupportArray extends SupportBase {
       console.error('Unsupported convertProperty:', object, object.native)
       return
     }
-    const array = object as any as RhineVarArray<T>
+    const array = object
     const native = object.native as any as YArray<T>
 
-    const get = (i: number) => {
+    const get = (i: number): OutputItem<T> => {
       if (i in array) {
-        return Reflect.get(array, i)
+        return Reflect.get(array, i) as OutputItem<T>
       } else {
-        return native.get(i)
+        return native.get(i) as OutputItem<T>
       }
     }
 
@@ -42,39 +42,35 @@ export default class SupportArray extends SupportBase {
       case 'length':
         return native.length
       case 'push':
-        return (...items: any[]): number => {
-          for (let i = 0; i < items.length; i++) {
-            items[i] = ensureNativeOrBasic(items[i])
-          }
-          native.push(items)
+        return (...items: InputItem<T>[]): number => {
+          const pushItems: any[] = items.map(ensureNativeOrBasic)
+          native.push(pushItems)
           return native.length
         }
       case 'pop':
-        return (): T | undefined => {
+        return (): OutputItem<T> | undefined => {
           if (native.length === 0) return undefined
           let key = native.length - 1
-          let item = getJson(key)
+          let item = get(key)
           native.delete(key)
-          return item as T
+          return item
         }
       case 'shift':
-        return (): T | undefined => {
+        return (): OutputItem<T> | undefined => {
           if (native.length === 0) return undefined
           let key = 0
-          let item = getJson(key)
+          let item = get(key)
           native.delete(key)
-          return item as T
+          return item
         }
       case 'unshift':
-        return (...items: any[]): number => {
-          for (let i = 0; i < items.length; i++) {
-            items[i] = ensureNativeOrBasic(items[i])
-          }
-          native.unshift(items)
+        return (...items: InputItem<T>[]): number => {
+          const unshiftItems: any[] = items.map(ensureNativeOrBasic)
+          native.unshift(unshiftItems)
           return native.length
         }
       case 'slice':
-        return (start: number, end?: number): RhineVarBase<any>[] => {
+        return (start: number, end?: number): OutputItem<T>[] => {
           if (end === undefined) end = native.length
           if (start < 0) start = native.length + start
           if (end < 0) end = native.length + end
@@ -82,12 +78,12 @@ export default class SupportArray extends SupportBase {
           if (end > native.length) end = native.length
           let result = []
           for (let i = start; i < end; i++) {
-            result.push(getJson(i))
+            result.push(get(i))
           }
           return result
         }
       case 'splice':
-        return (start: number, deleteCount: number, ...items: T[]): T[] => {
+        return (start: number, deleteCount: number, ...items: InputItem<T>[]): T[] => {
           const removed = []
           for (let i = start; i < start + deleteCount; i++) {
             let item = getJson(i)
@@ -104,30 +100,30 @@ export default class SupportArray extends SupportBase {
           return removed
         }
       case 'forEach':
-        return (callback: (value: T, index: number, arr: RhineVarArray<T>) => void) => {
+        return (callback: (value: OutputItem<T>, index: number, arr: RecursiveArray<T>) => void) => {
           return native.forEach((yValue, yIndex, yArray) => {
-            callback(getJson(yIndex), yIndex, array)
+            callback(get(yIndex), yIndex, array)
           })
         }
       case 'map':
-        return <R>(callback: (value: T, index: number, arr: RhineVarArray<T>) => R) => {
+        return <R>(callback: (value: OutputItem<T>, index: number, arr: RecursiveArray<T>) => R) => {
           const result: R[] = []
           for (let i = 0; i < native.length; i++) {
-            result.push(callback(getJson(i), i, array))
+            result.push(callback(get(i), i, array))
           }
           return result
         }
       case 'filter':
-        return (callback: (value: T, index: number, arr: RhineVarArray<T>) => boolean): T[] => {
-          let result: T[] = []
+        return (callback: (value: OutputItem<T>, index: number, arr: RecursiveArray<T>) => boolean): OutputItem<T>[] => {
+          let result: OutputItem<T>[] = []
           for (let i = 0; i < native.length; i++) {
-            let item = getJson(i)
+            let item = get(i)
             if (callback(item, i, array)) result.push(item)
           }
           return result
         }
       case 'indexOf':
-        return (searchElement: T, fromIndex: number = 0) => {
+          return (searchElement: InputItem<T>, fromIndex: number = 0) => {
           // fromIndex Optional
           // Zero-based index at which to start searching, converted to an integer.
           //
@@ -144,7 +140,7 @@ export default class SupportArray extends SupportBase {
           return -1
         }
       case 'lastIndexOf':
-        return (searchElement: T, fromIndex: number = native.length - 1) => {
+        return (searchElement: InputItem<T>, fromIndex: number = native.length - 1) => {
           // fromIndex Optional
           // Zero-based index at which to start searching backwards, converted to an integer.
           //
@@ -161,7 +157,7 @@ export default class SupportArray extends SupportBase {
           return -1
         }
       case 'includes':
-        return (searchElement: T, fromIndex?: number) => {
+        return (searchElement: InputItem<T>, fromIndex?: number) => {
           // fromIndex Optional
           // Zero-based index at which to start searching, converted to an integer.
           //
@@ -179,17 +175,17 @@ export default class SupportArray extends SupportBase {
           return false
         }
       case 'at':
-        return (i: number): T => {
+        return (i: number): OutputItem<T> => {
           if (i < 0) i = native.length + i
           if (i < 0 || i >= native.length) return undefined as any
           return get(i)
         }
       case 'with':
-        return (i: number, value: T): T[] => {
+        return (i: number, value: InputItem<T>): T[] => {
           if (i < 0) i = native.length + i
           if (i < 0 || i >= native.length) throw 'RangeError: Unexpect index ' + i + ' in RhineVarArray(' + native.length + ')'
           const arr = array.json() as T[]
-          arr[i] = value
+          arr[i] = ensureJsonOrBasic(value) as T
           return arr
         }
       case 'join':
@@ -203,56 +199,56 @@ export default class SupportArray extends SupportBase {
           return result
         }
       case 'some':
-        return (callback: (value: T, index: number, arr: RhineVarArray<T>) => boolean, thisArg?: any): boolean => {
+        return (callback: (value: OutputItem<T>, index: number, arr: RecursiveArray<T>) => boolean, thisArg?: any): boolean => {
           for (let i = 0; i < native.length; i++) {
-            if (callback(getJson(i), i, array)) return true
+            if (callback(get(i), i, array)) return true
           }
           return false
         }
       case 'every':
-        return (callback: (value: T, index: number, arr: RhineVarArray<T>) => boolean, thisArg?: any): boolean => {
+        return (callback: (value: OutputItem<T>, index: number, arr: RecursiveArray<T>) => boolean, thisArg?: any): boolean => {
           for (let i = 0; i < native.length; i++) {
-            if (!callback(getJson(i), i, array)) return false
+            if (!callback(get(i), i, array)) return false
           }
           return true
         }
       case 'find':
-        return (callback: (value: T, index: number, arr: RhineVarArray<T>) => boolean, thisArg?: any): T | undefined => {
+        return (callback: (value: OutputItem<T>, index: number, arr: RecursiveArray<T>) => boolean, thisArg?: any): OutputItem<T> | undefined => {
           for (let i = 0; i < native.length; i++) {
-            let item = getJson(i)
+            let item = get(i)
             if (callback(item, i, array)) return item
           }
           return undefined
         }
       case 'findIndex':
-        return (callback: (value: T, index: number, arr: RhineVarArray<T>) => boolean, thisArg?: any): number => {
+        return (callback: (value: OutputItem<T>, index: number, arr: RecursiveArray<T>) => boolean, thisArg?: any): number => {
           for (let i = 0; i < native.length; i++) {
-            if (callback(getJson(i), i, array)) return i
+            if (callback(get(i), i, array)) return i
           }
           return -1
         }
       case 'findLast':
-        return (callback: (value: T, index: number, arr: RhineVarArray<T>) => boolean, thisArg?: any): T | undefined => {
+        return (callback: (value: OutputItem<T>, index: number, arr: RecursiveArray<T>) => boolean, thisArg?: any): OutputItem<T> | undefined => {
           for (let i = native.length - 1; i >= 0; i--) {
-            let item = getJson(i)
+            let item = get(i)
             if (callback(item, i, array)) return item
           }
           return undefined
         }
       case 'findLastIndex':
-        return (callback: (value: T, index: number, arr: RhineVarArray<T>) => boolean, thisArg?: any): number => {
+        return (callback: (value: OutputItem<T>, index: number, arr: RecursiveArray<T>) => boolean, thisArg?: any): number => {
           for (let i = native.length - 1; i >= 0; i--) {
-            if (callback(getJson(i), i, array)) return i
+            if (callback(get(i), i, array)) return i
           }
           return -1
         }
       case 'entries':
-        return (): IterableIterator<[number, T]> => {
+        return (): IterableIterator<[number, OutputItem<T>]> => {
           let i = 0;
           return {
             next() {
               if (i < native.length) {
-                return {value: [i, getJson(i++)], done: false}
+                return {value: [i, get(i++)], done: false}
               } else {
                 return {value: undefined, done: true}
               }
@@ -279,28 +275,12 @@ export default class SupportArray extends SupportBase {
           }
         }
       case 'values':
-        return (): IterableIterator<T> => {
+        return (): IterableIterator<OutputItem<T>> => {
           let i = 0
           return {
             next() {
               if (i < native.length) {
-                return {value: getJson(i++), done: false}
-              } else {
-                return {value: undefined, done: true}
-              }
-            },
-            [Symbol.iterator]() {
-              return this
-            },
-          }
-        }
-      case Symbol.iterator:
-        return (): IterableIterator<T> => {
-          let i = 0
-          return {
-            next() {
-              if (i < native.length) {
-                return {value: getJson(i++), done: false}
+                return {value: get(i++), done: false}
               } else {
                 return {value: undefined, done: true}
               }
@@ -311,22 +291,22 @@ export default class SupportArray extends SupportBase {
           }
         }
       case 'reverse':
-        return (): RhineVarArray<T> => {
-          const items = object.json().reverse()
+        return (): RecursiveArray<T> => {
+          const items = object.json().reverse().map(ensureNativeOrBasic) as T[]
           native.delete(0, native.length)
           native.insert(0, items)
           return array
         }
       case 'sort':
-        return (compareFn?: (a: T, b: T) => number): RhineVarArray<T> => {
+        return (compareFn?: (a: T, b: T) => number): RecursiveArray<T> => {
           const items = object.json()
           items.sort(compareFn)
           native.delete(0, native.length)
-          native.insert(0, items)
+          native.insert(0, items.map(ensureNativeOrBasic) as T[])
           return array
         }
       case 'fill':
-        return (value: T, start: number = 0, end: number = native.length): RhineVarArray<T> => {
+        return (value: InputItem<T>, start: number = 0, end: number = native.length): RecursiveArray<T> => {
           if (start < 0) start = native.length + start
           if (end < 0) end = native.length + end
           if (start < 0) start = 0
@@ -357,6 +337,25 @@ export default class SupportArray extends SupportBase {
         return (start: number, deleteCount: number = native.length - start, ...items: T[]): T[] => {
           return array.json().splice(start, deleteCount, ...items)
         }
+      case 'copyWithin':
+        return (target: number, start: number = 0, end: number = native.length): RecursiveArray<T> => {
+          if (target < 0) target = native.length + target
+          if (start < 0) start = native.length + start
+          if (end < 0) end = native.length + end
+          if (target < 0) target = 0
+          if (target > native.length) target = native.length
+          if (start < 0) start = 0
+          if (end > native.length) end = native.length
+          if (start >= end) return array
+          const length = end - start
+          const items = []
+          for (let i = start; i < end; i++) {
+            items.push(getJson(i))
+          }
+          native.delete(target, length)
+          native.insert(target, items)
+          return array
+        }
       case 'toString':
         return (): string => {
           return array.toString()
@@ -364,6 +363,38 @@ export default class SupportArray extends SupportBase {
       case 'toLocaleString':
         return (): string => {
           return array.toLocaleString()
+        }
+      case 'flat':
+        return <U = any>(depth: number = 1): U[] => {
+          return array.json().flat(depth) as U[]
+        }
+      case 'flatMap':
+        return <U>(callback: (item: T, index: number, arr: T[]) => U, thisArg?: any) => {
+          return array.json().flatMap(callback, thisArg)
+        }
+      case 'reduce':
+        return <U>(callback: (previousValue: U, currentValue: T, currentIndex: number, arr: T[]) => U, initialValue: U) => {
+          return array.json().reduce(callback, initialValue)
+        }
+      case 'reduceRight':
+        return <U>(callback: (previousValue: U, currentValue: T, currentIndex: number, arr: T[]) => U, initialValue: U) => {
+          return array.json().reduceRight(callback, initialValue)
+        }
+      case Symbol.iterator:
+        return (): IterableIterator<OutputItem<T>> => {
+          let i = 0
+          return {
+            next() {
+              if (i < native.length) {
+                return {value: get(i++), done: false}
+              } else {
+                return {value: undefined, done: true}
+              }
+            },
+            [Symbol.iterator]() {
+              return this
+            },
+          }
         }
       case Symbol.unscopables:
         return {
@@ -385,41 +416,6 @@ export default class SupportArray extends SupportBase {
           splice: true,
           toLocaleString: true,
           toString: true,
-        }
-      case 'copyWithin':
-        return (target: number, start: number = 0, end: number = native.length): RhineVarArray<T> => {
-          if (target < 0) target = native.length + target
-          if (start < 0) start = native.length + start
-          if (end < 0) end = native.length + end
-          if (target < 0) target = 0
-          if (target > native.length) target = native.length
-          if (start < 0) start = 0
-          if (end > native.length) end = native.length
-          if (start >= end) return array
-          const length = end - start
-          const items = []
-          for (let i = start; i < end; i++) {
-            items.push(getJson(i))
-          }
-          native.delete(target, length)
-          native.insert(target, items)
-          return array
-        }
-      case 'flat':
-        return <U = any>(depth: number = 1): U[] => {
-          return array.json().flat(depth) as U[]
-        }
-      case 'flatMap':
-        return <U>(callback: (item: T, index: number, arr: T[]) => U, thisArg?: any) => {
-          return array.json().flatMap(callback, thisArg)
-        }
-      case 'reduce':
-        return <U>(callback: (previousValue: U, currentValue: T, currentIndex: number, arr: T[]) => U, initialValue: U) => {
-          return array.json().reduce(callback, initialValue)
-        }
-      case 'reduceRight':
-        return <U>(callback: (previousValue: U, currentValue: T, currentIndex: number, arr: T[]) => U, initialValue: U) => {
-          return array.json().reduceRight(callback, initialValue)
         }
       default:
         return null

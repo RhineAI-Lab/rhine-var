@@ -34,19 +34,18 @@ export type RecursiveObject<T extends object> = {
     : T[K]
 } & RhineVarObject<T>
 
+export type RecursiveArray<T> = RhineVarArray<T extends object ? RecursiveCrossRhineVar<T> : T, T>
+export type RecursiveMap<T> = RhineVarMap<T extends object ? RecursiveCrossRhineVar<T> : T, T>
+
 export type RecursiveCrossRhineVar<T extends object> =
   T extends YXmlText | YText | YXmlFragment
     ? RhineVar<T>
     : T extends (infer U)[] | YArray<infer U> | RhineVarArray<infer U>
-      ? U extends object
-        ? RhineVarArray<RecursiveCrossRhineVar<U>, U>
-        : RhineVarArray<U, U>
+      ? RecursiveArray<U>
       : T extends YObject<any> | RhineVarObject<any>
         ? RecursiveObject<T>
         : T extends YMap<infer U> | RhineVarMap<infer U>
-          ? U extends object
-            ? RhineVarMap<RecursiveCrossRhineVar<U>, U>
-            : RhineVarMap<U, U>
+          ? RecursiveMap<U>
           : RecursiveObject<T>
 
 export type StoredRhineVar<T extends object = any> = RecursiveCrossRhineVar<T>
@@ -55,3 +54,4 @@ export type ProxiedRhineVar<T extends object = any> = StoredRhineVar<T>
 
 export type InputItem<T> = T extends object ? T | Native | StoredRhineVar<T> : T
 export type OutputItem<T> = T extends object ? StoredRhineVar<T> : T
+
