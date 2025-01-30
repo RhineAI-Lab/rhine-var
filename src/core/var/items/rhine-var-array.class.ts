@@ -1,6 +1,6 @@
 import RhineVarBase from "@/core/var/rhine-var-base.class";
 import {NativeType} from "@/core/native/native-type.enum";
-import {InputItem, RecursiveArray} from "@/core/var/rhine-var.type";
+import {InputItem} from "@/core/var/rhine-var.type";
 
 
 export default class RhineVarArray<T = any, N = any> extends RhineVarBase<T[]> implements Iterable<T> {

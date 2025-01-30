@@ -1,13 +1,9 @@
 import {Native, RhineVarAny, YArray, YMap} from "@/index";
 import SupportBase from "@/core/var/support/support-base";
-import {ensureJsonOrBasic, ensureNativeOrBasic, isRhineVar} from "@/core/utils/var.utils";
-import RhineVarArray from "@/core/var/items/rhine-var-array.class";
+import {ensureNativeOrBasic, isRhineVar} from "@/core/utils/var.utils";
 import {isNative} from "@/core/native/native.utils";
-import RhineVarBase from "@/core/var/rhine-var-base.class";
 import RhineVarMap from "@/core/var/items/rhine-var-map.class";
-import RhineVarObject from "@/core/var/items/rhine-var-object.class";
-import {Array} from "yjs";
-import {InputItem, OutputItem} from "@/core/var/rhine-var.type";
+import {InputItem, RecursiveMap} from "@/core/var/rhine-var.type";
 
 
 export default class SupportMap extends SupportBase {
@@ -19,14 +15,14 @@ export default class SupportMap extends SupportBase {
       console.error('Unsupported convertProperty:', object, object.native)
       return
     }
-    const map = object as any as RhineVarMap<T>
-    const native = object.native as any as YMap<T>
+    const map = object
+    const native = object.native as YMap<T>
 
-    const get = (key: string): OutputItem<T> => {
+    const get = (key: string): T => {
       if (key in map) {
         return Reflect.get(map, key)
       } else {
-        return native.get(key) as OutputItem<T>  // Basic
+        return native.get(key) as T  // Basic
       }
     }
 
@@ -50,7 +46,7 @@ export default class SupportMap extends SupportBase {
           return native.set(key, ensureNativeOrBasic(value) as T)
         }
       case 'get':
-        return (key: string): OutputItem<T> | undefined => {
+        return (key: string): T | undefined => {
           return get(key)
         }
       case 'has':
@@ -58,7 +54,7 @@ export default class SupportMap extends SupportBase {
           return native.has(key)
         }
       case 'forEach':
-        return (callback: (value: OutputItem<T>, key: string, map: RhineVarMap<T>) => void, thisArg?: any) => {
+        return (callback: (value: T, key: string, map: RecursiveMap<T>) => void, thisArg?: any) => {
           for (const k of native.keys()) {
             callback(get(k), k, map)
           }

@@ -53,5 +53,4 @@ export type StoredRhineVar<T extends object = any> = RecursiveCrossRhineVar<T>
 export type ProxiedRhineVar<T extends object = any> = StoredRhineVar<T>
 
 export type InputItem<T> = T extends object ? T | Native | StoredRhineVar<T> : T
-export type OutputItem<T> = T extends object ? StoredRhineVar<T> : T
 
