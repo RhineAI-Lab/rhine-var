@@ -16,20 +16,22 @@ export default class SupportText extends SupportBase {
     const native = object.native as any as YText
 
     switch (key) {
-      case 'length':
-        return native.length
       case 'insert':
         return (index: number, value: string) => {
           native.insert(index, value)
+          return native.length
         }
       case 'delete':
         return (index: number, length: number) => {
           native.delete(index, length)
+          return native.length
         }
       case 'clear':
         return () => {
           native.delete(0, native.length)
         }
+      case 'length':
+        return native.length
       case 'at':
         return (index: number) => {
           return native.toString().charAt(index)
@@ -176,6 +178,10 @@ export default class SupportText extends SupportBase {
   static SUPPORTED_PROPERTIES = new Set<string | symbol>([
     Symbol.iterator,
     Symbol.unscopables,
+    'length',
+    'insert',
+    'delete',
+    'clear',
     'at',
     'charAt',
     'charCodeAt',

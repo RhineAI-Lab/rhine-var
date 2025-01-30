@@ -11,6 +11,17 @@ export default class RhineVarArray<T = any, N = any> extends RhineVarBase<T[]> i
 
   length: number = 0
 
+  insert(index: number, ...items: InputItem<N>[]) {
+    return -1
+  }
+
+  delete(index: number, length: number) {
+    return -1
+  }
+
+  clear() {
+  }
+
   push(...items: InputItem<N>[]): number {
     return -1
   }

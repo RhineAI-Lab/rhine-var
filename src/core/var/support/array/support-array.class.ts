@@ -39,6 +39,20 @@ export default class SupportArray extends SupportBase {
 
 
     switch (key) {
+      case 'insert':
+        return (index: number, ...items: any[]): number => {
+          native.insert(index, items.map(ensureNativeOrBasic))
+          return native.length
+        }
+      case 'delete':
+        return (index: number, length: number) => {
+          native.delete(index, length)
+          return native.length
+        }
+      case 'clear':
+        return () => {
+          native.delete(0, native.length)
+        }
       case 'length':
         return native.length
       case 'push':
