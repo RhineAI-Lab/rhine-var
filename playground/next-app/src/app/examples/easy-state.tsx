@@ -26,19 +26,18 @@ const defaultValue = {
     a: {name: 'aaa', text: text('aaa')},
     b: {name: 'bbb', text: text('aaa')},
     c: {name: 'ccc', text: text('aaa')},
-  })
+  }),
+  text: text('aaa')
 }
 
 const url = 'room-11'
 const state = rhineProxy(defaultValue, url, true)
 
 state.afterSynced(() => {
-  console.log(state.json())
-  const a = state.map.get('a')
-  if (a) {
-    console.log(a.text.value)
-  }
-  console.log(state.json())
+  state.text.subscribe((value) => {
+    console.log('text:', value)
+  })
+  state.text.value = 'aaa'
 })
 
 export default function EasyState() {

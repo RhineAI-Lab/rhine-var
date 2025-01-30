@@ -3,6 +3,7 @@
     "outDir": "./dist",
     "module": "commonjs",
     "target": "ES2017",
+    "lib": ["ESNext"],
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
