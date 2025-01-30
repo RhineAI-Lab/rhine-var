@@ -15,9 +15,10 @@ const url = 'room-11'
 const state = rhineProxy(defaultValue, url, true)
 
 state.afterSynced(() => {
-  console.log(state.text.value)
   state.text.value = 'bbb'
   console.log(state.text.json())
+  console.log(state.json().text)
+  console.log(state.text.value)
 })
 
 export default function EasyState() {

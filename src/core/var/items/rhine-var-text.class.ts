@@ -9,8 +9,8 @@ export default class RhineVarText extends RhineVarBase implements Iterable<strin
 
   length: number = -1
 
-  json(): {value: string} {
-    return undefined as any
+  json(): string {
+    return super.json();
   }
 
   insert(index: number, value: string) {

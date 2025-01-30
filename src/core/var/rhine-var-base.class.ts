@@ -76,9 +76,6 @@ export default abstract class RhineVarBase<T extends object = any> {
 
 
   json(): T {
-    if (this.native instanceof YText) {
-      return {value: this.native.toString()} as any
-    }
     return this.native.toJSON() as T
   }
 
@@ -122,7 +119,7 @@ export default abstract class RhineVarBase<T extends object = any> {
     return {} as T
   }
 
-  string(indent = 2): string {
+  jsonString(indent = 2): string {
     return JSON.stringify(this.json(), null, indent)
   }
 
@@ -348,7 +345,7 @@ export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'connector',
   'initialize',
   'json',
-  'string',
+  'jsonString',
   'parent',
   'isRoot',
   'root',
