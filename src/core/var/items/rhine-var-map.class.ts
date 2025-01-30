@@ -4,9 +4,9 @@ import {InputItem} from "@/core/var/rhine-var.type";
 
 export default class RhineVarMap<T = any, N = any> extends RhineVarBase<{[key: string]: T}> implements Iterable<[string, T]> {
 
-  type: NativeType.Map = NativeType.Map;
+  type: NativeType.Map = NativeType.Map
 
-  size: number = 0
+  size: number = -1
 
   set(key: string, value: InputItem<N>): void {
   }
