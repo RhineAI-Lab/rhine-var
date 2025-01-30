@@ -1,8 +1,7 @@
 "use client"
 
 import React from "react";
-import {enableRhineVarLog, rhineProxy, rhineText, rhineMap, useRhine} from "rhine-var";
-import {RhineVarAny} from "../../../../../src";
+import {enableRhineVarLog, rhineProxy, text, map, useRhine} from "rhine-var";
 
 console.log('\n\n=================== Rhine Var Playground ===================\n\n')
 
@@ -11,21 +10,24 @@ enableRhineVarLog(true)
 const defaultValue = {
   obj: {
     a: {
-      name: 'xxx'
+      name: 'xxx',
     },
     b: {
+      name: 'xxxa',
       age: 18
     }
-  }
+  },
+  arr: [
+    {name: 'a'},
+    {name: 'bb'},
+    {name: 'ccc'},
+  ]
 }
 const url = 'room-11'
 const state = rhineProxy(defaultValue, url, true)
 
 state.afterSynced(() => {
   console.log(state.json())
-  state.obj.forEach((value, key) => {
-    console.log(key, value)
-  })
   console.log(state.json())
 })
 

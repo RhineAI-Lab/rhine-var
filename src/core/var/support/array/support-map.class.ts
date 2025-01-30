@@ -38,7 +38,6 @@ export default class SupportMap extends SupportBase {
       return item as T
     }
 
-
     switch (key) {
       case 'size':
         return map.size
@@ -153,30 +152,26 @@ export default class SupportMap extends SupportBase {
           }
         }
       case Symbol.iterator:
+        const keys = [...native.keys()]
         return () => {
-          const keys = [...native.keys()]
+          let index = 0
           return {
-            [Symbol.iterator]: () => {
-              let index = 0
-              return {
-                next: () => {
-                  if (index < keys.length) {
-                    const key = keys[index++]
-                    return {
-                      value: [key, get(key)],
-                      done: false
-                    }
-                  } else {
-                    return {
-                      value: undefined,
-                      done: true
-                    }
-                  }
-                },
-                [Symbol.iterator]: () => {
-                  return this
+            next: () => {
+              if (index < keys.length) {
+                const key = keys[index++]
+                return {
+                  value: [key, get(key)],
+                  done: false
+                }
+              } else {
+                return {
+                  value: undefined,
+                  done: true
                 }
               }
+            },
+            [Symbol.iterator]: () => {
+              return this
             }
           }
         }

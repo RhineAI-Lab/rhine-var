@@ -13,8 +13,8 @@ import RhineVarXmlText from "@/core/var/items/rhine-var-xml-text.class";
 import RhineVarXmlElement from "@/core/var/items/rhine-var-xml-element.class";
 import RhineVarXmlFragment from "@/core/var/items/rhine-var-xml-fragment.class";
 import SupportManager from "@/core/var/support/support-manager";
-import { rhineText } from "@/core/proxy/items/rhine-text";
-import { rhineMap } from "./core/proxy/items/rhine-map";
+import { text } from "@/core/proxy/items/text";
+import { map } from "./core/proxy/items/map";
 import {
   Doc as YDoc,
   Array as YArray,
@@ -29,8 +29,8 @@ export {
   Connector,
   rhineProxy,
   rhineProxyGeneral,
-  rhineText,
-  rhineMap,
+  text,
+  map,
   RhineVarBase,
   RhineVarAny,
   RhineVar,

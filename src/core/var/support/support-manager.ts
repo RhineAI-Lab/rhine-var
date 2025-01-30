@@ -10,6 +10,7 @@ import SupportText from "@/core/var/support/array/support-text.class";
 export default class SupportManager {
 
   static convertProperty<T>(key: string | symbol, object: RhineVarAny) {
+    // console.log('SupportManager.convertProperty', key, object)
     if (object instanceof RhineVarArray) {
       return SupportArray.convertProperty<T>(key, object)
     } else if (object instanceof RhineVarMap) {
