@@ -1,7 +1,7 @@
 import {YMap} from "@/index";
 import {ensureNativeOrBasic} from "@/core/utils/var.utils";
 
-export function rhineMap<T>(defaultValue: {
+export default function map<T>(defaultValue: {
   [key: string]: T
 }): YMap<T> {
   const map = new YMap<T>()

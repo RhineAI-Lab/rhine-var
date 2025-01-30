@@ -1,5 +1,5 @@
 import {Doc, Text as YText} from "yjs";
 
-export function rhineText(defaultValue: string) {
+export default function text(defaultValue: string) {
   return new YText(defaultValue)
 }
