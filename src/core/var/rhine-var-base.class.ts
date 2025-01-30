@@ -1,6 +1,5 @@
 import {Transaction, YArrayEvent, YMapEvent, YTextEvent} from "yjs";
-import { YMap, YArray, YText, YXmlText, YXmlElement, YXmlFragment } from "@/index"
-import YObject from "@/core/native/y-object";
+import { YMap, YArray, YText } from "@/index"
 import {rhineProxyGeneral} from "@/core/proxy/rhine-proxy";
 import {log} from "@/utils/logger";
 import {isObjectOrArray} from "@/core/utils/data.utils";
@@ -192,7 +191,7 @@ export default abstract class RhineVarBase<T extends object = any> {
 
   emitDeep(path: YPath, value: any, oldValue: any, type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any> | YTextEvent, nativeTransaction: Transaction) {
     this.deepSubscribers.forEach(subscriber => subscriber(path, value, oldValue, type, nativeEvent, nativeTransaction))
-    if (!parent) return undefined
+    if (!this.parent) return undefined
     for (let key in this.parent) {
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(key)) continue;
       if (Reflect.get(this.parent, key)?.origin === this) {
@@ -294,16 +293,15 @@ export default abstract class RhineVarBase<T extends object = any> {
       }
     } else if (target instanceof YText) {
       this.observer = (event, transaction) => {
-        console.log('xxx', Reflect.get(this, 'text'))
         let i = 0
         event.delta.forEach(deltaItem => {
           if (deltaItem.retain !== undefined) {
             i += deltaItem.retain
             return
           }
-          let oldValue = Reflect.get(this, 'text')
+          let oldValue = Reflect.get(this, 'value')
           let newValue = this.native.toString()
-          Reflect.set(this.origin, 'text', newValue)
+          Reflect.set(this.origin, 'value', newValue)
           if (deltaItem.delete !== undefined) {
             log('Proxy.event: Text delete', i, ':', oldValue, '->', newValue)
             this.emit(i as keyof T, newValue as any, oldValue as any, ChangeType.Delete, event, transaction)
@@ -316,7 +314,6 @@ export default abstract class RhineVarBase<T extends object = any> {
             i += newValue.length
           }
         })
-        console.log('xxx', Reflect.get(this, 'text'))
       }
     } else {
       this.observer = (event, transaction) => {

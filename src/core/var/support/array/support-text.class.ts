@@ -8,6 +8,7 @@ export default class SupportText extends SupportBase {
   static TARGET_TAG = 'RhineVarText'
 
   static convertProperty<T>(key: string | symbol, object: RhineVarAny): any {
+    console.log('SupportText.convertProperty', key, object)
     if (!(object.native instanceof YText) || !(object instanceof RhineVarText)) {
       console.error('Unsupported convertProperty:', object, object.native)
       return
@@ -15,6 +16,28 @@ export default class SupportText extends SupportBase {
     const native = object.native as any as YText
 
     switch (key) {
+      case 'length':
+        return native.length
+      case 'value':
+        return native.toString()
+      case 'json':
+        return () => {
+          return {
+            value: native.toString()
+          }
+        }
+      case 'insert':
+        return (index: number, value: string) => {
+          native.insert(index, value)
+        }
+      case 'delete':
+        return (index: number, length: number) => {
+          native.delete(index, length)
+        }
+      case 'clear':
+        return () => {
+          native.delete(0, native.length)
+        }
       case 'at':
         return (index: number) => {
           return native.toString().charAt(index)
@@ -151,6 +174,8 @@ export default class SupportText extends SupportBase {
         return () => {
           return native.toString().valueOf()
         }
+      case Symbol.iterator:
+        return native.toString()[Symbol.iterator]
       default:
         return null
     }

@@ -14,9 +14,8 @@ import {
 import {createConnector} from "@/core/connector/create-connector";
 import {createRhineVar} from "@/core/proxy/create-rhine-var";
 import {ensureNative, ensureRhineVar} from "@/core/utils/var.utils";
-import RhineVarText from "@/core/var/items/rhine-var-text.class";
-import RhineVarArray from "@/core/var/items/rhine-var-array.class";
 import SupportManager from "@/core/var/support/support-manager";
+import RhineVarText from "@/core/var/items/rhine-var-text.class";
 
 // For create root RhineVar object
 export function rhineProxy<T extends object>(
@@ -67,8 +66,7 @@ export function rhineProxyGeneral<T extends object>(
   const object: RhineVarBase = createRhineVar(target, parent) as any
 
   if (object.native instanceof YText) {
-    Reflect.set(object, 'text', object.native.toString())
-    return object as RhineVarText as ProxiedRhineVar<T>
+    Reflect.set(object, 'value', object.native.toString())
   } else if (object.native instanceof YMap || object.native instanceof YArray) {
     object.native.forEach((value, keyString) => {
       let key = keyString as keyof T
@@ -122,6 +120,15 @@ export function rhineProxyGeneral<T extends object>(
     set(proxy, p, value, receiver): boolean {
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return Reflect.set(object, p, value, receiver)
       log('Proxy.handler.set:', p, 'to', value, '  ', object, receiver)
+
+      if (object.native instanceof YText && object instanceof RhineVarText && p === 'value') {
+        if (typeof value !== 'string') {
+          error('Value must be a string')
+        }
+        object.native.delete(0, object.native.length)
+        object.native.insert(0, value)
+        return true
+      }
 
       value = ensureRhineVar(value, object)
 
