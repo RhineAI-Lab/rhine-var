@@ -16,12 +16,13 @@ import {createRhineVar} from "@/core/proxy/create-rhine-var";
 import {ensureNative, ensureRhineVar} from "@/core/utils/var.utils";
 import SupportManager from "@/core/var/support/support-manager";
 import RhineVarText from "@/core/var/items/rhine-var-text.class";
+import ProxyOptions from "@/core/proxy/proxy-options.interface";
 
 // For create root RhineVar object
 export function rhineProxy<T extends object>(
   defaultValue: T | Native,
   connector?: Connector | string | number,
-  overwrite: boolean | number = false
+  options: ProxyOptions = {},
 ): ProxiedRhineVar<T> {
   if (!connector) {
     return rhineProxyGeneral<T>(defaultValue)
@@ -44,7 +45,7 @@ export function rhineProxy<T extends object>(
 
   // Bind connector
   connector.subscribeSynced((synced: boolean) => {
-    if (overwrite) {
+    if (options.overwrite) {
       connector.setState(object.native.clone())
     }
     if (!connector.hasState()) {

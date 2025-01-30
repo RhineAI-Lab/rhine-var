@@ -17,13 +17,11 @@ const defaultValue = {
 }
 
 const url = 'room-11'
-const state = rhineProxy(defaultValue, url, true)
+const state = rhineProxy(defaultValue, url, {
+  overwrite: true
+})
 
 state.afterSynced(async () => {
-  console.log(state.json())
-  state.arr.insert(2, {name: 'x', age: 100})
-  state.arr.delete(1, 2)
-  console.log(state.json())
 })
 
 export default function EasyState() {
