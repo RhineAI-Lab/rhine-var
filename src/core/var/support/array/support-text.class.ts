@@ -1,6 +1,5 @@
-import {RhineVarAny} from "@/index";
+import {RhineVarAny, YText} from "@/index";
 import SupportBase from "@/core/var/support/support-base";
-import {YText} from "yjs/dist/src/types/YText";
 import RhineVarText from "@/core/var/items/rhine-var-text.class";
 
 

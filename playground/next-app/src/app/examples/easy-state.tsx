@@ -2,6 +2,7 @@
 
 import React from "react";
 import {enableRhineVarLog, rhineProxy, rhineText, rhineMap, useRhine} from "rhine-var";
+import {RhineVarAny} from "../../../../../src";
 
 console.log('\n\n=================== Rhine Var Playground ===================\n\n')
 
@@ -22,7 +23,9 @@ const state = rhineProxy(defaultValue, url, true)
 
 state.afterSynced(() => {
   console.log(state.json())
-
+  state.obj.forEach((value, key) => {
+    console.log(key, value)
+  })
   console.log(state.json())
 })
 

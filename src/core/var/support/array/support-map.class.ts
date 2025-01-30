@@ -3,7 +3,8 @@ import SupportBase from "@/core/var/support/support-base";
 import {ensureNativeOrBasic, isRhineVar} from "@/core/utils/var.utils";
 import {isNative} from "@/core/native/native.utils";
 import RhineVarMap from "@/core/var/items/rhine-var-map.class";
-import {InputItem, RecursiveMap} from "@/core/var/rhine-var.type";
+import {InputItem, RecursiveMap, RecursiveObject} from "@/core/var/rhine-var.type";
+import RhineVarObject from "@/core/var/items/rhine-var-object.class";
 
 
 export default class SupportMap extends SupportBase {
@@ -11,7 +12,7 @@ export default class SupportMap extends SupportBase {
   static TARGET_TAG = 'c'
 
   static convertProperty<T>(key: string | symbol, object: RhineVarAny): any {
-    if (!(object.native instanceof YMap) || !(object instanceof RhineVarMap)) {
+    if (!(object.native instanceof YMap) || !(object instanceof RhineVarMap || object instanceof RhineVarObject)) {
       console.error('Unsupported convertProperty:', object, object.native)
       return
     }
@@ -54,7 +55,7 @@ export default class SupportMap extends SupportBase {
           return native.has(key)
         }
       case 'forEach':
-        return (callback: (value: T, key: string, map: RecursiveMap<T>) => void, thisArg?: any) => {
+        return (callback: (value: T, key: string, map: RecursiveMap<T> | RecursiveObject<any>) => void, thisArg?: any) => {
           for (const k of native.keys()) {
             callback(get(k), k, map)
           }
