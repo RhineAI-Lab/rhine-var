@@ -8,12 +8,7 @@ console.log('\n\n=================== Rhine Var Playground ===================\n\
 enableRhineVarLog(true)
 
 const defaultValue = {
-  arr: [
-    {name: 'a', age: 1},
-    {name: 'b', age: 2},
-    {name: 'c', age: 3},
-    {name: 'd', age: 4},
-  ]
+  text: text('Hello, Rhine Var!'),
 }
 
 const url = 'room-11'
@@ -22,6 +17,9 @@ const state = rhineProxy(defaultValue, url, {
 })
 
 state.afterSynced(async () => {
+  console.log('state.text.value:', state.text.value)
+  state.text.value = 'set'
+  console.log('state.text.value:', state.text.value)
 })
 
 export default function EasyState() {

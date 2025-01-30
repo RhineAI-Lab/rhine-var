@@ -124,11 +124,21 @@ export function rhineProxyGeneral<T extends object>(
 
       if (object.native instanceof YText && object instanceof RhineVarText && p === 'value') {
         if (typeof value !== 'string') {
-          error('Value must be a string')
+          error('Value for YText must be a string')
+          return false
         }
-        object.native.delete(0, object.native.length)
-        object.native.insert(0, value)
-        return true
+        const doc = object.native.doc
+        if (doc) {
+          doc.transact(() => {
+            const native = object.native as YText
+            native.delete(0, native.length)
+            native.insert(0, value)
+          })
+          return true
+        } else {
+          error('Document is not available')
+          return false
+        }
       }
 
       value = ensureRhineVar(value, object)

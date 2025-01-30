@@ -293,27 +293,44 @@ export default abstract class RhineVarBase<T extends object = any> {
       }
     } else if (target instanceof YText) {
       this.observer = (event, transaction) => {
-        let i = 0
+        let hasDelete = false
+        let hasInsert = false
         event.delta.forEach(deltaItem => {
-          if (deltaItem.retain !== undefined) {
-            i += deltaItem.retain
-            return
-          }
-          let oldValue = Reflect.get(this, 'value')
-          let newValue = this.native.toString()
-          Reflect.set(this.origin, 'value', newValue)
           if (deltaItem.delete !== undefined) {
-            log('Proxy.event: Text delete', i, ':', oldValue, '->', newValue)
-            this.emit(i as keyof T, newValue as any, oldValue as any, ChangeType.Delete, event, transaction)
-            this.emitDeep([i], newValue, oldValue, ChangeType.Delete, event, transaction)
-            i += deltaItem.delete
+            hasDelete = true
           } else if (deltaItem.insert !== undefined) {
-            log('Proxy.event: Text add', i, ':', oldValue, '->', newValue)
-            this.emit(i as keyof T, newValue as any, oldValue as any, ChangeType.Add, event, transaction)
-            this.emitDeep([i], newValue, oldValue, ChangeType.Add, event, transaction)
-            i += newValue.length
+            hasInsert = true
           }
         })
+        const isUpdate = hasDelete && hasInsert
+        const oldValue = Reflect.get(this, 'value')
+        const newValue = this.native.toString()
+        Reflect.set(this.origin, 'value', newValue)
+
+        let i = 0
+        if (isUpdate) {
+          log('Proxy.event: Text update', ':', oldValue, '->', newValue)
+          this.emit(i as keyof T, newValue as any, oldValue as any, ChangeType.Update, event, transaction)
+          this.emitDeep([i], newValue, oldValue, ChangeType.Update, event, transaction)
+        } else {
+          event.delta.forEach(deltaItem => {
+            if (deltaItem.retain !== undefined) {
+              i += deltaItem.retain
+              return
+            }
+            if (deltaItem.delete !== undefined) {
+              log('Proxy.event: Text delete', i, ':', oldValue, '->', newValue)
+              this.emit(i as keyof T, newValue as any, oldValue as any, ChangeType.Delete, event, transaction)
+              this.emitDeep([i], newValue, oldValue, ChangeType.Delete, event, transaction)
+              i += deltaItem.delete
+            } else if (deltaItem.insert !== undefined) {
+              log('Proxy.event: Text add', i, ':', oldValue, '->', newValue)
+              this.emit(i as keyof T, newValue as any, oldValue as any, ChangeType.Add, event, transaction)
+              this.emitDeep([i], newValue, oldValue, ChangeType.Add, event, transaction)
+              i += newValue.length
+            }
+          })
+        }
       }
     } else {
       this.observer = (event, transaction) => {
