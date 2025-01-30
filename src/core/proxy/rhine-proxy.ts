@@ -102,6 +102,18 @@ export function rhineProxyGeneral<T extends object>(
 
   const handler: ProxyHandler<RhineVarBase<T>> = {
     get(proxy, p, receiver) {
+      if (object.native instanceof YText && object instanceof RhineVarText) {
+        if (p === 'value') {
+          return object.native.toString()
+        } else if (p === 'json') {
+          return () => {
+            return {
+              value: object.native.toString()
+            }
+          }
+        }
+      }
+
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return Reflect.get(object, p, receiver)
 
       const supportProperty = SupportManager.convertProperty<T>(p, object as RhineVarAny)

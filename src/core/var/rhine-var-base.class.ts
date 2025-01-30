@@ -76,6 +76,9 @@ export default abstract class RhineVarBase<T extends object = any> {
 
 
   json(): T {
+    if (this.native instanceof YText) {
+      return {value: this.native.toString()} as any
+    }
     return this.native.toJSON() as T
   }
 

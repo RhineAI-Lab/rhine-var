@@ -18,14 +18,6 @@ export default class SupportText extends SupportBase {
     switch (key) {
       case 'length':
         return native.length
-      case 'value':
-        return native.toString()
-      case 'json':
-        return () => {
-          return {
-            value: native.toString()
-          }
-        }
       case 'insert':
         return (index: number, value: string) => {
           native.insert(index, value)

@@ -8,25 +8,6 @@ console.log('\n\n=================== Rhine Var Playground ===================\n\
 enableRhineVarLog(true)
 
 const defaultValue = {
-  obj: {
-    a: {
-      name: 'xxx',
-    },
-    b: {
-      name: 'xxxa',
-      age: 18
-    }
-  },
-  arr: [
-    {name: 'a'},
-    {name: 'bb'},
-    {name: 'ccc'},
-  ],
-  map: map({
-    a: {name: 'aaa', text: text('aaa')},
-    b: {name: 'bbb', text: text('aaa')},
-    c: {name: 'ccc', text: text('aaa')},
-  }),
   text: text('aaa')
 }
 
