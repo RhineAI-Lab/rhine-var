@@ -1,5 +1,4 @@
 import { YMap, YDoc } from "@/index"
-import {WebsocketProvider} from "y-websocket";
 import {ConnectorStatus} from "@/core/connector/connector-status.enum";
 import {Native} from "@/core/native/native.type";
 import {SyncedCallback} from "@/core/event/callback";

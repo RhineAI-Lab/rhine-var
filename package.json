@@ -59,9 +59,10 @@
     "typescript-transform-paths": "^3.5.0"
   },
   "dependencies": {
+    "yjs": "^13.6.23",
     "@hocuspocus/provider": "^2.15.0",
-    "y-websocket": "^2.0.4",
-    "yjs": "^13.6.23"
+    "y-protocols": "^1.0.6",
+    "y-websocket": "^2.0.4"
   },
   "peerDependencies": {
     "react": "^18.0.0",

@@ -41,7 +41,10 @@ export function rhineProxy<T extends object>(
     connector = createConnector(connector)
   }
   connector = connector as Connector;
-  (object as RhineVarAny).connector = connector
+
+  const root = object as any
+  root.options = options
+  root.connector = connector
 
   // Bind connector
   connector.subscribeSynced((synced: boolean) => {

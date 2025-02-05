@@ -1,4 +1,5 @@
-import {Transaction, YArrayEvent, YMapEvent, YTextEvent} from "yjs";
+import {Transaction, UndoManager, YArrayEvent, YMapEvent, YTextEvent} from "yjs";
+import {Awareness} from "y-protocols/awareness";
 import { YMap, YArray, YText } from "@/index"
 import {rhineProxyGeneral} from "@/core/proxy/rhine-proxy";
 import {log} from "@/utils/logger";
@@ -8,6 +9,7 @@ import {ChangeType} from "@/core/event/change-type.enum";
 import {Callback, DeepCallback, SyncedCallback} from "@/core/event/callback";
 import Connector from "@/core/connector/connector.abstract";
 import {isNative} from "@/core/native/native.utils";
+import ProxyOptions from "@/core/proxy/proxy-options.interface";
 
 
 export default abstract class RhineVarBase<T extends object = any> {
@@ -20,7 +22,11 @@ export default abstract class RhineVarBase<T extends object = any> {
     this.observe()
   }
 
-  connector: Connector | null = null
+  private options: ProxyOptions = {}
+  private connector: Connector | null = null
+  private undoManager: UndoManager | null = null
+  private awareness: Awareness | null = null
+  private clientId: string = ''
 
   isRoot(): boolean {
     return Boolean(!this.parent)
@@ -34,8 +40,36 @@ export default abstract class RhineVarBase<T extends object = any> {
     }
   }
 
+  getOptions(): ProxyOptions {
+    return this.root().options
+  }
+
   getConnector(): Connector | null {
     return this.root().connector
+  }
+
+  getUndoManager(): UndoManager | null {
+    if (this.getOptions().awareness !== undefined && !this.getOptions().awareness) {
+      console.error('You need to enable awareness to use undoManager')
+      return null
+    }
+    return this.root().undoManager
+  }
+
+  getAwareness(): Awareness | null {
+    if (this.getOptions().awareness !== undefined && !this.getOptions().awareness) {
+      console.error('You need to enable awareness to use awareness')
+      return null
+    }
+    return this.root().awareness
+  }
+
+  getClientId(): string {
+    if (this.getOptions().awareness !== undefined && !this.getOptions().awareness) {
+      console.error('You need to enable awareness to use clientId')
+      return ''
+    }
+    return this.root().clientId
   }
 
   initialize(native: Native) {
