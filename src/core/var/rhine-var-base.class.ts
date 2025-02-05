@@ -2,7 +2,7 @@ import {Transaction, UndoManager, YArrayEvent, YMapEvent, YTextEvent} from "yjs"
 import {Awareness} from "y-protocols/awareness";
 import { YMap, YArray, YText } from "@/index"
 import {rhineProxyGeneral} from "@/core/proxy/rhine-proxy";
-import {log} from "@/utils/logger";
+import {error, log} from "@/utils/logger";
 import {isObjectOrArray} from "@/core/utils/data.utils";
 import {Native, YPath} from "@/core/native/native.type";
 import {ChangeType} from "@/core/event/change-type.enum";
@@ -50,7 +50,7 @@ export default abstract class RhineVarBase<T extends object = any> {
 
   getUndoManager(): UndoManager | null {
     if (this.getOptions().awareness !== undefined && !this.getOptions().awareness) {
-      console.error('You need to enable awareness to use undoManager')
+      error('You need to enable awareness to use undoManager')
       return null
     }
     return this.root().undoManager
@@ -58,7 +58,7 @@ export default abstract class RhineVarBase<T extends object = any> {
 
   getAwareness(): Awareness | null {
     if (this.getOptions().awareness !== undefined && !this.getOptions().awareness) {
-      console.error('You need to enable awareness to use awareness')
+      error('You need to enable awareness to use awareness')
       return null
     }
     return this.root().awareness
@@ -66,7 +66,7 @@ export default abstract class RhineVarBase<T extends object = any> {
 
   getClientId(): string {
     if (this.getOptions().awareness !== undefined && !this.getOptions().awareness) {
-      console.error('You need to enable awareness to use clientId')
+      error('You need to enable awareness to use clientId')
       return ''
     }
     return this.root().clientId
@@ -82,6 +82,27 @@ export default abstract class RhineVarBase<T extends object = any> {
     }
     this.unobserve()
     this.native = native
+
+    if (this.isRoot()) {
+      if (this.options.undoManager === undefined || this.options.undoManager) {
+        const native = this.native
+        if (!native) {
+          error('Base map is not available for undoManager')
+        } else {
+          this.undoManager = new UndoManager(native)
+        }
+      }
+      if (this.options.awareness === undefined || this.options.awareness) {
+        const doc = this.connector?.yDoc
+        if (!doc) {
+          error('YDoc is not available for awareness')
+        } else {
+          this.awareness = new Awareness(doc)
+          this.clientId = this.awareness.clientID + ''
+        }
+      }
+    }
+
     this.observe()
     if (this.native instanceof YMap || this.native instanceof YArray) {
       this.native.forEach((value: any, key: string | number) => {
@@ -393,14 +414,23 @@ export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'origin',
   'native',
   'nativeType',
-  'connector',
   'initialize',
   'json',
   'jsonString',
   'parent',
   'isRoot',
   'root',
+
+  'options',
+  'connector',
+  'undoManager',
+  'awareness',
+  'clientId',
+  'getOptions',
   'getConnector',
+  'getUndoManager',
+  'getAwareness',
+  'getClientId',
 
   'afterSynced',
   'waitSynced',
