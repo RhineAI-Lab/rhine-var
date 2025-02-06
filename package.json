@@ -1,6 +1,6 @@
 {
   "name": "rhine-var",
-  "version": "0.8.6",
+  "version": "0.8.7",
   "description": "Variables that support multi-user collaboration and persistence, making collaboration and variable operations as simple as possible, with strict and well-defined type hints.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -59,12 +59,12 @@
     "typescript-transform-paths": "^3.5.0"
   },
   "dependencies": {
+  },
+  "peerDependencies": {
     "yjs": "^13.6.23",
     "@hocuspocus/provider": "^2.15.0",
     "y-protocols": "^1.0.6",
-    "y-websocket": "^2.0.4"
-  },
-  "peerDependencies": {
+    "y-websocket": "^2.0.4",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   }
