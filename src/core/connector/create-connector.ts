@@ -17,6 +17,7 @@ export function createConnector(connectorText: string | number) {
   const connector = new HocuspocusConnector(text)
   // const connector = new WebsocketConnector(text)
 
+  // @ts-ignore
   if (typeof window !== 'undefined') {
     connector.connect(String(text))
   }

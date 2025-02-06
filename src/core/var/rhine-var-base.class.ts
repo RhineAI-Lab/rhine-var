@@ -26,7 +26,7 @@ export default abstract class RhineVarBase<T extends object = any> {
   private connector: Connector | null = null
   private undoManager: UndoManager | null = null
   private awareness: Awareness | null = null
-  private clientId: string = ''
+  private clientId: number = -1
 
   isRoot(): boolean {
     return Boolean(!this.parent)
@@ -64,10 +64,10 @@ export default abstract class RhineVarBase<T extends object = any> {
     return this.root().awareness
   }
 
-  getClientId(): string {
+  getClientId(): number {
     if (this.getOptions().awareness !== undefined && !this.getOptions().awareness) {
       error('You need to enable awareness to use clientId')
-      return ''
+      return -1
     }
     return this.root().clientId
   }
@@ -85,7 +85,6 @@ export default abstract class RhineVarBase<T extends object = any> {
 
     if (this.isRoot()) {
       if (this.options.undoManager === undefined || this.options.undoManager) {
-        const native = this.native
         if (!native) {
           error('Base map is not available for undoManager')
         } else {
@@ -98,7 +97,7 @@ export default abstract class RhineVarBase<T extends object = any> {
           error('YDoc is not available for awareness')
         } else {
           this.awareness = new Awareness(doc)
-          this.clientId = this.awareness.clientID + ''
+          this.clientId = this.awareness.clientID
         }
       }
     }
