@@ -4,12 +4,14 @@ import { YMap, YArray, YText } from "@/index"
 import {rhineProxyGeneral} from "@/core/proxy/rhine-proxy";
 import {error, log} from "@/utils/logger";
 import {isObjectOrArray} from "@/core/utils/data.utils";
-import {Native, YPath} from "@/core/native/native.type";
+import {Native, YKey, YPath} from "@/core/native/native.type";
 import {ChangeType} from "@/core/event/change-type.enum";
 import {Callback, DeepCallback, SyncedCallback} from "@/core/event/callback";
 import Connector from "@/core/connector/connector.abstract";
 import {isNative} from "@/core/native/native.utils";
 import ProxyOptions from "@/core/proxy/proxy-options.interface";
+import {hasKey} from "@/core/utils/native.utils";
+import RhineVarConfig from "@/config/config";
 
 
 export default abstract class RhineVarBase<T extends object = any> {
@@ -74,10 +76,19 @@ export default abstract class RhineVarBase<T extends object = any> {
 
   initialize(native: Native) {
     // initialize function will call after every synced
-    log('Synced initialize:', this.json(), native.toJSON())
+    if (RhineVarConfig.ENABLE_ERROR) {
+      log('Synced initialize:', this.json(), native.toJSON())
+    }
+
+    const recursiveKeys: YKey[] = []
+
     if (this.native instanceof YMap || this.native instanceof YArray) {
       this.native.forEach((value: any, key: string | number) => {
-        Reflect.deleteProperty(this.origin, key)
+        if (hasKey(native, key)) {
+          recursiveKeys.push(key)
+        } else {
+          Reflect.deleteProperty(this.origin, key)
+        }
       })
     }
     this.unobserve()
@@ -105,6 +116,15 @@ export default abstract class RhineVarBase<T extends object = any> {
     this.observe()
     if (this.native instanceof YMap || this.native instanceof YArray) {
       this.native.forEach((value: any, key: string | number) => {
+        if (recursiveKeys.includes(key)) {
+          const child = Reflect.get(this, key)
+          if (child instanceof RhineVarBase) {
+            child.initialize(value)
+          } else {
+            Reflect.set(this.origin, key, value)
+          }
+          return
+        }
         if (isNative(value)) {
           Reflect.set(this.origin, key, rhineProxyGeneral(value, this as any))
         } else {

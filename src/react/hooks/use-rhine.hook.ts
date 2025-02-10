@@ -1,8 +1,8 @@
 "use client"
 import {useEffect, useState} from "react";
 import {RhineVarAny, StoredRhineVar} from "@/core/var/rhine-var.type";
-import {getPathFromRoot} from "@/utils/get-path-from-root";
-import {getTargetByPathFromRoot} from "@/utils/get-target-by-path-from-root";
+import {getPathFromRoot} from "@/core/utils/get-path-from-root";
+import {getTargetByPathFromRoot} from "@/core/utils/get-target-by-path-from-root";
 
 export default function useRhine<T extends object>(proxy: StoredRhineVar<T>): Readonly<T> {
 
