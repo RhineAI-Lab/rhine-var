@@ -10,7 +10,7 @@ import {
   nativeHas,
   nativeOwnKeys,
   nativeSet
-} from "@/core/native/native.utils";
+} from "@/core/utils/native.utils";
 import {createConnector} from "@/core/connector/create-connector";
 import {createRhineVar} from "@/core/proxy/create-rhine-var";
 import {ensureNative, ensureRhineVar} from "@/core/utils/var.utils";
@@ -83,7 +83,7 @@ export function rhineProxyGeneral<T extends object>(
   }
 
   const proxyGetOwnPropertyDescriptor = (proxy: RhineVarBase<T>, p: string | symbol) => {
-    log('Proxy.handler.getOwnPropertyDescriptor:', p, '  ', object)
+    // log('Proxy.handler.getOwnPropertyDescriptor:', p, '  ', object)
     if (p === Symbol.iterator) {
       return {
         value: function* () {
@@ -101,7 +101,7 @@ export function rhineProxyGeneral<T extends object>(
         configurable: true,
       }
     }
-    return Reflect.getOwnPropertyDescriptor(object, p)
+    const result = Reflect.getOwnPropertyDescriptor(object, p)
   }
 
   const handler: ProxyHandler<RhineVarBase<T>> = {

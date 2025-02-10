@@ -2,7 +2,7 @@ import {Native, RhineVarAny, YArray} from "@/index";
 import SupportBase from "@/core/var/support/support-base";
 import {ensureJsonOrBasic, ensureNativeOrBasic, isRhineVar} from "@/core/utils/var.utils";
 import RhineVarArray from "@/core/var/items/rhine-var-array.class";
-import {isNative} from "@/core/native/native.utils";
+import {isNative} from "@/core/utils/native.utils";
 import {RecursiveArray} from "@/core/var/rhine-var.type";
 
 

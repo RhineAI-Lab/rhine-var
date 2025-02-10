@@ -7,7 +7,7 @@ import RhineVarXmlText from "@/core/var/items/rhine-var-xml-text.class";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
 import {RhineVarAny, StoredRhineVar} from "@/core/var/rhine-var.type";
 import {rhineProxyGeneral} from "@/core/proxy/rhine-proxy";
-import {isNative, jsonToNative} from "@/core/native/native.utils";
+import {isNative, jsonToNative} from "@/core/utils/native.utils";
 import {isObjectOrArray} from "@/core/utils/data.utils";
 import {Native} from "@/core/native/native.type";
 import RhineVarObject from "@/core/var/items/rhine-var-object.class";

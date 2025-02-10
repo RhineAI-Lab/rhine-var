@@ -8,9 +8,8 @@ import {Native, YKey, YPath} from "@/core/native/native.type";
 import {ChangeType} from "@/core/event/change-type.enum";
 import {Callback, DeepCallback, SyncedCallback} from "@/core/event/callback";
 import Connector from "@/core/connector/connector.abstract";
-import {isNative} from "@/core/native/native.utils";
+import {isNative, nativeHas} from "@/core/utils/native.utils";
 import ProxyOptions from "@/core/proxy/proxy-options.interface";
-import {hasKey} from "@/core/utils/native.utils";
 import RhineVarConfig from "@/config/config";
 
 
@@ -84,7 +83,7 @@ export default abstract class RhineVarBase<T extends object = any> {
 
     if (this.native instanceof YMap || this.native instanceof YArray) {
       this.native.forEach((value: any, key: string | number) => {
-        if (hasKey(native, key)) {
+        if (nativeHas(native, key)) {
           recursiveKeys.push(key)
         } else {
           Reflect.deleteProperty(this.origin, key)
@@ -115,7 +114,7 @@ export default abstract class RhineVarBase<T extends object = any> {
 
     this.observe()
     if (this.native instanceof YMap || this.native instanceof YArray) {
-      this.native.forEach((value: any, key: string | number) => {
+      this.native.forEach((value: Native, key: string | number) => {
         if (recursiveKeys.includes(key)) {
           const child = Reflect.get(this, key)
           if (child instanceof RhineVarBase) {
@@ -264,11 +263,12 @@ export default abstract class RhineVarBase<T extends object = any> {
   }
 
   emitDeep(path: YPath, value: any, oldValue: any, type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any> | YTextEvent, nativeTransaction: Transaction) {
+    console.log('emitDeep', path)
     this.deepSubscribers.forEach(subscriber => subscriber(path, value, oldValue, type, nativeEvent, nativeTransaction))
     if (!this.parent) return undefined
     for (let key in this.parent) {
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(key)) continue;
-      if (Reflect.get(this.parent, key)?.origin === this) {
+      if (Reflect.get(this.parent, key)?.origin === this.origin) {
         if (!isNaN(Number(key))) {
           key = Number(key) as any
         }

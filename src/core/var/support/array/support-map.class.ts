@@ -1,7 +1,7 @@
 import {Native, RhineVarAny, YArray, YMap} from "@/index";
 import SupportBase from "@/core/var/support/support-base";
 import {ensureNativeOrBasic, isRhineVar} from "@/core/utils/var.utils";
-import {isNative} from "@/core/native/native.utils";
+import {isNative} from "@/core/utils/native.utils";
 import RhineVarMap from "@/core/var/items/rhine-var-map.class";
 import {InputItem, RecursiveMap, RecursiveObject} from "@/core/var/rhine-var.type";
 import RhineVarObject from "@/core/var/items/rhine-var-object.class";
