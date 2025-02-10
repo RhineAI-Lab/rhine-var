@@ -1,8 +1,8 @@
 "use client"
 import {useEffect, useState} from "react";
-import {ProxiedRhineVar} from "@/core/var/rhine-var.type";
+import {StoredRhineVar} from "@/core/var/rhine-var.type";
 
-export default function useRhine<T extends object>(proxy: ProxiedRhineVar<T>): Readonly<T> {
+export default function useRhine<T extends object>(proxy: StoredRhineVar<T>): Readonly<T> {
   
   const createSnapshot = () => proxy.json() as Readonly<T>
   const [state, setState] = useState(createSnapshot)

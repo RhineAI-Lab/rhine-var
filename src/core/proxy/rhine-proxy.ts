@@ -1,8 +1,8 @@
-import {YDoc, YMap, YArray, YText, RhineVarAny} from "@/index"
+import {YDoc, YMap, YArray, YText} from "@/index"
 import Connector from "@/core/connector/connector.abstract";
 import RhineVarBase, {RHINE_VAR_PREDEFINED_PROPERTIES} from "@/core/var/rhine-var-base.class";
 import {error, log} from "@/utils/logger";
-import {ProxiedRhineVar} from "@/core/var/rhine-var.type";
+import {StoredRhineVar, RhineVarAny} from "@/core/var/rhine-var.type";
 import {Native} from "@/core/native/native.type";
 import {
   isNative,
@@ -23,7 +23,7 @@ export function rhineProxy<T extends object>(
   defaultValue: T | Native,
   connector?: Connector | string | number,
   options: ProxyOptions = {},
-): ProxiedRhineVar<T> {
+): StoredRhineVar<T> {
   if (!connector) {
     return rhineProxyGeneral<T>(defaultValue)
   }
@@ -64,7 +64,7 @@ export function rhineProxy<T extends object>(
 export function rhineProxyGeneral<T extends object>(
   data: T | Native,
   parent: RhineVarBase | null = null
-): ProxiedRhineVar<T> {
+): StoredRhineVar<T> {
   let target = ensureNative<T>(data)
 
   const object: RhineVarBase = createRhineVar(target, parent) as any
@@ -172,6 +172,6 @@ export function rhineProxyGeneral<T extends object>(
     getOwnPropertyDescriptor: proxyGetOwnPropertyDescriptor,
   }
 
-  return new Proxy(object, handler) as ProxiedRhineVar<T>
+  return new Proxy(object, handler) as StoredRhineVar<T>
 }
 
