@@ -1,9 +1,10 @@
 import { YMap, YArray, YText, YXmlText, YXmlElement, YXmlFragment } from "@/index"
-import {Native, YKey} from "@/core/native/native.type";
+import {Native, YKey, YPath} from "@/core/native/native.type";
 import {isArray, isObject} from "@/core/utils/data.utils";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
 import {error} from "@/utils/logger";
 import YObject from "@/core/native/y-object";
+import {AbstractType} from "yjs";
 
 
 export function isNative(value: any): boolean {
@@ -143,5 +144,59 @@ export function jsonToNative(data: any): Native {
   }
   return data
 }
+
+export function getKeyFromParent(target: Native): YKey | undefined {
+  const parent = target.parent
+  if (!parent) {
+    return undefined
+  }
+  let result = undefined
+  if (parent instanceof YMap) {
+    parent.forEach((value, key) => {
+      if (value === target) {
+        result = key
+      }
+    })
+  } else if (parent instanceof YArray) {
+    parent.forEach((value, key) => {
+      if (value === target) {
+        result = key
+      }
+    })
+  }
+  return result
+}
+
+export function getPathFromRoot(target: Native): YPath {
+  const path: YPath = []
+  let current = target
+  let parent = current.parent
+  while (parent) {
+    let flag = false
+    if (parent instanceof YMap) {
+      parent.forEach((value, key) => {
+        if (value === current) {
+          path.unshift(key)
+          flag = true
+        }
+      })
+    } else if (parent instanceof YArray) {
+      parent.forEach((value, key) => {
+        if (value === current) {
+          path.unshift(key)
+          flag = true
+        }
+      })
+    }
+    if (!flag) {
+      error('Failed to get path from root')
+      break
+    }
+    current = parent as Native
+    parent = current.parent
+  }
+  return path
+}
+
 
 

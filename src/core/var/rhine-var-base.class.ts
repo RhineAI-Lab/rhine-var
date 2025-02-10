@@ -8,7 +8,7 @@ import {Native, YKey, YPath} from "@/core/native/native.type";
 import {ChangeType} from "@/core/event/change-type.enum";
 import {Callback, DeepCallback, SyncedCallback} from "@/core/event/callback";
 import Connector from "@/core/connector/connector.abstract";
-import {isNative, nativeHas} from "@/core/utils/native.utils";
+import {getKeyFromParent, isNative, nativeHas} from "@/core/utils/native.utils";
 import ProxyOptions from "@/core/proxy/proxy-options.interface";
 import RhineVarConfig from "@/config/config";
 
@@ -263,15 +263,11 @@ export default abstract class RhineVarBase<T extends object = any> {
   }
 
   emitDeep(path: YPath, value: any, oldValue: any, type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any> | YTextEvent, nativeTransaction: Transaction) {
-    console.log('emitDeep', path)
     this.deepSubscribers.forEach(subscriber => subscriber(path, value, oldValue, type, nativeEvent, nativeTransaction))
-    if (!this.parent) return undefined
-    for (let key in this.parent) {
-      if (RHINE_VAR_PREDEFINED_PROPERTIES.has(key)) continue;
-      if (Reflect.get(this.parent, key)?.origin === this.origin) {
-        if (!isNaN(Number(key))) {
-          key = Number(key) as any
-        }
+
+    if (this.parent) {
+      const key = getKeyFromParent(this.native)
+      if (key !== undefined) {
         this.parent.emitDeep([key, ...path], value, oldValue, type, nativeEvent, nativeTransaction)
       }
     }

@@ -1,40 +1,21 @@
 "use client"
 import {useEffect, useState} from "react";
-import {RhineVarAny, StoredRhineVar} from "@/core/var/rhine-var.type";
-import {getPathFromRoot} from "@/core/utils/get-path-from-root";
-import {getTargetByPathFromRoot} from "@/core/utils/get-target-by-path-from-root";
-import {log} from "@/utils/logger";
+import {StoredRhineVar} from "@/core/var/rhine-var.type";
 
 export default function useRhine<T extends object>(proxy: StoredRhineVar<T>): Readonly<T> {
 
-  const [state, setState] = useState(() => proxy.json())
-  
+  const createSnapshot = () => proxy.json() as Readonly<T>
+  const [state, setState] = useState(createSnapshot)
+
   useEffect(() => {
-    const root = proxy.root()
-    const path = getPathFromRoot(proxy)
-
-    let updateState = () => setState(() => proxy.json())
-
-    let unsubscribeDeep = proxy.subscribeDeep(updateState)
-    let unsubscribeSynced = root.subscribeSynced(() => {
-      updateState()
-      setTimeout(() => {
-        let newProxy = getTargetByPathFromRoot(root, path)
-        if (newProxy && newProxy !== proxy) {
-          log('useRhine: proxy changed')
-          unsubscribeDeep()
-          updateState = () => setState(() => newProxy.json())
-          unsubscribeDeep = proxy.subscribeDeep(updateState)
-        }
-        updateState()
-      }, 1)
-    })
-
+    const updateState = () => setState(createSnapshot)
+    const unsubscribeSynced = proxy.subscribeSynced(updateState)
+    const unsubscribeDeep = proxy.subscribeDeep(updateState)
     return () => {
       unsubscribeSynced()
       unsubscribeDeep()
     }
   }, [proxy])
-  
+
   return state
 }
