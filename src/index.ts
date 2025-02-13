@@ -1,10 +1,10 @@
 import {rhineProxy, rhineProxyGeneral} from "@/core/proxy/rhine-proxy";
-import { RhineVar, RecursiveCrossRhineVar, StoredRhineVar, RhineVarAny } from "@/core/var/rhine-var.type";
+import { RhineVar, RecursiveCrossRhineVar, StoredRhineVar, RhineVarAny, RecursiveObject, RecursiveArray, RecursiveMap } from "@/core/var/rhine-var.type";
 import Connector from "@/core/connector/connector.abstract";
 import useRhine from "@/react/hooks/use-rhine.hook"
 import useSynced from "@/react/hooks/use-synced.hook"
-import {Native, YPath} from "@/core/native/native.type";
-import { getRhineVarConfig, enableRhineVarLog, enableRhineVarSyncHandshakeCheck } from "@/config/config";
+import {Native, YKey, YPath} from "@/core/native/native.type";
+import {getRhineVarConfig, enableRhineVarLog, enableRhineVarSyncHandshakeCheck} from "@/config/config";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
 import RhineVarMap from "@/core/var/items/rhine-var-map.class";
 import RhineVarArray from "@/core/var/items/rhine-var-array.class";
@@ -26,6 +26,18 @@ import {
   XmlText as YXmlText
 } from "yjs";
 
+export type {
+  StoredRhineVar,
+  RhineVarAny,
+  RecursiveCrossRhineVar,
+  RecursiveObject,
+  RecursiveArray,
+  RecursiveMap,
+  Native,
+  YPath,
+  YKey,
+}
+
 export {
   Connector,
   rhineProxy,
@@ -34,7 +46,6 @@ export {
   text,
   map,
   RhineVarBase,
-  RhineVarAny,
   RhineVar,
   RhineVarMap,
   RhineVarArray,
@@ -43,10 +54,6 @@ export {
   RhineVarXmlElement,
   RhineVarXmlFragment,
   SupportManager,
-  RecursiveCrossRhineVar,
-  StoredRhineVar,
-  YPath,
-  Native,
   enableRhineVarLog,
   enableRhineVarSyncHandshakeCheck,
   getRhineVarConfig,
