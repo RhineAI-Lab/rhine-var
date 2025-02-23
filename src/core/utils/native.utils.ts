@@ -4,7 +4,6 @@ import {isArray, isObject} from "@/core/utils/data.utils";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
 import {error} from "@/utils/logger";
 import YObject from "@/core/native/y-object";
-import {AbstractType} from "yjs";
 
 
 export function isNative(value: any): boolean {
@@ -197,6 +196,3 @@ export function getPathFromRoot(target: Native): YPath {
   }
   return path
 }
-
-
-

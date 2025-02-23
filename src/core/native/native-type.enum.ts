@@ -1,10 +1,10 @@
 
 export enum NativeType {
-  Object = 'object',
-  Map = 'map',
-  Array = 'array',
-  Text = 'text',
-  XmlFragment = 'xml-fragment',
-  XmlElement = 'xml-element',
-  XmlText = 'xml-text'
+  Object = 'OBJECT',
+  Map = 'MAP',
+  Array = 'ARRAY',
+  Text = 'TEXT',
+  XmlFragment = 'XML_FRAGMENT',
+  XmlElement = 'XML_ELEMENT',
+  XmlText = 'XML_TEXT'
 }

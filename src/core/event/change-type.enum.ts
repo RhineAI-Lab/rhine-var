@@ -1,7 +1,7 @@
 
 export enum ChangeType {
-  Add = 'add',  // For YMap / YArray
-  Update = 'update',  // For YMap
-  Delete = 'delete',  // For YMap / YArray
-  Sync = 'sync',  // For Connector
+  Add = 'ADD',  // For YMap / YArray
+  Update = 'UPDATE',  // For YMap
+  Delete = 'DELETE',  // For YMap / YArray
+  Sync = 'SYNC',  // For Connector
 }
