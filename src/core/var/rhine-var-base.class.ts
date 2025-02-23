@@ -1,6 +1,6 @@
 import {Transaction, UndoManager, YArrayEvent, YMapEvent, YTextEvent} from "yjs";
 import {Awareness} from "y-protocols/awareness";
-import { YMap, YArray, YText } from "@/index"
+import {YArray, YMap, YText} from "@/index"
 import {rhineProxyGeneral} from "@/core/proxy/rhine-proxy";
 import {error, log} from "@/utils/logger";
 import {isObjectOrArray} from "@/core/utils/data.utils";
@@ -290,6 +290,8 @@ export default abstract class RhineVarBase<T extends object = any> {
     if (target instanceof YMap) {
       this.observer = (event, transaction) => {
         event.changes.keys.forEach(({action, oldValue}, key) => {
+          const type = action === 'add' ? ChangeType.Add : (action === 'delete' ? ChangeType.Delete : ChangeType.Update)
+
           if (isObjectOrArray(oldValue)) {
             oldValue = Reflect.get(this, key)
             if (oldValue instanceof RhineVarBase) {
@@ -298,21 +300,21 @@ export default abstract class RhineVarBase<T extends object = any> {
           }
 
           let value = undefined
-          if (action === 'add' || action === 'update') {
+          if (type === ChangeType.Add || type === ChangeType.Update) {
             value = target.get(key)
             if (isNative(value)) {
               Reflect.set(this.origin, key, rhineProxyGeneral(value, this as any))
             } else {
               Reflect.set(this.origin, key, value)
             }
-          } else if (action === 'delete') {
+          } else if (type === ChangeType.Delete) {
             Reflect.deleteProperty(this.origin, key)
           }
 
           const newValue = key in this ? Reflect.get(this, key) : value
           log('Proxy.event: Map', action, key + ':', oldValue, '->', newValue)
-          this.emit(key as keyof T, newValue, oldValue, action as ChangeType, event, transaction)
-          this.emitDeep([key], newValue, oldValue, action as ChangeType, event, transaction)
+          this.emit(key as keyof T, newValue, oldValue, type, event, transaction)
+          this.emitDeep([key], newValue, oldValue, type, event, transaction)
         })
       }
     } else if (target instanceof YArray){
