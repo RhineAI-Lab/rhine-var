@@ -26,6 +26,7 @@ console.log(state.map)
 state.afterSynced(() => {
   console.log(state.obj)
   console.log(state.map)
+  console.log('Synced:', state.json())
 })
 
 export default function PlaygroundTemp() {

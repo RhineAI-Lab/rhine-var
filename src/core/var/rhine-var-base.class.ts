@@ -427,8 +427,6 @@ export default abstract class RhineVarBase<T extends object = any> {
 }
 
 
-export const RHINE_VAR_OBJECT_KEY = 'RhineVarObject'
-
 export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'origin',
   'native',
@@ -439,6 +437,7 @@ export const RHINE_VAR_PREDEFINED_PROPERTIES = new Set<string | symbol>([
   'parent',
   'isRoot',
   'root',
+  'class',
 
   'options',
   'connector',

@@ -1,7 +1,7 @@
 import { YMap, YArray, YText, YXmlText, YXmlElement, YXmlFragment } from "@/index"
 import {Native, YKey, YPath} from "@/core/native/native.type";
 import {isArray, isMap, isObject} from "@/core/utils/data.utils";
-import RhineVarBase, {RHINE_VAR_OBJECT_KEY} from "@/core/var/rhine-var-base.class";
+import RhineVarBase from "@/core/var/rhine-var-base.class";
 import {error} from "@/utils/logger";
 import YObject from "@/core/native/y-object";
 
@@ -40,7 +40,7 @@ export function nativeSet(target: Native, key: string | symbol, value: any): boo
       error('Unsupported nativeSet for:', target)
     }
   } catch (e) {
-    error('RhineVar nativeSet.error:', e)
+    error('nativeSet.error:', e)
   }
   return false
 }
@@ -60,7 +60,7 @@ export function nativeHas(target: Native, key: string | symbol | number): boolea
       }
     }
   } catch (e) {
-    error('RhineVar nativeHas.error:', e)
+    error('nativeHas.error:', e)
   }
   return false
 }
@@ -100,7 +100,7 @@ export function nativeDelete(target: Native, key: string | symbol): boolean {
       }
     }
   } catch (e) {
-    error('RhineVar nativeDelete.error:', e)
+    error('nativeDelete.error:', e)
   }
   return false
 }
@@ -132,6 +132,7 @@ export function jsonToNative(data: any): Native {
     data.forEach((value, key) => {
       map.set(key, jsonToNative(value))
     })
+    map.set('class', 'RhineVarMap')
     return map
   }
   if (isObject(data)) {
@@ -139,7 +140,7 @@ export function jsonToNative(data: any): Native {
     Object.entries(data).forEach(([key, value]) => {
       map.set(key, jsonToNative(value))
     })
-    map.set(RHINE_VAR_OBJECT_KEY, true)
+    map.set('class', 'RhineVarObject')
     return map
   }
   if (isArray(data)) {
