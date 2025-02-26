@@ -9,7 +9,7 @@ import RhineVarObject from "@/core/var/items/rhine-var-object.class";
 
 export default class SupportMap extends SupportBase {
 
-  static TARGET_TAG = 'c'
+  static TARGET_TAG = 'RhineVarMap'
 
   static convertProperty<T>(key: string | symbol, object: RhineVarAny): any {
     if (!(object.native instanceof YMap) || !(object instanceof RhineVarMap || object instanceof RhineVarObject)) {
