@@ -12,14 +12,22 @@ enableRhineVarLog(true)
 
 
 const defaultValue = {
-  names: map<string>()
+  obj: {
+    size: 10,
+    a: 'aaa'
+  }
 }
 
-const state = rhineProxy(defaultValue, 'ws://localhost:11600/room-3', {
-  overwrite: true
+const state = rhineProxy(defaultValue, 'room-3', {
+  overwrite: false
 })
 
+console.log(state.obj.size)
 
-export default function Playground2() {
+setTimeout(() => {
+  console.log(state.obj.size)
+}, 2000)
+
+export default function PlaygroundTemp() {
   return <div className='page'/>
 }

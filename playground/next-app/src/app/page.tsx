@@ -4,7 +4,7 @@ import React from "react";
 import EasyCounter from "@/app/examples/easy-counter";
 import Playground from "@/app/examples/playground";
 import EasyState from "@/app/examples/easy-state";
-import Playground2 from "@/app/examples/playground-2";
+import PlaygroundTemp from "@/app/examples/playground-temp";
 
 export default function page() {
   
@@ -12,7 +12,7 @@ export default function page() {
     {/*<EasyCounter/>*/}
     {/*<Playground/>*/}
     {/*<EasyState/>*/}
-    <Playground2/>
+    <PlaygroundTemp/>
   </main>
 }
 
