@@ -8,7 +8,7 @@ import RhineVarText from "@/core/var/items/rhine-var-text.class";
 import RhineVarXmlFragment from "@/core/var/items/rhine-var-xml-fragment.class";
 import RhineVarXmlElement from "@/core/var/items/rhine-var-xml-element.class";
 import RhineVarXmlText from "@/core/var/items/rhine-var-xml-text.class";
-import RhineVarBase from "@/core/var/rhine-var-base.class";
+import RhineVarBase, {RHINE_VAR_OBJECT_KEY} from "@/core/var/rhine-var-base.class";
 import RhineVarObject from "@/core/var/items/rhine-var-object.class";
 
 export function createRhineVar<T extends object = any>(target: Native, parent: RhineVarBase | null): RhineVarAny<T>
@@ -23,7 +23,11 @@ export function createRhineVar<T extends object = any>(target: Native, parent: R
   if (target instanceof YObject) {
     return new RhineVarObject<T>(target, parent)
   } else if (target instanceof YMap) {
-    return new RhineVarMap<T>(target, parent)
+    if (target.get(RHINE_VAR_OBJECT_KEY)) {
+      return new RhineVarObject<T>(target, parent)
+    } else {
+      return new RhineVarMap<T>(target, parent)
+    }
   } else if (target instanceof YArray) {
     return new RhineVarArray<T>(target, parent)
   } else if (target instanceof YXmlText) {

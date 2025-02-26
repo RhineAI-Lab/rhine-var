@@ -6,8 +6,6 @@ export default class RhineVarObject<T extends object = any> extends RhineVarBase
 
   type: NativeType.Object = NativeType.Object;
 
-  size: number = -1
-
   set(key: keyof T, value: InputItem<T[keyof T]>): void {
   }
 
@@ -25,9 +23,6 @@ export default class RhineVarObject<T extends object = any> extends RhineVarBase
 
   delete(key: keyof T): boolean {
     return false
-  }
-
-  clear(): void {
   }
 
   keys(): IterableIterator<keyof T> {

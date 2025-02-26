@@ -1,7 +1,7 @@
 import { YMap, YArray, YText, YXmlText, YXmlElement, YXmlFragment } from "@/index"
 import {Native, YKey, YPath} from "@/core/native/native.type";
-import {isArray, isObject} from "@/core/utils/data.utils";
-import RhineVarBase from "@/core/var/rhine-var-base.class";
+import {isArray, isMap, isObject} from "@/core/utils/data.utils";
+import RhineVarBase, {RHINE_VAR_OBJECT_KEY} from "@/core/var/rhine-var-base.class";
 import {error} from "@/utils/logger";
 import YObject from "@/core/native/y-object";
 
@@ -127,11 +127,19 @@ export function jsonToNative(data: any): Native {
   if (isNative(data)) {
     return data
   }
+  if (isMap(data)) {
+    let map = new YMap<any>()
+    data.forEach((value, key) => {
+      map.set(key, jsonToNative(value))
+    })
+    return map
+  }
   if (isObject(data)) {
     let map = new YObject<any>()
     Object.entries(data).forEach(([key, value]) => {
       map.set(key, jsonToNative(value))
     })
+    map.set(RHINE_VAR_OBJECT_KEY, true)
     return map
   }
   if (isArray(data)) {

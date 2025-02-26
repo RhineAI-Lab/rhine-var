@@ -5,7 +5,7 @@ import {rhineProxy, enableRhineVarLog, map} from "rhine-var";
 import {StoredRhineVar} from "../../../../../src";
 import {string} from "prop-types";
 
-console.log('\n\n=================== Rhine Var Playground 2 ===================\n\n')
+console.log('\n\n=================== Rhine Var Temp Playground ===================\n\n')
 
 enableRhineVarLog(true)
 
@@ -13,20 +13,20 @@ enableRhineVarLog(true)
 
 const defaultValue = {
   obj: {
-    size: 10,
-    a: 'aaa'
-  }
+    size: 20,
+  },
+  map: map(),
 }
 
-const state = rhineProxy(defaultValue, 'room-3', {
-  overwrite: false
+const state = rhineProxy(defaultValue, 'room-5', {overwrite: false})
+
+console.log(state.obj)
+console.log(state.map)
+
+state.afterSynced(() => {
+  console.log(state.obj)
+  console.log(state.map)
 })
-
-console.log(state.obj.size)
-
-setTimeout(() => {
-  console.log(state.obj.size)
-}, 2000)
 
 export default function PlaygroundTemp() {
   return <div className='page'/>
