@@ -6,6 +6,7 @@ import {RhineVarAny} from "@/core/var/rhine-var.type";
 import RhineVarObject from "@/core/var/items/rhine-var-object.class";
 import SupportMap from "@/core/var/support/array/support-map.class";
 import SupportText from "@/core/var/support/array/support-text.class";
+import SupportObject from "@/core/var/support/array/support-object.class";
 
 export default class SupportManager {
 
@@ -16,9 +17,7 @@ export default class SupportManager {
     } else if (object instanceof RhineVarMap) {
       return SupportMap.convertProperty<T>(key, object)
     } else if (object instanceof RhineVarObject) {
-      // Directly use the Support tool of RhineVarMap to process Object data.
-      // Although the internal types of the tool do not match exactly, it doesn’t matter because the type computation at runtime comes from the definition of RhineVarObject.
-      return SupportMap.convertProperty<T>(key, object)
+      return SupportObject.convertProperty<T>(key, object)
     } else if (object instanceof RhineVarText) {
       return SupportText.convertProperty(key, object)
     }
