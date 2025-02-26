@@ -430,7 +430,7 @@ export default class SupportArray extends SupportBase {
           toString: true,
         }
       default:
-        return null
+        return undefined
     }
   }
 

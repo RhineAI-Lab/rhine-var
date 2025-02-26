@@ -40,7 +40,7 @@ export default class SupportMap extends SupportBase {
 
     switch (key) {
       case 'size':
-        return map.size
+        return native.size
       case 'set':
         return (key: string, value: InputItem<T>) => {
           return native.set(key, ensureNativeOrBasic(value) as T)
@@ -176,7 +176,7 @@ export default class SupportMap extends SupportBase {
           }
         }
       default:
-        return null
+        return undefined
     }
   }
 

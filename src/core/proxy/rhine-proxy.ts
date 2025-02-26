@@ -109,7 +109,7 @@ export function rhineProxyGeneral<T extends object>(
       if (RHINE_VAR_PREDEFINED_PROPERTIES.has(p)) return Reflect.get(object, p, receiver)
 
       const supportProperty = SupportManager.convertProperty<T>(p, object as RhineVarAny)
-      if (supportProperty) return supportProperty
+      if (supportProperty !== undefined) return supportProperty
 
       log('Proxy.handler.get:', p, '  ', object, receiver)
 

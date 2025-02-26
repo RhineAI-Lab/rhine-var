@@ -171,7 +171,7 @@ export default class SupportText extends SupportBase {
       case Symbol.iterator:
         return native.toString()[Symbol.iterator]
       default:
-        return null
+        return undefined
     }
   }
 

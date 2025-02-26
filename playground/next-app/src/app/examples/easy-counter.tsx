@@ -1,4 +1,4 @@
-import {rhineProxy, useRhine, enableRhineVarLog} from 'rhine-var'
+import {rhineProxy, useRhine, enableRhineVarLog, map} from 'rhine-var'
 
 enableRhineVarLog(true)
 
@@ -7,7 +7,7 @@ const defaultValue = {
     count: 0,
     item: {
       text: 'aaa'
-    }
+    },
   }
 }
 const url = 'room-1'
