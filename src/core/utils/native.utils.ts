@@ -1,5 +1,5 @@
 import { YMap, YArray, YText, YXmlText, YXmlElement, YXmlFragment } from "@/index"
-import {Native, YKey, YPath} from "@/core/native/native.type";
+import {Native, RvKey, RvPath} from "@/core/native/native.type";
 import {isArray, isMap, isObject} from "@/core/utils/data.utils";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
 import {error} from "@/utils/logger";
@@ -132,7 +132,6 @@ export function jsonToNative(data: any): Native {
     data.forEach((value, key) => {
       map.set(key, jsonToNative(value))
     })
-    map.set('class', 'RhineVarMap')
     return map
   }
   if (isObject(data)) {
@@ -153,7 +152,7 @@ export function jsonToNative(data: any): Native {
   return data
 }
 
-export function getKeyFromParent(target: Native): YKey | undefined {
+export function getKeyFromParent(target: Native): RvKey | undefined {
   const parent = target.parent
   if (!parent) {
     return undefined
@@ -175,8 +174,8 @@ export function getKeyFromParent(target: Native): YKey | undefined {
   return result
 }
 
-export function getPathFromRoot(target: Native): YPath {
-  const path: YPath = []
+export function getPathFromRoot(target: Native): RvPath {
+  const path: RvPath = []
   let current = target
   let parent = current.parent
   while (parent) {

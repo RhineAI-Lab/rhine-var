@@ -3,7 +3,7 @@ import { RhineVar, RecursiveCrossRhineVar, StoredRhineVar, RhineVarAny, Recursiv
 import Connector from "@/core/connector/connector.abstract";
 import useRhine from "@/react/hooks/use-rhine.hook"
 import useSynced from "@/react/hooks/use-synced.hook"
-import {Native, YKey, YPath} from "@/core/native/native.type";
+import {Native, RvKey, RvPath} from "@/core/native/native.type";
 import {getRhineVarConfig, enableRhineVarLog, enableRhineVarSyncHandshakeCheck} from "@/config/config";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
 import RhineVarMap from "@/core/var/items/rhine-var-map.class";
@@ -34,8 +34,8 @@ export type {
   RecursiveArray,
   RecursiveMap,
   Native,
-  YPath,
-  YKey,
+  RvPath,
+  RvKey,
 }
 
 export {

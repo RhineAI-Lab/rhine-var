@@ -4,7 +4,7 @@ import {YArray, YMap, YText} from "@/index"
 import {rhineProxyGeneral} from "@/core/proxy/rhine-proxy";
 import {error, log} from "@/utils/logger";
 import {isObjectOrArray} from "@/core/utils/data.utils";
-import {Native, YKey, YPath} from "@/core/native/native.type";
+import {Native, RvKey, RvPath} from "@/core/native/native.type";
 import {ChangeType} from "@/core/event/change-type.enum";
 import {Callback, DeepCallback, SyncedCallback} from "@/core/event/callback";
 import Connector from "@/core/connector/connector.abstract";
@@ -79,7 +79,7 @@ export default abstract class RhineVarBase<T extends object = any> {
       log('Synced initialize:', this.json(), native.toJSON())
     }
 
-    const recursiveKeys: YKey[] = []
+    const recursiveKeys: RvKey[] = []
 
     if (this.native instanceof YMap || this.native instanceof YArray) {
       this.native.forEach((value: any, key: string | number) => {
@@ -262,7 +262,7 @@ export default abstract class RhineVarBase<T extends object = any> {
     this.deepSubscribers = []
   }
 
-  emitDeep(path: YPath, value: any, oldValue: any, type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any> | YTextEvent, nativeTransaction: Transaction) {
+  emitDeep(path: RvPath, value: any, oldValue: any, type: ChangeType, nativeEvent: YMapEvent<any> | YArrayEvent<any> | YTextEvent, nativeTransaction: Transaction) {
     this.deepSubscribers.forEach(subscriber => subscriber(path, value, oldValue, type, nativeEvent, nativeTransaction))
 
     if (this.parent) {

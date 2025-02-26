@@ -1,6 +1,6 @@
 import {ChangeType} from "@/core/event/change-type.enum";
 import {Text as YText, Transaction, YArrayEvent, YMapEvent, YTextEvent} from "yjs";
-import {YPath} from "@/core/native/native.type";
+import {RvPath} from "@/core/native/native.type";
 import {StoredRhineVar} from "@/core/var/rhine-var.type";
 
 // The property name only indicates its meaning in the context of a list.
@@ -14,7 +14,7 @@ export type Callback<T> = (
 ) => void
 
 export type DeepCallback<T> = (
-  path: YPath,
+  path: RvPath,
   value: any | StoredRhineVar<any>,
   oldValue: any,
   type: ChangeType,
