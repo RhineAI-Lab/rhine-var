@@ -3,7 +3,7 @@ import {Awareness} from "y-protocols/awareness";
 import {YArray, YMap, YText} from "@/index"
 import {rhineProxyGeneral} from "@/core/proxy/rhine-proxy";
 import {error, log} from "@/utils/logger";
-import {isObjectOrArray} from "@/core/utils/data.utils";
+import {isObject, isObjectOrArray} from "@/core/utils/data.utils";
 import {Native, RvKey, RvPath} from "@/core/native/native.type";
 import {ChangeType} from "@/core/event/change-type.enum";
 import {Callback, DeepCallback, SyncedCallback} from "@/core/event/callback";
@@ -11,6 +11,7 @@ import Connector from "@/core/connector/connector.abstract";
 import {getKeyFromParent, isNative, nativeHas} from "@/core/utils/native.utils";
 import ProxyOptions from "@/core/proxy/proxy-options.interface";
 import RhineVarConfig from "@/config/config";
+import {UndoManagerOptions} from "yjs/dist/src/utils/UndoManager";
 
 
 export default abstract class RhineVarBase<T extends object = any> {
@@ -98,7 +99,7 @@ export default abstract class RhineVarBase<T extends object = any> {
         if (!native) {
           error('Base map is not available for undoManager')
         } else {
-          this.undoManager = new UndoManager(native)
+          this.undoManager = new UndoManager(native, isObject(this.options.undoManager) ? this.options.undoManager as UndoManagerOptions : undefined)
         }
       }
       if (this.options.awareness === undefined || this.options.awareness) {
