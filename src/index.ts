@@ -25,6 +25,8 @@ import {
   XmlElement as YXmlElement,
   XmlText as YXmlText
 } from "yjs";
+import ProxyOptions from "./core/proxy/proxy-options.interface";
+import { UndoManagerOptions } from "yjs/dist/src/utils/UndoManager";
 
 export type {
   StoredRhineVar,
@@ -36,6 +38,8 @@ export type {
   Native,
   RvPath,
   RvKey,
+  ProxyOptions,
+  UndoManagerOptions,
 }
 
 export {
