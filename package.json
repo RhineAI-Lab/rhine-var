@@ -1,6 +1,6 @@
 {
   "name": "rhine-var",
-  "version": "0.9.7",
+  "version": "0.9.8",
   "description": "Variables that support multi-user collaboration and persistence, making collaboration and variable operations as simple as possible, with strict and well-defined type hints.",
   "exports": {
     ".": "./dist/index.js",
@@ -15,8 +15,7 @@
     "link-next": "npm link && npm link rhine-var --prefix playground/next-app",
     "test": "echo All tests passed.",
     "build": "tsc",
-    "commit": "node scripts/commit.js",
-    "publish": "npm publish"
+    "commit": "node scripts/commit.js"
   },
   "author": "RhineAI",
   "license": "Apache-2.0",
