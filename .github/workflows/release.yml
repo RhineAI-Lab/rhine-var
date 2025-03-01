@@ -1,4 +1,4 @@
-name: Auto Release and Publish via package.json version
+name: Auto Release and Publish via package version
 
 on:
   push:
