@@ -25,6 +25,7 @@ import {
 } from "yjs";
 import ProxyOptions from "./core/proxy/proxy-options.interface";
 import { UndoManagerOptions } from "yjs/dist/src/utils/UndoManager";
+import { ChangeType } from "./core/event/change-type.enum";
 
 export type {
   StoredRhineVar,
@@ -66,4 +67,5 @@ export {
   YXmlFragment,
   YXmlElement,
   YXmlText,
+  ChangeType,
 }
