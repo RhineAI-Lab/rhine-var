@@ -126,7 +126,7 @@ async function main() {
   console.log('')
 
   console.log('')
-  console.log("🔍 Track the workflow run status for this commit:")
+  console.log("🔍 Track the workflow status for this commit:")
   console.log('\x1B]8;;%s\x07%s\x1B]8;;\x07', ACTIONS_URL, ACTIONS_URL)
   console.log('')
   console.log('')
