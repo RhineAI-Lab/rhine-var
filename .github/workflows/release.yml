@@ -119,9 +119,12 @@ jobs:
         run: yarn build
 
       - name: Configure npm Registry
-        run: npm config set @RhineAI-Lab:registry=https://npm.pkg.github.com
+        run: npm config set @rhineai-lab:registry=https://npm.pkg.github.com
+
+      - name: Debug npm config
+        run: npm config list
 
       - name: Publish to NPM
-        run: npm publish --registry https://npm.pkg.github.com/RhineAI-Lab
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
