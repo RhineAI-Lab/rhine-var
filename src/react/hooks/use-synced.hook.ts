@@ -1,9 +1,14 @@
 import Connector from "@/core/connector/connector.abstract";
-import {useEffect, useState} from "react";
 import {StoredRhineVar} from "@/core/var/rhine-var.type";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
+import loadReact from "@/react/load-react";
 
 export default function useSynced(target?: Connector | StoredRhineVar) {
+
+  const React = loadReact()
+  if (!React) {
+    throw new Error('RhineVar: useRhine hook requires React')
+  }
   
   const checkSynced = (): boolean => {
     let connector: Connector | null = null
@@ -15,9 +20,9 @@ export default function useSynced(target?: Connector | StoredRhineVar) {
     return connector?.synced ?? false
   }
   
-  const [synced, setSynced] = useState(checkSynced)
-  
-  useEffect(() => {
+  const [synced, setSynced] = React.useState(checkSynced)
+
+  React.useEffect(() => {
     if (target instanceof Connector) {
       return target.subscribeSynced((value: boolean) => setSynced(value))
     }

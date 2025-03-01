@@ -1,8 +1,6 @@
 import {rhineProxy, rhineProxyGeneral} from "@/core/proxy/rhine-proxy";
 import { RhineVar, RecursiveCrossRhineVar, StoredRhineVar, RhineVarAny, RecursiveObject, RecursiveArray, RecursiveMap } from "@/core/var/rhine-var.type";
 import Connector from "@/core/connector/connector.abstract";
-import useRhine from "@/react/hooks/use-rhine.hook"
-import useSynced from "@/react/hooks/use-synced.hook"
 import {Native, RvKey, RvPath} from "@/core/native/native.type";
 import {getRhineVarConfig, enableRhineVarLog, enableRhineVarSyncHandshakeCheck} from "@/config/config";
 import RhineVarBase from "@/core/var/rhine-var-base.class";
@@ -61,8 +59,6 @@ export {
   enableRhineVarLog,
   enableRhineVarSyncHandshakeCheck,
   getRhineVarConfig,
-  useRhine,
-  useSynced,
   YDoc,
   YMap,
   YArray,

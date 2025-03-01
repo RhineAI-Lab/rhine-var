@@ -1,11 +1,8 @@
 import { YDoc } from "@/index"
-import {WebsocketProvider} from "y-websocket";
 import {ConnectorStatus} from "@/core/connector/connector-status.enum";
 import {error, log} from "@/utils/logger";
-import {Native} from "@/core/native/native.type";
 import RhineVarConfig from "@/config/config";
 import SyncHandshakeCheck from "@/core/connector/websocket/sync-handshake-check.class";
-import {SyncedCallback} from "@/core/event/callback";
 import Connector from "@/core/connector/connector.abstract";
 import {HocuspocusProvider} from "@hocuspocus/provider";
 

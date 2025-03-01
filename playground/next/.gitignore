@@ -4,8 +4,6 @@
 /.pnp
 .pnp.js
 .yarn/install-state.gz
-package-lock.json
-yarn.lock
 
 # testing
 /coverage
@@ -38,5 +36,5 @@ yarn-error.log*
 next-env.d.ts
 
 # IDE
-/.idea
-/.vscode
+.idea
+.vscode

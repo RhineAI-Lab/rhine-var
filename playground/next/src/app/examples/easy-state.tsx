@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react";
-import {enableRhineVarLog, rhineProxy, text, map, item, useRhine} from "rhine-var";
+import {enableRhineVarLog, rhineProxy, text, map, item} from "rhine-var";
 
 console.log('\n\n=================== Rhine Var Playground ===================\n\n')
 

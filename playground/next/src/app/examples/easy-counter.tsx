@@ -1,4 +1,5 @@
-import {rhineProxy, useRhine, enableRhineVarLog, map} from 'rhine-var'
+import {rhineProxy, enableRhineVarLog, map} from 'rhine-var'
+import {useRhine} from "rhine-var/react";
 
 enableRhineVarLog(true)
 
@@ -32,10 +33,10 @@ function Counter() {
   return <div className='page' onClick={() => {
     console.log(state.json())
   }}>
-    {/*<button onClick={() => state.data.count-- }> - 1 </button>*/}
-    {/*<span onClick={() => state.data.count = 0}>{snap.count}</span>*/}
-    {/*<button onClick={() => state.data.count++ }> + 1 </button>*/}
-    <input value={snap.data.item.text} onChange={e => state.data.item.text = e.target.value}/>
+    <button onClick={() => state.data.count-- }> - 1 </button>
+    <span onClick={() => state.data.count = 0}>{snap.data.count}</span>
+    <button onClick={() => state.data.count++ }> + 1 </button>
+    {/*<input value={snap.data.item.text} onChange={e => state.data.item.text = e.target.value}/>*/}
   </div>
 }
 
