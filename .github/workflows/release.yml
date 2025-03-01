@@ -45,31 +45,16 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Create Tag and Release
-        uses: actions/github-script@v6
+      - name: Create Release and Tag
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          script: |
-            const version = '${{ needs.Version.outputs.current_version }}';
-            const tagName = `v${version}`;
-            
-            await github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: `refs/tags/${tagName}`,
-              sha: context.sha
-            });
-            
-            await github.rest.repos.createRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tag_name: tagName,
-              name: `${tagName}`,
-              body: "Install: https://www.npmjs.com/package/rhine-var",
-              draft: false,
-              prerelease: false
-            });
+          tag_name: v${{ needs.Version.outputs.current_version }}
+          release_name: v${{ needs.Version.outputs.current_version }}
+          body: "Install: https://www.npmjs.com/package/rhine-var"
+          draft: false
+          prerelease: false
   
 
   Publish:
