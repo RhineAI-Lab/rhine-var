@@ -2,8 +2,6 @@
 
 import React from "react";
 import {rhineProxy, enableRhineVarLog, map} from "rhine-var";
-import {StoredRhineVar} from "../../../../../src";
-import {string} from "prop-types";
 
 console.log('\n\n=================== Rhine Var Temp Playground ===================\n\n')
 

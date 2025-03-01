@@ -5,7 +5,8 @@ const { execSync } = require('child_process')
 const path = require('path')
 const fs = require('fs')
 
-const PROJECT1_PATH = path.resolve(__dirname, '../')
+const PROJECT_PATH = path.resolve(__dirname, '../')
+const ACTIONS_URL = 'https://github.com/RhineAI-Lab/rhine-var/actions'
 
 function checkPackageJson(projectPath) {
   if (!fs.existsSync(path.join(projectPath, 'package.json'))) {
@@ -106,9 +107,9 @@ function incrementVersion(version) {
 }
 
 async function main() {
-  checkPackageJson(PROJECT1_PATH)
+  checkPackageJson(PROJECT_PATH)
 
-  const currentVersion = getCurrentVersion(PROJECT1_PATH)
+  const currentVersion = getCurrentVersion(PROJECT_PATH)
   const newVersion = incrementVersion(currentVersion)
   console.log(`New version: ${currentVersion} -> ${newVersion}`)
   console.log('')
@@ -116,17 +117,23 @@ async function main() {
   const commitMessage = await getCommitMessage()
   console.log('\n')
 
-  console.log(`Updating project: ${PROJECT1_PATH}`)
-  updateVersion(PROJECT1_PATH, newVersion)
+  console.log(`Updating project: ${PROJECT_PATH}`)
+  updateVersion(PROJECT_PATH, newVersion)
   console.log('')
-  executeGitCommit(PROJECT1_PATH, commitMessage)
+  executeGitCommit(PROJECT_PATH, commitMessage)
   console.log('')
-  createGitTag(PROJECT1_PATH, newVersion)
+  createGitTag(PROJECT_PATH, newVersion)
   console.log('')
 
-  console.log(`Pushing project: ${PROJECT1_PATH}`)
   console.log('')
-  executeGitPush(PROJECT1_PATH)
+  console.log("You can track the workflow run status for this commit here:");
+  console.log('\x1B]8;;%s\x07%s\x1B]8;;\x07', ACTIONS_URL, `🔍 View workflow run →`);
+  console.log('')
+  console.log('')
+
+  console.log(`Pushing project: ${PROJECT_PATH}`)
+  console.log('')
+  executeGitPush(PROJECT_PATH)
   console.log('')
 
   // console.log(`Building project: ${PROJECT1_PATH}`)

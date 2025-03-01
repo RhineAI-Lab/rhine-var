@@ -22,5 +22,5 @@
     ]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "playground", "assets"],
+  "exclude": ["node_modules", "dist", "playground", "assets", "scripts", ".github", ".idea", ".vscode"],
 }
