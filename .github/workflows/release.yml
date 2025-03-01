@@ -119,7 +119,9 @@ jobs:
         run: yarn build
 
       - name: Configure npm Registry
-        run: npm config set @rhineai-lab:registry=https://npm.pkg.github.com
+        run: |
+          npm config set @RhineAI-Lab:registry=https://npm.pkg.github.com
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
 
       - name: Debug npm config
         run: npm config list
