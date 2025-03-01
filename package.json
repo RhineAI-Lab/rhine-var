@@ -1,6 +1,6 @@
 {
   "name": "rhine-var",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Variables that support multi-user collaboration and persistence, making collaboration and variable operations as simple as possible, with strict and well-defined type hints.",
   "exports": {
     ".": "./dist/index.js",
@@ -15,6 +15,7 @@
     "link-next": "npm link && npm link rhine-var --prefix playground/next-app",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
+    "commit": "node scripts/commit.js",
     "publish": "npm publish"
   },
   "author": "RhineAI",
@@ -65,9 +66,9 @@
   },
   "dependencies": {
     "yjs": "^13.6.23",
-    "@hocuspocus/provider": "^2.15.0",
     "y-protocols": "^1.0.6",
-    "y-websocket": "^2.0.4"
+    "y-websocket": "^2.0.4",
+    "@hocuspocus/provider": "^2.15.0"
   },
   "peerDependencies": {}
 }

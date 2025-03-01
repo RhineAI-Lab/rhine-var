@@ -96,8 +96,6 @@ function executePublish(projectPath) {
     console.log(`\nPublishing package...`)
     execSync('npm publish', { cwd: projectPath, stdio: 'inherit' })
   } catch (error) {
-    console.error(`Publish failed in ${projectPath}`)
-    process.exit(1)
   }
 }
 
