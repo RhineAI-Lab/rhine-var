@@ -129,15 +129,15 @@ async function main() {
   executeGitPush(PROJECT1_PATH)
   console.log('')
 
-  console.log(`Building project: ${PROJECT1_PATH}`)
-  executeBuild(PROJECT1_PATH)
-  console.log('')
+  // console.log(`Building project: ${PROJECT1_PATH}`)
+  // executeBuild(PROJECT1_PATH)
+  // console.log('')
+  //
+  // console.log(`Publishing project: ${PROJECT1_PATH}`)
+  // executePublish(PROJECT1_PATH)
+  // console.log('')
 
-  console.log(`Publishing project: ${PROJECT1_PATH}`)
-  executePublish(PROJECT1_PATH)
-  console.log('')
-
-  console.log(`\nSuccessfully committed, built and published version: ${newVersion}`)
+  console.log(`\nSuccessfully committed with version: ${newVersion}`)
 }
 
 main()
