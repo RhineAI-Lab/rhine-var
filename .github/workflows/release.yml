@@ -42,7 +42,7 @@ jobs:
     if: ${{ needs.Version.outputs.version_changed == 'true' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Create Tag and Release
