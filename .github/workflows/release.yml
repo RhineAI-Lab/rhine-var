@@ -8,49 +8,59 @@ on:
       - 'package.json'
 
 jobs:
-  Release:
+
+  Version:
     runs-on: ubuntu-latest
+    outputs:
+      version_changed: ${{ steps.detect.outputs.version_changed }}
+      current_version: ${{ steps.detect.outputs.current_version }}
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
-      - name: Get Versions
-        id: versions
+      - name: Detect version change
+        id: detect
         run: |
-          # 当前版本
           CURRENT_VERSION=$(jq -r .version package.json)
           echo "Current version: $CURRENT_VERSION"
-
+          
           git checkout HEAD~1 -- package.json 2>/dev/null || true
           PREVIOUS_VERSION=$(jq -r .version package.json 2>/dev/null || echo "0.0.0")
           echo "Previous version: $PREVIOUS_VERSION"
-
+          
           if [[ "$CURRENT_VERSION" != "$PREVIOUS_VERSION" ]]; then
-            echo "::set-output name=version_changed::true"
-            echo "::set-output name=current_version::$CURRENT_VERSION"
+            echo "version_changed=true" >> $GITHUB_OUTPUT
+            echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=version_changed::false"
+            echo "version_changed=false" >> $GITHUB_OUTPUT
           fi
 
+  Release:
+    needs: Version
+    if: ${{ needs.Version.outputs.version_changed == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Create Tag and Release
-        if: steps.versions.outputs.version_changed == 'true'
         uses: actions/github-script@v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           script: |
-            const version = '${{ steps.versions.outputs.current_version }}';
+            const version = '${{ needs.Version.outputs.current_version }}';
             const tagName = `v${version}`;
-
+            
             await github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: `refs/tags/${tagName}`,
               sha: context.sha
             });
-
+            
             await github.rest.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -60,3 +70,33 @@ jobs:
               draft: false,
               prerelease: false
             });
+  
+
+  Publish:
+    needs: Version
+    if: ${{ needs.Version.outputs.version_changed == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "yarn"
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run Unit Tests
+        run: yarn test
+
+      - name: Build Project
+        run: yarn build
+
+      - name: Publish to NPM
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
