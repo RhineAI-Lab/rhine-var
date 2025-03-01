@@ -10,6 +10,7 @@ on:
 jobs:
 
   Version:
+    name: Analysis Version
     runs-on: ubuntu-latest
     outputs:
       version_changed: ${{ steps.detect.outputs.version_changed }}
@@ -38,6 +39,7 @@ jobs:
           fi
 
   Release:
+    name: Release and Tag
     needs: Version
     if: ${{ needs.Version.outputs.version_changed == 'true' }}
     runs-on: ubuntu-latest
@@ -58,6 +60,7 @@ jobs:
   
 
   Publish:
+    name: Publish to NPM
     needs: Version
     if: ${{ needs.Version.outputs.version_changed == 'true' }}
     runs-on: ubuntu-latest
@@ -71,6 +74,40 @@ jobs:
         with:
           node-version: "20"
           registry-url: https://registry.npmjs.org/
+          cache: "yarn"
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run Unit Tests
+        run: yarn test
+
+      - name: Build Project
+        run: yarn build
+
+      - name: Publish to NPM
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  Packages:
+    name: Publish to GitHub Packages
+    needs: Version
+    if: ${{ needs.Version.outputs.version_changed == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: https://npm.pkg.github.com/
           cache: "yarn"
 
       - name: Install Dependencies
